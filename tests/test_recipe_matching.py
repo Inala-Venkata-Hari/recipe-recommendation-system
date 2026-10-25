@@ -28,10 +28,11 @@ class FindBestMatchesTests(unittest.TestCase):
     def test_falls_back_to_largest_subset_and_keeps_ties(self):
         result = find_best_matches(
             self.recipes,
-            ["rice", "beans", "tomato", "onion", "carrot"],
+            ["rice", "beans", "tomato", "onion", "salt"],
         )
-        self.assertEqual(set(result["id"]), {1, 2, 3})
+        self.assertEqual(set(result["id"]), {1, 2})
         self.assertTrue((result["_match_count"] == 4).all())
+        self.assertNotIn(3, result["id"].tolist())
         self.assertNotIn(4, result["id"].tolist())
 
     def test_no_shared_ingredients_returns_empty(self):
