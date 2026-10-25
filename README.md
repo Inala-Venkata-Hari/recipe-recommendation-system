@@ -22,12 +22,14 @@ Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python
 ## Prototype behaviour
 
 - At least 3 selected ingredients are required before recommendations appear.
+- Add several cart ingredients at once by separating names with commas, semicolons, or new lines; recognized ingredients are added without duplicating existing cart items.
+- Ingredient names not found in the dataset are reported and not added.
 - Recipes matching at least one selected cart ingredient are included; recipes with zero overlap are excluded.
 - Primary ranking: recipes using more selected cart items appear first.
 - Tie-breaker: among recipes matching the same number of cart items, recipes requiring fewer additional ingredients appear first.
 - Further tie-breaker: recipes with shorter cooking time appear first; missing cooking times are placed last.
 - Each recipe displays the matched cart items, the match count, and the number of additional ingredients required.
-- The cart selection is never changed, and missing ingredients are not shown as a shopping list.
+- The cart selection is never changed by recommendation results, and missing ingredients are not shown as a shopping list.
 - Results update when cart ingredients or preference change.
 - Ingredient names are normalized consistently across preprocessing, loaded data, and matching: case, repeated whitespace, and common hyphen/dash variants are standardized; duplicate normalized ingredients are counted once.
 - Normalization intentionally preserves descriptive words and other punctuation, so ingredients such as `rice` and `white rice` remain distinct.
