@@ -1,9 +1,9 @@
 import ast
-from itertools import combinations
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+from recipe_matching import find_best_matches
 
 DATA_FILE = Path(__file__).parent / "data" / "recipes_cleaned.csv"
 
@@ -18,46 +18,6 @@ def parse_list(value):
         return parsed if isinstance(parsed, list) else []
     except (ValueError, SyntaxError, TypeError):
         return []
-
-
-def find_best_matches(recipes, selected):
-    """Return recipes matching the largest possible subset of selected ingredients.
-
-    This is equivalent to trying n, n-1, n-2, ... selected ingredients, but
-    counts ingredient overlap in one pass instead of enumerating every subset.
-    Only recipes at the strongest available match level are returned.
-    """
-    if not selected:
-        return recipes.iloc[0:0].copy()
-
-    selected_by_key = {}
-    for ingredient in selected:
-        selected_by_key[str(ingredient).strip().casefold()] = str(ingredient)
-
-    results = recipes.copy()
-    selected_keys = list(selected_by_key.keys())
-
-    def matched_for_recipe(items):
-        recipe_keys = {
-            str(item).strip().casefold()
-            for item in (items if isinstance(items, list) else [])
-        }
-        return [
-            selected_by_key[key]
-            for key in selected_keys
-            if key in recipe_keys
-        ]
-
-    results["_matched_ingredients"] = results["ingredients"].apply(matched_for_recipe)
-    results["_match_count"] = results["_matched_ingredients"].apply(len)
-
-    best_count = int(results["_match_count"].max()) if not results.empty else 0
-    if best_count == 0:
-        return results.iloc[0:0].copy()
-
-    # Keep only the largest subset size that has results and avoid duplicates:
-    # each recipe appears once even if it matches multiple possible subsets.
-    return results[results["_match_count"] == best_count].copy()
 
 
 @st.cache_data
