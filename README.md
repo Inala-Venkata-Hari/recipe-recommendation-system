@@ -1,0 +1,46 @@
+# Smart Cart Recipe Recommendation System
+
+A prototype that recommends recipes from ingredients selected in a smart shopping cart. Built with Python, pandas, and Streamlit.
+
+## Run locally
+
+Python 3.10+ recommended.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1`.
+
+## Dataset
+
+Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python preprocess.py`. This generates `data/recipes_cleaned.csv` (up to 5,000 recipes) and `data/ingredients_classified.csv` (unique ingredients and frequency categories). The raw dataset is not included.
+
+## Prototype behaviour
+
+- At least 3 selected ingredients are required.
+- Every selected ingredient must appear in a recommended recipe; missing ingredients are not shown.
+- Results update when cart ingredients or preference change.
+- Preferences: Low calorie (up to 500 kcal), Quick meal (up to 30 minutes), Balanced meal (up to 600 kcal and 45 minutes), Budget-friendly (informational placeholder; price data is not available).
+- Calories come from the first nutrition value in the source list and should be verified before health-critical use.
+
+## Ingredient frequency categories
+
+- Common: >=25% of sampled recipes
+- Moderately common: >=10%
+- Specialized: >=3%
+- Rare / recipe-specific: below 3%
+
+## Roadmap
+
+- `v0.1.0`: initial prototype
+- `v0.2.0`: improve matching and ranking
+- `v0.3.0`: improve dataset and preprocessing
+- `v0.4.0`: tests and error handling
+- `v0.5.0`: interface and documentation improvements
+- `v1.0.0`: first stable release
+
+Research/learning prototype; not medical or price-verified advice.
