@@ -27,8 +27,11 @@ Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python
 - Recipes matching at least one selected cart ingredient are included; recipes with zero overlap are excluded.
 - Primary ranking: recipes using more selected cart items appear first.
 - Tie-breaker: among recipes matching the same number of cart items, recipes requiring fewer additional ingredients appear first.
-- Further tie-breaker: recipes with shorter cooking time appear first; missing cooking times are placed last.
+- Next tie-breaker: recipes whose missing ingredients appear more frequently in the sampled dataset are preferred.
+- Final tie-breaker: recipes with shorter cooking time appear first; missing cooking times are placed last.
 - Each recipe displays the matched cart items, the match count, and the number of additional ingredients required.
+- Ingredient classification estimates practicality: when earlier ranking criteria tie, recipes with common or moderately common missing ingredients are preferred over recipes needing specialized or rare ingredients.
+- Each recipe shows a practicality label, including whether it is ready to cook, mostly common, or includes specialized/rare ingredients.
 - The cart selection is never changed by recommendation results, and missing ingredients are not shown as a shopping list.
 - Results update when cart ingredients or preference change.
 - Ingredient names are normalized consistently across preprocessing, loaded data, and matching: case, repeated whitespace, and common hyphen/dash variants are standardized; duplicate normalized ingredients are counted once.
@@ -43,6 +46,8 @@ Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python
 - Moderately common: >=10%
 - Specialized: >=3%
 - Rare / recipe-specific: below 3%
+
+These categories measure frequency in the sampled Food.com recipes, not real-world grocery availability, local stock, price, or nutritional value. The practicality score is a ranking hint only and never overrides the number of cart matches or the count of missing ingredients.
 
 ## Roadmap
 
