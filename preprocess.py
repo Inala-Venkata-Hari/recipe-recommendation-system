@@ -1,9 +1,10 @@
 """Create reduced recipe and ingredient-frequency classification datasets."""
 import ast
-import re
 from pathlib import Path
 
 import pandas as pd
+
+from ingredient_normalization import normalize_ingredient, normalize_ingredient_list
 
 ROOT = Path(__file__).parent
 SOURCE = ROOT / "RAW_recipes.csv"
@@ -22,10 +23,6 @@ def parse_list(value):
         return result if isinstance(result, list) else []
     except (ValueError, SyntaxError, TypeError):
         return []
-
-
-def normalize_ingredient(value):
-    return re.sub(r"\s+", " ", str(value).lower().strip())
 
 
 def calories_from_nutrition(values):
@@ -50,9 +47,7 @@ def main():
     df = df.drop_duplicates(subset=["id"])
     for column in ("ingredients", "nutrition", "tags", "steps"):
         df[column] = df[column].apply(parse_list)
-    df["ingredients"] = df["ingredients"].apply(
-        lambda values: list(dict.fromkeys(normalize_ingredient(item) for item in values if str(item).strip()))
-    )
+    df["ingredients"] = df["ingredients"].apply(normalize_ingredient_list)
     df["n_ingredients"] = df["ingredients"].apply(len)
     df["minutes"] = pd.to_numeric(df["minutes"], errors="coerce")
     df = df[(df["n_ingredients"] >= 5) & df["minutes"].notna() & (df["minutes"] > 0)]
