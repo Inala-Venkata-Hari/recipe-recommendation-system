@@ -29,6 +29,8 @@ Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python
 - Each recipe displays the matched cart items, the match count, and the number of additional ingredients required.
 - The cart selection is never changed, and missing ingredients are not shown as a shopping list.
 - Results update when cart ingredients or preference change.
+- Ingredient names are normalized consistently across preprocessing, loaded data, and matching: case, repeated whitespace, and common hyphen/dash variants are standardized; duplicate normalized ingredients are counted once.
+- Normalization intentionally preserves descriptive words and other punctuation, so ingredients such as `rice` and `white rice` remain distinct.
 - Run matching tests with `python -m unittest discover -s tests`.
 - Preferences: Low calorie (up to 500 kcal), Quick meal (up to 30 minutes), Balanced meal (up to 600 kcal and 45 minutes), Budget-friendly (informational placeholder; price data is not available).
 - Calories come from the first nutrition value in the source list and should be verified before health-critical use.
