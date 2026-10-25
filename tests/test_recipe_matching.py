@@ -2,7 +2,28 @@ import unittest
 
 import pandas as pd
 
+from ingredient_normalization import normalize_ingredient, normalize_ingredient_list
 from recipe_matching import find_ranked_matches
+
+
+class IngredientNormalizationTests(unittest.TestCase):
+    def test_case_whitespace_and_hyphen_variants_normalize_together(self):
+        variants = ["white rice", "white- rice", "White Rice", " white   rice ", "WHITE-RICE"]
+        self.assertEqual({normalize_ingredient(value) for value in variants}, {"white rice"})
+
+    def test_dash_unicode_variants_normalize_to_spaces(self):
+        self.assertEqual(normalize_ingredient("brown–rice"), "brown rice")
+        self.assertEqual(normalize_ingredient("brown—rice"), "brown rice")
+
+    def test_distinct_ingredient_descriptors_are_preserved(self):
+        self.assertNotEqual(normalize_ingredient("rice"), normalize_ingredient("white rice"))
+        self.assertNotEqual(normalize_ingredient("chili powder"), normalize_ingredient("chili flakes"))
+
+    def test_normalize_list_removes_duplicates_and_keeps_order(self):
+        self.assertEqual(
+            normalize_ingredient_list(["White Rice", "white- rice", "salt", "", None, " SALT "]),
+            ["white rice", "salt"],
+        )
 
 
 class FindRankedMatchesTests(unittest.TestCase):
@@ -43,6 +64,14 @@ class FindRankedMatchesTests(unittest.TestCase):
         result = find_ranked_matches(self.recipes, [" RICE ", "BEANS", "Tomato"])
         self.assertEqual(int(result.iloc[0]["_match_count"]), 3)
         self.assertEqual(int(result.iloc[0]["_required_count"]), 0)
+
+    def test_matching_handles_hyphen_variants(self):
+        recipes = pd.DataFrame([
+            {"id": 1, "name": "Rice", "ingredients": ["white- rice", "beans", "tomato"], "minutes": 15}
+        ])
+        result = find_ranked_matches(recipes, ["white rice", "beans", "tomato"])
+        self.assertEqual(int(result.iloc[0]["_match_count"]), 3)
+        self.assertEqual(result.iloc[0]["_matched_ingredients"], ["white rice"])
 
     def test_empty_selection_returns_empty(self):
         result = find_ranked_matches(self.recipes, [])

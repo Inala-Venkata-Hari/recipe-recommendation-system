@@ -1,5 +1,7 @@
 import pandas as pd
 
+from ingredient_normalization import normalize_ingredient, normalize_ingredient_list
+
 
 def find_ranked_matches(recipes, selected):
     """Rank recipes by cart overlap, then by how few extra ingredients they need.
@@ -17,25 +19,18 @@ def find_ranked_matches(recipes, selected):
 
     selected_by_key = {}
     for ingredient in selected:
-        key = str(ingredient).strip().casefold()
-        selected_by_key.setdefault(key, str(ingredient).strip())
+        key = normalize_ingredient(ingredient)
+        if key:
+            selected_by_key.setdefault(key, key)
 
     selected_keys = list(selected_by_key)
 
     def normalized_recipe_items(items):
-        return {
-            str(item).strip().casefold()
-            for item in (items if isinstance(items, list) else [])
-            if str(item).strip()
-        }
+        return set(normalize_ingredient_list(items))
 
     def matched_for_recipe(items):
         recipe_keys = normalized_recipe_items(items)
-        return [
-            selected_by_key[key]
-            for key in selected_keys
-            if key in recipe_keys
-        ]
+        return [selected_by_key[key] for key in selected_keys if key in recipe_keys]
 
     results = recipes.copy()
     results["_matched_ingredients"] = results["ingredients"].apply(matched_for_recipe)
@@ -43,7 +38,7 @@ def find_ranked_matches(recipes, selected):
     results["_required_count"] = results["ingredients"].apply(
         lambda items: max(
             len(normalized_recipe_items(items))
-            - len(set(normalized_recipe_items(items)).intersection(selected_by_key)),
+            - len(normalized_recipe_items(items).intersection(selected_by_key)),
             0,
         )
     )

@@ -1,8 +1,11 @@
 import ast
+import re
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+
+from ingredient_normalization import normalize_ingredient, normalize_ingredient_list
 from recipe_matching import find_ranked_matches
 
 DATA_FILE = Path(__file__).parent / "data" / "recipes_cleaned.csv"
@@ -26,6 +29,9 @@ def load_recipes():
     for column in ("ingredients", "tags", "steps", "nutrition"):
         if column in df:
             df[column] = df[column].apply(parse_list)
+    # Normalize existing processed data too, so a full raw-data reprocessing
+    # is not required for the app to handle spelling/spacing variants.
+    df["ingredients"] = df["ingredients"].apply(normalize_ingredient_list)
     df["minutes"] = pd.to_numeric(df["minutes"], errors="coerce")
     df["calories_per_serving"] = pd.to_numeric(df["calories_per_serving"], errors="coerce")
     return df
@@ -52,7 +58,48 @@ if preference == "Budget-friendly":
 
 st.header("2. Add items to your cart")
 all_ingredients = sorted({ingredient for items in recipes["ingredients"] for ingredient in items})
-selected = st.multiselect("Ingredients already selected", options=all_ingredients, placeholder="Search for an ingredient...")
+ingredient_by_key = {normalize_ingredient(item): item for item in all_ingredients}
+
+st.write("Enter multiple ingredients separated by commas or new lines.")
+bulk_input = st.text_area(
+    "Add several ingredients at once",
+    placeholder="white rice, tomato, onion\nblack pepper",
+    key="bulk_ingredient_input",
+)
+if st.button("Add all ingredients", type="primary"):
+    requested = normalize_ingredient_list(re.split(r"[,\n;]+", bulk_input))
+    matched = []
+    unrecognized = []
+    for ingredient in requested:
+        canonical = ingredient_by_key.get(ingredient)
+        if canonical is None:
+            unrecognized.append(ingredient)
+        else:
+            matched.append(canonical)
+
+    current = st.session_state.get("cart_ingredients", [])
+    combined = normalize_ingredient_list(list(current) + matched)
+    # Keep displayed options in the exact spelling used by the normalized dataset.
+    st.session_state["cart_ingredients"] = [
+        ingredient_by_key[item] for item in combined if item in ingredient_by_key
+    ]
+    st.session_state["bulk_added_count"] = len(matched)
+    st.session_state["bulk_unrecognized"] = unrecognized
+
+    if unrecognized:
+        st.warning(
+            "These ingredients were not found in the dataset and were not added: "
+            + ", ".join(unrecognized)
+        )
+    if matched:
+        st.success(f"Added {len(set(matched))} recognized ingredient(s), ignoring existing duplicates.")
+
+selected = st.multiselect(
+    "Ingredients already selected",
+    options=all_ingredients,
+    placeholder="Search for an ingredient...",
+    key="cart_ingredients",
+)
 st.write("Selected items: " + str(len(selected)))
 
 st.header("3. Recipe recommendations")
