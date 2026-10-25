@@ -21,10 +21,13 @@ Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python
 
 ## Prototype behaviour
 
-- At least 3 selected ingredients are required.
-- The matcher first seeks recipes containing all selected ingredients. If no exact match exists, it falls back to the largest available subset of selected ingredients and returns only recipes at that best match level.
-- Results show which selected cart ingredients each recipe matches; the cart selection itself is never changed. Missing ingredients are not shown.
-- If no selected ingredient occurs in any recipe, the app reports that no matches were found.
+- At least 3 selected ingredients are required before recommendations appear.
+- Recipes matching at least one selected cart ingredient are included; recipes with zero overlap are excluded.
+- Primary ranking: recipes using more selected cart items appear first.
+- Tie-breaker: among recipes matching the same number of cart items, recipes requiring fewer additional ingredients appear first.
+- Further tie-breaker: recipes with shorter cooking time appear first; missing cooking times are placed last.
+- Each recipe displays the matched cart items, the match count, and the number of additional ingredients required.
+- The cart selection is never changed, and missing ingredients are not shown as a shopping list.
 - Results update when cart ingredients or preference change.
 - Run matching tests with `python -m unittest discover -s tests`.
 - Preferences: Low calorie (up to 500 kcal), Quick meal (up to 30 minutes), Balanced meal (up to 600 kcal and 45 minutes), Budget-friendly (informational placeholder; price data is not available).
