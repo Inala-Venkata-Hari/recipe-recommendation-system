@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-from recipe_matching import find_best_matches
+from recipe_matching import find_ranked_matches
 
 DATA_FILE = Path(__file__).parent / "data" / "recipes_cleaned.csv"
 
@@ -61,24 +61,24 @@ if len(selected) < 3:
     st.info("Select " + str(missing) + " more item(s) to see recommendations.")
     st.stop()
 
-# Match the cart first. If no recipe contains all selected ingredients, the
-# helper automatically returns recipes matching the largest available subset.
-best_matches = find_best_matches(recipes, selected)
+# Rank by how many selected cart items the recipe uses. If tied, prefer recipes
+# that require fewer additional ingredients, then shorter cooking time.
+matches = find_ranked_matches(recipes, selected)
 
-if best_matches.empty:
+if matches.empty:
     st.warning("No recipes contain any of the selected ingredients in this dataset.")
     st.stop()
 
-best_match_count = int(best_matches["_match_count"].iloc[0])
-if best_match_count < len(selected):
+top_match_count = int(matches["_match_count"].max())
+if top_match_count < len(selected):
     st.info(
-        f"No recipe matched all {len(selected)} selected items. "
-        f"Showing the best available matches, each using {best_match_count} "
-        f"of your selected items."
+        f"No recipe uses all {len(selected)} selected items. The strongest matches use "
+        f"{top_match_count} selected items; ties are ranked by how many extra ingredients "
+        "the recipe needs."
     )
 
-# Apply the chosen preference to the strongest ingredient-match level.
-matches = best_matches.copy()
+# Apply the chosen preference to all matching recipes without changing their
+# ingredient ranking among the remaining results.
 if preference == "Low calorie":
     matches = matches[matches["calories_per_serving"].notna() & (matches["calories_per_serving"] <= 500)]
 elif preference == "Quick meal":
@@ -92,13 +92,10 @@ elif preference == "Balanced meal":
     ]
 
 if matches.empty:
-    st.warning(
-        "Recipes matched your selected ingredients, but none at the best match level "
-        "satisfied the chosen preference. Try another preference."
-    )
+    st.warning("Recipes matched your selected ingredients, but none satisfied the chosen preference. Try another preference.")
 else:
     st.success(str(len(matches)) + " matching recipe(s)")
-    for _, recipe in matches.sort_values("minutes", na_position="last").iterrows():
+    for _, recipe in matches.iterrows():
         with st.container(border=True):
             st.subheader(str(recipe["name"]))
             st.write(
@@ -106,6 +103,7 @@ else:
                 + ", ".join(recipe["_matched_ingredients"])
                 + f" ({int(recipe['_match_count'])} of {len(selected)} selected)"
             )
+            st.write(f"Additional ingredients needed: {int(recipe['_required_count'])}")
             left, right = st.columns(2)
             with left:
                 mins = recipe["minutes"]
@@ -122,7 +120,6 @@ else:
                     st.write("Instructions unavailable in the source data.")
 
 st.caption(
-    "Prototype data sampled from Food.com. When an exact match is unavailable, "
-    "recommendations use the largest matching subset of selected cart items. "
-    "Your cart selection is not changed."
+    "Recipes are ranked by selected cart items matched, then by fewer additional ingredients "
+    "needed, and then by cooking time. Your cart selection is not changed."
 )
