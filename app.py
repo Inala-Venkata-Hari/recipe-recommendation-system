@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+
+from ingredient_normalization import normalize_ingredient_list
 from recipe_matching import find_ranked_matches
 
 DATA_FILE = Path(__file__).parent / "data" / "recipes_cleaned.csv"
@@ -26,6 +28,9 @@ def load_recipes():
     for column in ("ingredients", "tags", "steps", "nutrition"):
         if column in df:
             df[column] = df[column].apply(parse_list)
+    # Normalize existing processed data too, so a full raw-data reprocessing
+    # is not required for the app to handle spelling/spacing variants.
+    df["ingredients"] = df["ingredients"].apply(normalize_ingredient_list)
     df["minutes"] = pd.to_numeric(df["minutes"], errors="coerce")
     df["calories_per_serving"] = pd.to_numeric(df["calories_per_serving"], errors="coerce")
     return df
