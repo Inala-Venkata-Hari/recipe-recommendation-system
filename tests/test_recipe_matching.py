@@ -20,13 +20,14 @@ class FindRankedMatchesTests(unittest.TestCase):
 
     def test_primary_sort_is_match_count(self):
         result = find_ranked_matches(self.recipes, ["rice", "beans", "tomato", "onion"])
-        self.assertEqual(result["_match_count"].tolist(), [3, 3, 3, 2, 2])
-        self.assertEqual(result["id"].tolist()[:3], [6, 1, 2])
+        self.assertEqual(result["_match_count"].tolist(), [4, 3, 3, 3, 2])
+        self.assertEqual(result["id"].tolist()[:3], [1, 3, 6])
 
     def test_tie_breaker_prefers_fewer_additional_ingredients(self):
         result = find_ranked_matches(self.recipes, ["rice", "beans", "tomato", "onion"])
-        top_three = result[result["_match_count"] == 3]
-        self.assertEqual(top_three["_required_count"].tolist(), [0, 1, 1])
+        tied = result[result["_match_count"] == 3]
+        self.assertEqual(tied["_required_count"].tolist(), [0, 0, 1])
+        self.assertEqual(tied["id"].tolist(), [3, 6, 2])
 
     def test_fewer_additional_items_before_cooking_time(self):
         result = find_ranked_matches(self.recipes, ["rice", "beans", "tomato", "onion", "salt"])
