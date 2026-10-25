@@ -78,5 +78,47 @@ class FindRankedMatchesTests(unittest.TestCase):
         self.assertTrue(result.empty)
 
 
+    def test_classification_breaks_ties_after_match_and_missing_counts(self):
+        recipes = pd.DataFrame([
+            {"id": 10, "name": "Rare extras", "ingredients": ["rice", "beans", "saffron"], "minutes": 10},
+            {"id": 11, "name": "Common extras", "ingredients": ["rice", "beans", "salt"], "minutes": 20},
+        ])
+        categories = {
+            "rice": "Common",
+            "beans": "Common",
+            "saffron": "Rare / recipe-specific",
+            "salt": "Common",
+        }
+        result = find_ranked_matches(recipes, ["rice", "beans", "tomato"], categories)
+        self.assertEqual(result["id"].tolist(), [11, 10])
+        self.assertEqual(result["_required_count"].tolist(), [1, 1])
+        self.assertEqual(
+            result["_practicality_label"].tolist(),
+            [
+                "Mostly common or moderately common ingredients",
+                "Includes rare / recipe-specific ingredients",
+            ],
+        )
+
+    def test_no_missing_ingredients_gets_ready_to_cook_label(self):
+        recipes = pd.DataFrame([
+            {"id": 12, "name": "Ready", "ingredients": ["rice", "beans"], "minutes": 10},
+        ])
+        result = find_ranked_matches(
+            recipes, ["rice", "beans"], {"rice": "Common", "beans": "Common"}
+        )
+        self.assertEqual(
+            result.iloc[0]["_practicality_label"],
+            "Ready to cook — no additional ingredients",
+        )
+
+    def test_unknown_classification_is_reported(self):
+        recipes = pd.DataFrame([
+            {"id": 13, "name": "Unknown", "ingredients": ["rice", "beans", "mystery spice"], "minutes": 10},
+        ])
+        result = find_ranked_matches(recipes, ["rice", "beans"], {"rice": "Common", "beans": "Common"})
+        self.assertEqual(result.iloc[0]["_practicality_label"], "Ingredient frequency data incomplete")
+
+
 if __name__ == "__main__":
     unittest.main()
