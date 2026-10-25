@@ -1,21 +1,20 @@
 import pandas as pd
 
 
-def find_best_matches(recipes, selected):
-    """Return recipes matching the largest possible subset of selected ingredients.
+def find_ranked_matches(recipes, selected):
+    """Rank recipes by cart overlap, then by how few extra ingredients they need.
 
-    A recipe's score is the number of selected cart ingredients it contains.
-    Keeping only the maximum score is equivalent to trying n, n-1, n-2, ...
-    selected ingredients and stopping at the first subset size that has results.
+    Primary score: more selected cart ingredients matched is better.
+    Tie-breaker: fewer recipe ingredients not already in the cart is better.
+    Recipes with no selected-ingredient overlap are excluded.
     """
     if not selected or recipes.empty:
         empty = recipes.iloc[0:0].copy()
         empty["_matched_ingredients"] = pd.Series(dtype=object)
         empty["_match_count"] = pd.Series(dtype=int)
+        empty["_required_count"] = pd.Series(dtype=int)
         return empty
 
-    # Compare normalized names so capitalization and surrounding spaces do not
-    # prevent an ingredient match. Keep the original selected name for display.
     selected_by_key = {}
     for ingredient in selected:
         key = str(ingredient).strip().casefold()
@@ -23,11 +22,15 @@ def find_best_matches(recipes, selected):
 
     selected_keys = list(selected_by_key)
 
-    def matched_for_recipe(items):
-        recipe_keys = {
+    def normalized_recipe_items(items):
+        return {
             str(item).strip().casefold()
             for item in (items if isinstance(items, list) else [])
+            if str(item).strip()
         }
+
+    def matched_for_recipe(items):
+        recipe_keys = normalized_recipe_items(items)
         return [
             selected_by_key[key]
             for key in selected_keys
@@ -37,11 +40,28 @@ def find_best_matches(recipes, selected):
     results = recipes.copy()
     results["_matched_ingredients"] = results["ingredients"].apply(matched_for_recipe)
     results["_match_count"] = results["_matched_ingredients"].apply(len)
+    results["_required_count"] = results["ingredients"].apply(
+        lambda items: max(
+            len(normalized_recipe_items(items))
+            - len(set(normalized_recipe_items(items)).intersection(selected_by_key)),
+            0,
+        )
+    )
 
-    best_count = int(results["_match_count"].max())
-    if best_count == 0:
-        return results.iloc[0:0].copy()
+    # A recipe with no matching cart items is not a useful recommendation.
+    results = results[results["_match_count"] > 0].copy()
 
-    # A recipe is represented once, even if it would match multiple subsets.
-    # Returning only max-score recipes prioritizes the largest matching subset.
-    return results[results["_match_count"] == best_count].copy()
+    # Primary: maximize cart matches. Tie-breaker: minimize additional items
+    # needed to make the recipe. Final tie-breaker: shorter cooking time.
+    sort_columns = ["_match_count", "_required_count"]
+    ascending = [False, True]
+    if "minutes" in results.columns:
+        sort_columns.append("minutes")
+        ascending.append(True)
+
+    return results.sort_values(
+        sort_columns,
+        ascending=ascending,
+        na_position="last",
+        kind="stable",
+    )
