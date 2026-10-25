@@ -1,4 +1,5 @@
 import ast
+from itertools import combinations
 from pathlib import Path
 
 import pandas as pd
@@ -17,6 +18,46 @@ def parse_list(value):
         return parsed if isinstance(parsed, list) else []
     except (ValueError, SyntaxError, TypeError):
         return []
+
+
+def find_best_matches(recipes, selected):
+    """Return recipes matching the largest possible subset of selected ingredients.
+
+    This is equivalent to trying n, n-1, n-2, ... selected ingredients, but
+    counts ingredient overlap in one pass instead of enumerating every subset.
+    Only recipes at the strongest available match level are returned.
+    """
+    if not selected:
+        return recipes.iloc[0:0].copy()
+
+    selected_by_key = {}
+    for ingredient in selected:
+        selected_by_key[str(ingredient).strip().casefold()] = str(ingredient)
+
+    results = recipes.copy()
+    selected_keys = list(selected_by_key.keys())
+
+    def matched_for_recipe(items):
+        recipe_keys = {
+            str(item).strip().casefold()
+            for item in (items if isinstance(items, list) else [])
+        }
+        return [
+            selected_by_key[key]
+            for key in selected_keys
+            if key in recipe_keys
+        ]
+
+    results["_matched_ingredients"] = results["ingredients"].apply(matched_for_recipe)
+    results["_match_count"] = results["_matched_ingredients"].apply(len)
+
+    best_count = int(results["_match_count"].max()) if not results.empty else 0
+    if best_count == 0:
+        return results.iloc[0:0].copy()
+
+    # Keep only the largest subset size that has results and avoid duplicates:
+    # each recipe appears once even if it matches multiple possible subsets.
+    return results[results["_match_count"] == best_count].copy()
 
 
 @st.cache_data
@@ -60,21 +101,51 @@ if len(selected) < 3:
     st.info("Select " + str(missing) + " more item(s) to see recommendations.")
     st.stop()
 
-matches = recipes[recipes["ingredients"].apply(lambda items: all(item in items for item in selected))].copy()
+# Match the cart first. If no recipe contains all selected ingredients, the
+# helper automatically returns recipes matching the largest available subset.
+best_matches = find_best_matches(recipes, selected)
+
+if best_matches.empty:
+    st.warning("No recipes contain any of the selected ingredients in this dataset.")
+    st.stop()
+
+best_match_count = int(best_matches["_match_count"].iloc[0])
+if best_match_count < len(selected):
+    st.info(
+        f"No recipe matched all {len(selected)} selected items. "
+        f"Showing the best available matches, each using {best_match_count} "
+        f"of your selected items."
+    )
+
+# Apply the chosen preference to the strongest ingredient-match level.
+matches = best_matches.copy()
 if preference == "Low calorie":
     matches = matches[matches["calories_per_serving"].notna() & (matches["calories_per_serving"] <= 500)]
 elif preference == "Quick meal":
-    matches = matches[matches["minutes"] <= 30]
+    matches = matches[matches["minutes"].notna() & (matches["minutes"] <= 30)]
 elif preference == "Balanced meal":
-    matches = matches[matches["calories_per_serving"].notna() & (matches["calories_per_serving"] <= 600) & (matches["minutes"] <= 45)]
+    matches = matches[
+        matches["calories_per_serving"].notna()
+        & (matches["calories_per_serving"] <= 600)
+        & matches["minutes"].notna()
+        & (matches["minutes"] <= 45)
+    ]
 
 if matches.empty:
-    st.warning("No recipes in this dataset match all selected ingredients and the chosen preference.")
+    st.warning(
+        "Recipes matched your selected ingredients, but none at the best match level "
+        "satisfied the chosen preference. Try another preference."
+    )
 else:
     st.success(str(len(matches)) + " matching recipe(s)")
-    for _, recipe in matches.sort_values("minutes").iterrows():
+    for _, recipe in matches.sort_values("minutes", na_position="last").iterrows():
         with st.container(border=True):
             st.subheader(str(recipe["name"]))
+            st.write(
+                "Matched cart items: "
+                + ", ".join(recipe["_matched_ingredients"])
+                + f" ({int(recipe['_match_count'])} of {len(selected)} selected)"
+            )
             left, right = st.columns(2)
             with left:
                 mins = recipe["minutes"]
@@ -90,4 +161,8 @@ else:
                 else:
                     st.write("Instructions unavailable in the source data.")
 
-st.caption("Prototype data sampled from Food.com. Every selected ingredient must be present in a recommended recipe; missing ingredients are intentionally not displayed.")
+st.caption(
+    "Prototype data sampled from Food.com. When an exact match is unavailable, "
+    "recommendations use the largest matching subset of selected cart items. "
+    "Your cart selection is not changed."
+)
