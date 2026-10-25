@@ -46,16 +46,12 @@ def main():
     missing = set(COLUMNS) - set(df.columns)
     if missing:
         raise ValueError("Source CSV is missing columns: " + str(sorted(missing)))
-
     df = df[COLUMNS].dropna(subset=["id", "name", "ingredients"]).copy()
     df = df.drop_duplicates(subset=["id"])
     for column in ("ingredients", "nutrition", "tags", "steps"):
         df[column] = df[column].apply(parse_list)
-
     df["ingredients"] = df["ingredients"].apply(
-        lambda values: list(dict.fromkeys(
-            normalize_ingredient(item) for item in values if str(item).strip()
-        ))
+        lambda values: list(dict.fromkeys(normalize_ingredient(item) for item in values if str(item).strip()))
     )
     df["n_ingredients"] = df["ingredients"].apply(len)
     df["minutes"] = pd.to_numeric(df["minutes"], errors="coerce")
@@ -68,7 +64,6 @@ def main():
     for items in df["ingredients"]:
         for item in set(items):
             frequencies[item] = frequencies.get(item, 0) + 1
-
     total = len(df)
     rows = []
     for item, count in frequencies.items():
@@ -87,7 +82,6 @@ def main():
             "frequency_ratio": round(ratio, 4),
             "ingredient_frequency_category": category,
         })
-
     pd.DataFrame(rows).sort_values("recipe_frequency", ascending=False).to_csv(
         DATA_DIR / "ingredients_classified.csv", index=False
     )

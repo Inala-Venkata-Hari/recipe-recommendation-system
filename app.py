@@ -50,14 +50,8 @@ if preference == "Budget-friendly":
     st.info("Cost filtering is not active yet because reliable local grocery prices are not available in the source dataset.")
 
 st.header("2. Add items to your cart")
-all_ingredients = sorted({
-    ingredient for items in recipes["ingredients"] for ingredient in items
-})
-selected = st.multiselect(
-    "Ingredients already selected",
-    options=all_ingredients,
-    placeholder="Search for an ingredient...",
-)
+all_ingredients = sorted({ingredient for items in recipes["ingredients"] for ingredient in items})
+selected = st.multiselect("Ingredients already selected", options=all_ingredients, placeholder="Search for an ingredient...")
 st.write("Selected items: " + str(len(selected)))
 
 st.header("3. Recipe recommendations")
@@ -66,20 +60,13 @@ if len(selected) < 3:
     st.info("Select " + str(missing) + " more item(s) to see recommendations.")
     st.stop()
 
-matches = recipes[
-    recipes["ingredients"].apply(lambda items: all(item in items for item in selected))
-].copy()
-
+matches = recipes[recipes["ingredients"].apply(lambda items: all(item in items for item in selected))].copy()
 if preference == "Low calorie":
     matches = matches[matches["calories_per_serving"].notna() & (matches["calories_per_serving"] <= 500)]
 elif preference == "Quick meal":
     matches = matches[matches["minutes"] <= 30]
 elif preference == "Balanced meal":
-    matches = matches[
-        matches["calories_per_serving"].notna()
-        & (matches["calories_per_serving"] <= 600)
-        & (matches["minutes"] <= 45)
-    ]
+    matches = matches[matches["calories_per_serving"].notna() & (matches["calories_per_serving"] <= 600) & (matches["minutes"] <= 45)]
 
 if matches.empty:
     st.warning("No recipes in this dataset match all selected ingredients and the chosen preference.")
