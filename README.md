@@ -22,8 +22,11 @@ Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python
 ## Prototype behaviour
 
 - At least 3 selected ingredients are required.
-- Every selected ingredient must appear in a recommended recipe; missing ingredients are not shown.
+- The matcher first seeks recipes containing all selected ingredients. If no exact match exists, it falls back to the largest available subset of selected ingredients and returns only recipes at that best match level.
+- Results show which selected cart ingredients each recipe matches; the cart selection itself is never changed. Missing ingredients are not shown.
+- If no selected ingredient occurs in any recipe, the app reports that no matches were found.
 - Results update when cart ingredients or preference change.
+- Run matching tests with `python -m unittest discover -s tests`.
 - Preferences: Low calorie (up to 500 kcal), Quick meal (up to 30 minutes), Balanced meal (up to 600 kcal and 45 minutes), Budget-friendly (informational placeholder; price data is not available).
 - Calories come from the first nutrition value in the source list and should be verified before health-critical use.
 
