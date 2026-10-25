@@ -9,6 +9,7 @@ from ingredient_normalization import normalize_ingredient, normalize_ingredient_
 from recipe_matching import find_ranked_matches
 
 DATA_FILE = Path(__file__).parent / "data" / "recipes_cleaned.csv"
+CLASSIFICATION_FILE = Path(__file__).parent / "data" / "ingredients_classified.csv"
 
 
 def parse_list(value):
@@ -37,6 +38,22 @@ def load_recipes():
     return df
 
 
+@st.cache_data
+def load_ingredient_categories():
+    """Load dataset-frequency categories for recipe practicality scoring."""
+    if not CLASSIFICATION_FILE.exists():
+        return {}
+    categories = pd.read_csv(CLASSIFICATION_FILE)
+    required_columns = {"ingredient_name", "ingredient_frequency_category"}
+    if not required_columns.issubset(categories.columns):
+        return {}
+    return {
+        normalize_ingredient(row["ingredient_name"]): row["ingredient_frequency_category"]
+        for _, row in categories.iterrows()
+        if normalize_ingredient(row["ingredient_name"])
+    }
+
+
 st.set_page_config(page_title="Smart Cart Recipe Recommender", page_icon="🍲", layout="wide")
 st.title("🍲 Smart Cart Recipe Recommender")
 st.caption("Choose a preference, then select the ingredients already in your cart. Results update automatically.")
@@ -46,6 +63,7 @@ if not DATA_FILE.exists():
     st.stop()
 
 recipes = load_recipes()
+ingredient_categories = load_ingredient_categories()
 st.header("1. Choose your preference")
 preference = st.radio(
     "What matters most for this meal?",
@@ -110,7 +128,7 @@ if len(selected) < 3:
 
 # Rank by how many selected cart items the recipe uses. If tied, prefer recipes
 # that require fewer additional ingredients, then shorter cooking time.
-matches = find_ranked_matches(recipes, selected)
+matches = find_ranked_matches(recipes, selected, ingredient_categories=ingredient_categories)
 
 if matches.empty:
     st.warning("No recipes contain any of the selected ingredients in this dataset.")
@@ -151,6 +169,8 @@ else:
                 + f" ({int(recipe['_match_count'])} of {len(selected)} selected)"
             )
             st.write(f"Additional ingredients needed: {int(recipe['_required_count'])}")
+            if "_practicality_label" in recipe.index:
+                st.write("Ingredient practicality: " + str(recipe["_practicality_label"]))
             left, right = st.columns(2)
             with left:
                 mins = recipe["minutes"]
@@ -167,6 +187,7 @@ else:
                     st.write("Instructions unavailable in the source data.")
 
 st.caption(
-    "Recipes are ranked by selected cart items matched, then by fewer additional ingredients "
-    "needed, and then by cooking time. Your cart selection is not changed."
+    "Recipes are ranked by cart-item matches, fewer additional ingredients, dataset-frequency "
+    "practicality, and then cooking time. Frequency reflects the sampled recipe dataset, not "
+    "verified local availability or price. Your cart selection is not changed."
 )
