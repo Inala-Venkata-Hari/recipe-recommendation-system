@@ -35,7 +35,9 @@ The discount engine considers combinations of 2–4 eligible items. An item is e
 - Recipes using at least three items from a larger cart are explicitly identified.
 - The ingredient selector is simplified: less-frequently used ingredients appear first, with no category-filter maze.
 - Approved household pantry staples are hidden from the selector by default, but customers can opt to show and select them.
-- Pantry identification is hybrid: a manually maintained approved list defines staples, while preprocessing generates high-frequency candidates (>=25% of recipes) for human review. Frequency alone never automatically makes an ingredient a pantry staple.
+- Pantry identification is hybrid: a small manually curated core list in `app.py` defines household basics, while preprocessing generates high-frequency candidates (>=25% of recipes) for human review. Frequency alone never automatically makes an ingredient a pantry staple.
+- Approved additional staples are saved in `data/pantry_ingredients.csv`; the app creates this file when the first candidates are approved. Review this file to manage household-specific assumptions.
+- Run `python preprocess.py` to regenerate `data/pantry_candidates.csv` from the current recipe sample.
 - Pantry ingredients remain in recipe instructions and are excluded only from the count of additional items the customer must obtain.
 - Ingredient catalog prices are shown beside selected ingredients when available. Recipe-level totals require quantities; existing source recipes generally lack reliable ingredient quantities, so no total is fabricated.
 - Local system time selects a broad meal period. Optional schedule context refines meal suggestions; the system does not claim to detect a person's actual mood.
@@ -54,7 +56,7 @@ A numeric estimate requires each recipe ingredient to have a quantity in grams. 
 
 ## Data preparation
 
-Place Food.com `RAW_recipes.csv` beside `preprocess.py`, then run `python preprocess.py`. It creates `data/recipes_cleaned.csv` and `data/ingredients_classified.csv`. Categories: Common (>=25%), Moderately common (>=10%), Specialized (>=3%), Rare / recipe-specific (<3%). The distinctiveness score complements frequency; rarity alone is not proof that an ingredient defines a recipe.
+Place Food.com `RAW_recipes.csv` beside `preprocess.py`, then run `python preprocess.py`. It creates `data/recipes_cleaned.csv`, `data/ingredients_classified.csv`, and `data/pantry_candidates.csv`. Ingredient selection is ordered by ascending recipe frequency (least frequent first); frequency categories are retained only as analysis metadata, not as customer-facing filters.
 
 ## Important limitations
 
