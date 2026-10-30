@@ -1,4 +1,5 @@
 import ast
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -11,13 +12,15 @@ from recipe_sorting import sort_recipes
 from inventory_discounts import generate_combo_offers
 
 ROOT = Path(__file__).parent
-DATA_FILE = ROOT / "data" / "recipes_cleaned.csv"
-CLASSIFICATION_FILE = ROOT / "data" / "ingredients_classified.csv"
-INVENTORY_FILE = ROOT / "data" / "seller_inventory.csv"
-CATALOG_FILE = ROOT / "data" / "ingredient_catalog.csv"
-PANTRY_FILE = ROOT / "data" / "pantry_ingredients.csv"
-PANTRY_CANDIDATES_FILE = ROOT / "data" / "pantry_candidates.csv"
-CUSTOM_FILE = ROOT / "data" / "custom_recipes.csv"
+# Set RECIPE_DATA_DIR to switch between the real data and an isolated test dataset.
+DATA_DIR = Path(os.environ.get("RECIPE_DATA_DIR", ROOT / "data"))
+DATA_FILE = DATA_DIR / "recipes_cleaned.csv"
+CLASSIFICATION_FILE = DATA_DIR / "ingredients_classified.csv"
+INVENTORY_FILE = DATA_DIR / "seller_inventory.csv"
+CATALOG_FILE = DATA_DIR / "ingredient_catalog.csv"
+PANTRY_FILE = DATA_DIR / "pantry_ingredients.csv"
+PANTRY_CANDIDATES_FILE = DATA_DIR / "pantry_candidates.csv"
+CUSTOM_FILE = DATA_DIR / "custom_recipes.csv"
 
 
 def parse_list(value):
@@ -89,7 +92,7 @@ st.title("🍲 Smart Cart: Inventory-Aware Recipe Recommendations")
 st.caption("Seller inventory and supply conditions drive combination offers; recipes make those offers useful to customers.")
 
 if not DATA_FILE.exists():
-    st.error("Recipe data not found. Place RAW_recipes.csv beside preprocess.py and run python preprocess.py.")
+    st.error(f"Recipe data not found in {DATA_DIR}. Run python generate_synthetic_data.py or python preprocess.py.")
     st.stop()
 
 recipes = load_recipes()
