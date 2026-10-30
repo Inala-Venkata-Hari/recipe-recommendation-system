@@ -78,11 +78,16 @@ classified = read_csv_or_empty(CLASSIFICATION_FILE, ["ingredient_name", "recipe_
 catalog = read_csv_or_empty(CATALOG_FILE, ["ingredient_name", "price_per_100g", "kcal_per_100g"])
 pantry_df = read_csv_or_empty(PANTRY_FILE, ["ingredient_name", "enabled", "notes"])
 pantry_candidates = read_csv_or_empty(PANTRY_CANDIDATES_FILE, ["ingredient_name", "recipe_frequency", "frequency_ratio"])
+# Core pantry staples are explicitly curated; the CSV adds household-specific approvals.
+DEFAULT_PANTRY = {
+    "salt", "sugar", "water", "vegetable oil", "black pepper",
+    "turmeric", "cumin", "coriander powder", "chilli powder",
+}
 if not pantry_df.empty:
     enabled_values = pantry_df["enabled"].astype(str).str.casefold().isin(["true", "1", "yes", "y"])
-    pantry_items = set(pantry_df.loc[enabled_values, "ingredient_name"].map(normalize_ingredient))
+    pantry_items = DEFAULT_PANTRY | set(pantry_df.loc[enabled_values, "ingredient_name"].map(normalize_ingredient))
 else:
-    pantry_items = set()
+    pantry_items = DEFAULT_PANTRY
 tabs = st.tabs(["Customer recommendations", "Seller inventory & combo offers", "Create your recipe"])
 
 with tabs[0]:
@@ -97,7 +102,9 @@ with tabs[0]:
     st.caption(f"Contextual suggestion: {context}. Time and schedule do not determine a person's actual mood.")
 
     st.header("2. Select cart ingredients")
-    all_ingredients = sorted({item for values in recipes["ingredients"] for item in values}, key=str.casefold)
+    all_ingredients = list({item for values in recipes["ingredients"] for item in values})
+    frequency_lookup = classified.set_index("ingredient_name")["recipe_frequency"].to_dict() if not classified.empty else {}
+    all_ingredients.sort(key=lambda item: (frequency_lookup.get(item, float("inf")), item.casefold()))
     # Approved pantry staples are hidden by default, but can be selected when needed.
     show_pantry = st.checkbox("Include household pantry staples in the ingredient list", value=False)
     selectable = [x for x in all_ingredients if show_pantry or x not in pantry_items]
@@ -129,13 +136,14 @@ with tabs[0]:
         if pantry_candidates.empty:
             st.info("No candidate file yet. Run python preprocess.py to generate it.")
         else:
-            approved = set(pantry_df.loc[pantry_df["enabled"].astype(str).str.casefold().isin(["true", "1", "yes", "y"]), "ingredient_name"].map(normalize_ingredient)) if not pantry_df.empty else set()
+            approved = pantry_items
             pending = pantry_candidates[~pantry_candidates["ingredient_name"].map(normalize_ingredient).isin(approved)]
             st.dataframe(pending.head(50), hide_index=True, use_container_width=True)
             to_approve = st.multiselect("Select candidates to add to the pantry list", pending["ingredient_name"].tolist())
             if st.button("Approve selected pantry candidates", disabled=not to_approve):
                 additions = pd.DataFrame([{"ingredient_name": name, "enabled": True, "notes": "Approved from recipe-frequency candidates"} for name in to_approve])
-                combined = pd.concat([pantry_df, additions], ignore_index=True).drop_duplicates(subset=["ingredient_name"], keep="last")
+                defaults = pd.DataFrame([{"ingredient_name": item, "enabled": True, "notes": "Core manually curated household pantry staple"} for item in sorted(DEFAULT_PANTRY)])
+                combined = pd.concat([defaults, pantry_df, additions], ignore_index=True).drop_duplicates(subset=["ingredient_name"], keep="last")
                 combined.to_csv(PANTRY_FILE, index=False)
                 st.success("Pantry list updated. Rerun the app to apply the changes.")
 
