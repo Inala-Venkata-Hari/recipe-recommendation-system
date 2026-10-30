@@ -71,7 +71,7 @@ class FindRankedMatchesTests(unittest.TestCase):
         ])
         result = find_ranked_matches(recipes, ["white rice", "beans", "tomato"])
         self.assertEqual(int(result.iloc[0]["_match_count"]), 3)
-        self.assertEqual(result.iloc[0]["_matched_ingredients"], ["white rice"])
+        self.assertEqual(result.iloc[0]["_matched_ingredients"], ["white rice", "beans", "tomato"])
 
     def test_empty_selection_returns_empty(self):
         result = find_ranked_matches(self.recipes, [])
