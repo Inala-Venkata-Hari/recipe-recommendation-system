@@ -25,7 +25,10 @@ def generate_combo_offers(inventory, max_discount=15, min_items=2, max_items=4,
             proposed = min(float(max_discount), base_discount + surplus_scale * avg_surplus)
             revenue = sum(x["unit_price"] for x in combo)
             cost = sum(x["unit_cost"] for x in combo)
-            margin_cap = max(0.0, (revenue - cost - revenue * minimum_margin_pct / 100) / revenue * 100)
+            minimum_margin = min(max(float(minimum_margin_pct), 0.0), 99.0) / 100
+            # Preserve the requested margin on the discounted selling price.
+            minimum_revenue_after_discount = cost / (1 - minimum_margin)
+            margin_cap = max(0.0, (revenue - minimum_revenue_after_discount) / revenue * 100)
             discount = min(proposed, margin_cap)
             if discount <= 0:
                 continue
