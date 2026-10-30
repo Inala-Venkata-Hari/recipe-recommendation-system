@@ -7,6 +7,7 @@ import streamlit as st
 
 from ingredient_normalization import normalize_ingredient, normalize_ingredient_list
 from recipe_matching import find_ranked_matches
+from recipe_sorting import sort_recipes
 from inventory_discounts import generate_combo_offers
 
 ROOT = Path(__file__).parent
@@ -199,46 +200,15 @@ with tabs[0]:
         else:
             max_matches = int(matches["_match_count"].max())
             st.caption(f"Top matches use {max_matches} of your {len(selected)} selected items.")
-            # The selected category is the only primary sorting criterion.
-            # Every category uses fewer additional ingredients as its first tie-breaker.
-            cost_column = "estimated_cost" if "estimated_cost" in matches.columns else None
-            if cost_column:
-                matches[cost_column] = pd.to_numeric(matches[cost_column], errors="coerce")
-
-            if sort_preference == "Calories":
-                sort_columns = ["calories_per_serving", "_required_count", "minutes"]
-                ascending = [True, True, True]
-                if cost_column:
-                    sort_columns.append(cost_column)
-                    ascending.append(True)
-            elif sort_preference == "Time Taken":
-                sort_columns = ["minutes", "_required_count"]
-                ascending = [True, True]
-                if cost_column:
-                    sort_columns.append(cost_column)
-                    ascending.append(True)
-                sort_columns.append("calories_per_serving")
-                ascending.append(True)
-            else:  # Budget Friendly
-                if cost_column and matches[cost_column].notna().any():
-                    sort_columns = [cost_column, "_required_count", "minutes", "calories_per_serving"]
-                    ascending = [True, True, True, True]
-                else:
-                    st.warning(
-                        "Budget Friendly is selected, but reliable recipe costs are unavailable. "
-                        "The current recipe dataset does not contain ingredient quantities, so "
-                        "cost cannot be calculated from ingredient names alone. Showing recipes "
-                        "with fewer additional ingredients first until recipe cost data is added."
-                    )
-                    sort_columns = ["_required_count", "minutes", "calories_per_serving"]
-                    ascending = [True, True, True]
-
-            matches = matches.sort_values(
-                sort_columns,
-                ascending=ascending,
-                na_position="last",
-                kind="stable",
-            )
+            matches, budget_cost_available = sort_recipes(matches, sort_preference)
+            if sort_preference == "Budget Friendly" and not budget_cost_available:
+                st.warning(
+                    "Budget Friendly sorting is currently unavailable for these recipes. "
+                    "The source dataset does not provide ingredient quantities, and no "
+                    "reliable recipe-level cost estimates are available. For now, recipes "
+                    "are ordered by fewer additional ingredients, then shorter cooking time. "
+                    "Add recipe ingredient quantities and catalog prices to enable cost sorting."
+                )
             for _, recipe in matches.iterrows():
                 with st.container(border=True):
                     st.subheader(str(recipe["name"]))
