@@ -1,0 +1,8 @@
+ingredient_name,stock_qty,required_qty,unit_cost,unit_price
+rice,180,40,42,60
+tomato,150,35,18,30
+onion,200,50,20,34
+paneer,65,25,210,280
+noodles,90,20,28,45
+chickpeas,110,30,55,78
+chicken,45,40,170,210
