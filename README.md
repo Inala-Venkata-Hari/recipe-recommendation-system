@@ -30,7 +30,12 @@ The discount engine considers combinations of 2–4 eligible items. An item is e
 
 - Ingredients are selected individually; the previous bulk/multiple-add control has been removed.
 - At least three cart ingredients are required to show recommendations.
-- Recipes are ranked by cart overlap, then fewer missing ingredients, then cooking time.
+- Customers can sort recommendations using exactly three categories: **Calories**, **Time Taken**, and **Budget Friendly**.
+- Calories: lowest calories per serving first; ties use fewer additional ingredients, then shorter cooking time.
+- Time Taken: shortest cooking time first; ties use fewer additional ingredients, then lower estimated recipe cost when available, then lower calories.
+- Budget Friendly: lowest reliable recipe-level cost first; ties use fewer additional ingredients, then shorter cooking time.
+- Missing primary values are placed last. Sorting is stable when all available criteria tie.
+- Budget Friendly sorting requires reliable recipe-level costs. The Food.com source recipes do not include dependable ingredient quantities, so the app clearly reports when cost sorting is unavailable rather than inventing estimates.
 - Recipes requiring **zero additional ingredients** receive a prominent success highlight.
 - Recipes using at least three items from a larger cart are explicitly identified.
 - The ingredient selector is simplified: less-frequently used ingredients appear first, with no category-filter maze.
