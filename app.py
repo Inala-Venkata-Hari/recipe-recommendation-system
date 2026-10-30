@@ -199,7 +199,7 @@ with tabs[0]:
             st.warning("No recipes contain any of the selected ingredients.")
         else:
             max_matches = int(matches["_match_count"].max())
-            st.caption(f"Top matches use {max_matches} of your {len(selected)} selected items.")
+            st.caption(f"Your recommendations match up to {max_matches} of your {len(selected)} selected cart items.")
             matches, budget_cost_available = sort_recipes(matches, sort_preference)
             if sort_preference == "Budget Friendly" and not budget_cost_available:
                 st.warning(
