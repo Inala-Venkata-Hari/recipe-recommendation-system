@@ -2,6 +2,7 @@ import unittest
 import pandas as pd
 
 from inventory_discounts import generate_combo_offers
+from recipe_matching import find_ranked_matches
 
 
 class InventoryDiscountTests(unittest.TestCase):
@@ -28,6 +29,25 @@ class InventoryDiscountTests(unittest.TestCase):
             {"ingredient_name": "b", "stock_qty": 100, "required_qty": 0, "unit_cost": 9.8, "unit_price": 10},
         ])
         self.assertEqual(generate_combo_offers(inventory, minimum_margin_pct=5), [])
+
+    def test_pantry_staples_are_excluded_from_additional_ingredient_count(self):
+        recipes = pd.DataFrame([
+            {"name": "Simple chicken", "ingredients": ["chicken", "onion", "salt"], "minutes": 20},
+            {"name": "Chicken curry", "ingredients": ["chicken", "onion", "salt", "garlic"], "minutes": 30},
+        ])
+        matches = find_ranked_matches(recipes, ["chicken", "onion"], pantry_items={"salt"})
+        simple = matches[matches["name"] == "Simple chicken"].iloc[0]
+        curry = matches[matches["name"] == "Chicken curry"].iloc[0]
+        self.assertEqual(simple["_required_count"], 0)
+        self.assertEqual(curry["_required_count"], 1)
+
+    def test_selected_pantry_staple_is_still_counted_as_cart_match(self):
+        recipes = pd.DataFrame([
+            {"name": "Simple chicken", "ingredients": ["chicken", "onion", "salt"], "minutes": 20},
+        ])
+        matches = find_ranked_matches(recipes, ["chicken", "onion", "salt"], pantry_items={"salt"})
+        self.assertEqual(matches.iloc[0]["_match_count"], 3)
+        self.assertEqual(matches.iloc[0]["_required_count"], 0)
 
 
 if __name__ == "__main__":
