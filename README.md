@@ -74,3 +74,29 @@ Place Food.com `RAW_recipes.csv` beside `preprocess.py`, then run `python prepro
 - Schedule context is selected by the user; no private calendar or emotion inference is performed.
 - Calories and costs are only estimated when quantity and reference data are available.
 - This is a research prototype; validate pricing, stock reservations, taxes, and local food/nutrition data before commercial deployment.
+
+
+## Isolated synthetic test environment
+
+The `small-test` branch includes a small, reproducible dataset so features can be tested without the full Food.com source file or any real retailer data.
+
+Generate it:
+
+```bash
+python generate_synthetic_data.py
+```
+
+Run the app against the synthetic data (the original `data/` directory is not changed):
+
+**Linux / macOS**
+```bash
+RECIPE_DATA_DIR=data/synthetic_demo streamlit run app.py
+```
+
+**Windows PowerShell**
+```powershell
+$env:RECIPE_DATA_DIR = "data/synthetic_demo"
+streamlit run app.py
+```
+
+The generated dataset contains 15 sample recipes, ingredient-frequency records, an ingredient catalog, and seller inventory rows. Prices and nutrition values are intentionally fictional and must never be treated as market or dietary facts. To return to the normal dataset, unset `RECIPE_DATA_DIR` and run the app normally.
