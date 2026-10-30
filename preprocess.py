@@ -36,6 +36,33 @@ def calories_from_nutrition(values):
         return None
 
 
+
+def update_ingredient_catalog(ingredient_names):
+    """Create catalog rows for all known ingredients while preserving entered values."""
+    catalog_path = DATA_DIR / "ingredient_catalog.csv"
+    columns = ["ingredient_name", "price_per_100g", "kcal_per_100g"]
+    if catalog_path.exists():
+        existing = pd.read_csv(catalog_path)
+        for column in columns:
+            if column not in existing.columns:
+                existing[column] = pd.NA
+        existing = existing[columns]
+    else:
+        existing = pd.DataFrame(columns=columns)
+
+    existing["_key"] = existing["ingredient_name"].map(normalize_ingredient)
+    known = set(existing["_key"].dropna())
+    additions = [
+        {"ingredient_name": name, "price_per_100g": pd.NA, "kcal_per_100g": pd.NA}
+        for name in sorted(set(ingredient_names) - known)
+    ]
+    existing = pd.concat([existing[columns], pd.DataFrame(additions)], ignore_index=True)
+    existing = existing.drop_duplicates(subset=["ingredient_name"], keep="first")
+    existing = existing.sort_values("ingredient_name", key=lambda col: col.str.casefold(), kind="stable")
+    existing.to_csv(catalog_path, index=False)
+    return len(additions)
+
+
 def main():
     if not SOURCE.exists():
         raise FileNotFoundError("Put RAW_recipes.csv in the project root beside preprocess.py.")
@@ -91,7 +118,11 @@ def main():
     candidates = classified[classified["frequency_ratio"] >= 0.25][["ingredient_name", "recipe_frequency", "frequency_ratio"]].copy()
     candidates = candidates.sort_values(["frequency_ratio", "ingredient_name"], ascending=[False, True], kind="stable")
     candidates.to_csv(DATA_DIR / "pantry_candidates.csv", index=False)
+
+    added = update_ingredient_catalog(frequencies.keys())
     print("Created " + str(len(df)) + " recipes and " + str(len(rows)) + " unique ingredients.")
+    print("Ingredient catalog: " + str(DATA_DIR / "ingredient_catalog.csv"))
+    print("Added " + str(added) + " new ingredients; enter each price per 100 g.")
 
 
 if __name__ == "__main__":
