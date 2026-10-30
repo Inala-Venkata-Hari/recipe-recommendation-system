@@ -14,6 +14,8 @@ DATA_FILE = ROOT / "data" / "recipes_cleaned.csv"
 CLASSIFICATION_FILE = ROOT / "data" / "ingredients_classified.csv"
 INVENTORY_FILE = ROOT / "data" / "seller_inventory.csv"
 CATALOG_FILE = ROOT / "data" / "ingredient_catalog.csv"
+PANTRY_FILE = ROOT / "data" / "pantry_ingredients.csv"
+PANTRY_CANDIDATES_FILE = ROOT / "data" / "pantry_candidates.csv"
 CUSTOM_FILE = ROOT / "data" / "custom_recipes.csv"
 
 
@@ -74,6 +76,13 @@ if not DATA_FILE.exists():
 recipes = load_recipes()
 classified = read_csv_or_empty(CLASSIFICATION_FILE, ["ingredient_name", "recipe_frequency", "frequency_ratio", "ingredient_frequency_category"])
 catalog = read_csv_or_empty(CATALOG_FILE, ["ingredient_name", "price_per_100g", "kcal_per_100g"])
+pantry_df = read_csv_or_empty(PANTRY_FILE, ["ingredient_name", "enabled", "notes"])
+pantry_candidates = read_csv_or_empty(PANTRY_CANDIDATES_FILE, ["ingredient_name", "recipe_frequency", "frequency_ratio"])
+if not pantry_df.empty:
+    enabled_values = pantry_df["enabled"].astype(str).str.casefold().isin(["true", "1", "yes", "y"])
+    pantry_items = set(pantry_df.loc[enabled_values, "ingredient_name"].map(normalize_ingredient))
+else:
+    pantry_items = set()
 tabs = st.tabs(["Customer recommendations", "Seller inventory & combo offers", "Create your recipe"])
 
 with tabs[0]:
@@ -89,33 +98,52 @@ with tabs[0]:
 
     st.header("2. Select cart ingredients")
     all_ingredients = sorted({item for values in recipes["ingredients"] for item in values}, key=str.casefold)
-    if not classified.empty:
-        category_order = {"Common": 0, "Moderately common": 1, "Specialized": 2, "Rare / recipe-specific": 3}
-        freq = classified.set_index("ingredient_name").to_dict("index")
-        category_filter = st.selectbox("Filter ingredient category", ["All categories", "Common", "Moderately common", "Specialized", "Rare / recipe-specific"])
-        sort_choice = st.selectbox("Ingredient ordering", ["Most frequently used first", "Specialized / unique first", "Alphabetical"])
-        if sort_choice == "Most frequently used first":
-            all_ingredients.sort(key=lambda x: (category_order.get(freq.get(x, {}).get("ingredient_frequency_category"), 4), -freq.get(x, {}).get("recipe_frequency", 0), x.casefold()))
-        elif sort_choice == "Specialized / unique first":
-            all_ingredients.sort(key=lambda x: (-category_order.get(freq.get(x, {}).get("ingredient_frequency_category"), -1), freq.get(x, {}).get("recipe_frequency", 0), x.casefold()))
-        if category_filter != "All categories":
-            visible = [x for x in all_ingredients if freq.get(x, {}).get("ingredient_frequency_category") == category_filter]
-        else:
-            visible = all_ingredients
-    else:
-        visible = all_ingredients
-    # Keep already-selected items available if the filter changes, so a category
-    # switch never silently discards a cart selection.
+    # Approved pantry staples are hidden by default, but can be selected when needed.
+    show_pantry = st.checkbox("Include household pantry staples in the ingredient list", value=False)
+    selectable = [x for x in all_ingredients if show_pantry or x not in pantry_items]
     selected_before_filter = st.session_state.get("cart_ingredients", [])
-    options = list(dict.fromkeys(visible + selected_before_filter))
-    selected = st.multiselect("Search and select items individually (bulk add has been removed)", options, key="cart_ingredients")
+    options = list(dict.fromkeys(selectable + selected_before_filter))
+    price_lookup = {}
+    if not catalog.empty and "ingredient_name" in catalog.columns and "price_per_100g" in catalog.columns:
+        for row in catalog.itertuples():
+            try:
+                price_lookup[normalize_ingredient(row.ingredient_name)] = float(row.price_per_100g)
+            except (TypeError, ValueError):
+                pass
+    selected = st.multiselect(
+        "Search and select ingredients individually", options, key="cart_ingredients",
+        format_func=lambda item: (
+            f"{item.title()} — ₹{price_lookup[normalize_ingredient(item)]:.2f}/100g"
+            if normalize_ingredient(item) in price_lookup else item.title()
+        ),
+    )
     st.write(f"Items in cart: **{len(selected)}**")
+    if selected:
+        price_rows = [{"Ingredient": item.title(), "Catalog price (per 100 g)": price_lookup.get(normalize_ingredient(item))} for item in selected]
+        if any(row["Catalog price (per 100 g)"] is not None for row in price_rows):
+            st.caption("Available ingredient prices from your catalog (per 100 g). Recipe totals require ingredient quantities.")
+            st.dataframe(pd.DataFrame(price_rows), hide_index=True, use_container_width=True)
+
+    with st.expander("Review frequency-based pantry candidates"):
+        st.caption("These ingredients occur frequently in the recipe dataset. Frequency makes them candidates only; approve them only if they are normally stocked in your target households.")
+        if pantry_candidates.empty:
+            st.info("No candidate file yet. Run python preprocess.py to generate it.")
+        else:
+            approved = set(pantry_df.loc[pantry_df["enabled"].astype(str).str.casefold().isin(["true", "1", "yes", "y"]), "ingredient_name"].map(normalize_ingredient)) if not pantry_df.empty else set()
+            pending = pantry_candidates[~pantry_candidates["ingredient_name"].map(normalize_ingredient).isin(approved)]
+            st.dataframe(pending.head(50), hide_index=True, use_container_width=True)
+            to_approve = st.multiselect("Select candidates to add to the pantry list", pending["ingredient_name"].tolist())
+            if st.button("Approve selected pantry candidates", disabled=not to_approve):
+                additions = pd.DataFrame([{"ingredient_name": name, "enabled": True, "notes": "Approved from recipe-frequency candidates"} for name in to_approve])
+                combined = pd.concat([pantry_df, additions], ignore_index=True).drop_duplicates(subset=["ingredient_name"], keep="last")
+                combined.to_csv(PANTRY_FILE, index=False)
+                st.success("Pantry list updated. Rerun the app to apply the changes.")
 
     st.header("3. Recipes using your cart items")
     if len(selected) < 3:
         st.info(f"Select {3-len(selected)} more item(s) to display recommendations.")
     else:
-        matches = find_ranked_matches(recipes, selected)
+        matches = find_ranked_matches(recipes, selected, pantry_items=pantry_items)
         if matches.empty:
             st.warning("No recipes contain any of the selected ingredients.")
         else:
@@ -144,7 +172,7 @@ with tabs[0]:
                     a, b = st.columns(2)
                     a.metric("Cooking time", f"{int(recipe['minutes'])} min" if pd.notna(recipe["minutes"]) else "Unavailable")
                     b.metric("Dataset calories / serving", f"{round(recipe['calories_per_serving'])} kcal" if pd.notna(recipe["calories_per_serving"]) else "Unavailable")
-                    st.caption("Exact ingredient-based cost/calories require ingredient quantities and a populated ingredient catalog; recipe names alone are insufficient.")
+                    st.caption("Existing dataset recipes do not provide reliable per-ingredient quantities, so an exact total recipe cost cannot be calculated from ingredient names alone. Catalog prices are shown above when available.")
                     with st.expander("Cooking instructions"):
                         for i, step in enumerate(recipe.get("steps", []), 1):
                             st.write(f"{i}. {step}")
