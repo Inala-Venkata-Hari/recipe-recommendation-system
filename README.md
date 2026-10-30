@@ -1,56 +1,62 @@
-# Smart Cart Recipe Recommendation System
+# Smart Cart Recipe Recommendation & Seller Inventory System
 
-A prototype that recommends recipes from ingredients selected in a smart shopping cart. Built with Python, pandas, and Streamlit.
+A seller-oriented smart-cart platform. Its primary purpose is to create inventory-aware combo discounts from current stock and supply requirements; recipe recommendations help customers understand and use those combinations.
 
-## Run locally
-
-Python 3.10+ recommended.
+## Run
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
+source .venv/bin/activate
 pip install -r requirements.txt
+python preprocess.py
 streamlit run app.py
 ```
 
-On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1`.
+Windows PowerShell: activate with `.venv\\Scripts\\Activate.ps1`.
 
-## Dataset
+## Seller inventory and combo discounts
 
-Place the Food.com `RAW_recipes.csv` file beside `preprocess.py` and run `python preprocess.py`. This generates `data/recipes_cleaned.csv` (up to 5,000 recipes) and `data/ingredients_classified.csv` (unique ingredients and frequency categories). The raw dataset is not included.
+Upload an inventory CSV or create `data/seller_inventory.csv` using `data/seller_inventory_template.csv`. Required columns:
 
-## Prototype behaviour
+- `ingredient_name`
+- `stock_qty`: current stock
+- `required_qty`: reserved / expected supply requirement that must be protected
+- `unit_cost`: seller's cost per item/unit
+- `unit_price`: normal selling price per item/unit
 
-- At least 3 selected ingredients are required before recommendations appear.
-- Add several cart ingredients at once by separating names with commas, semicolons, or new lines; recognized ingredients are added without duplicating existing cart items.
-- Ingredient names not found in the dataset are reported and not added.
-- Recipes matching at least one selected cart ingredient are included; recipes with zero overlap are excluded.
-- Primary ranking: recipes using more selected cart items appear first.
-- Tie-breaker: among recipes matching the same number of cart items, recipes requiring fewer additional ingredients appear first.
-- Further tie-breaker: recipes with shorter cooking time appear first; missing cooking times are placed last.
-- Each recipe displays the matched cart items, the match count, and the number of additional ingredients required.
-- The cart selection is never changed by recommendation results, and missing ingredients are not shown as a shopping list.
-- Results update when cart ingredients or preference change.
-- Ingredient names are normalized consistently across preprocessing, loaded data, and matching: case, repeated whitespace, and common hyphen/dash variants are standardized; duplicate normalized ingredients are counted once.
-- Normalization intentionally preserves descriptive words and other punctuation, so ingredients such as `rice` and `white rice` remain distinct.
-- Run matching tests with `python -m unittest discover -s tests`.
-- Preferences: Low calorie (up to 500 kcal), Quick meal (up to 30 minutes), Balanced meal (up to 600 kcal and 45 minutes), Budget-friendly (informational placeholder; price data is not available).
-- Calories come from the first nutrition value in the source list and should be verified before health-critical use.
+The discount engine considers combinations of 2–4 eligible items. An item is eligible only when stock exceeds required supply and unit price exceeds unit cost. Discount scales with the average surplus-stock ratio, is capped by the seller-configured maximum, and is further capped to preserve the configured minimum margin. These are initial configurable rules; production use should incorporate demand forecasts, expiry dates, replenishment lead time, and transaction data.
 
-## Ingredient frequency categories
+## Customer recommendations
 
-- Common: >=25% of sampled recipes
-- Moderately common: >=10%
-- Specialized: >=3%
-- Rare / recipe-specific: below 3%
+- Ingredients are selected individually; the previous bulk/multiple-add control has been removed.
+- At least three cart ingredients are required to show recommendations.
+- Recipes are ranked by cart overlap, then fewer missing ingredients, then cooking time.
+- Recipes requiring **zero additional ingredients** receive a prominent success highlight.
+- Recipes using at least three items from a larger cart are explicitly identified.
+- Ingredient category filtering and ordering are available. Changing the category does not silently remove already selected cart items.
+- Ingredient categories are based on recipe frequency; the distinctiveness score is inverse document frequency (IDF), so higher values indicate ingredients concentrated in fewer recipes.
+- Local system time selects a broad meal period. Optional schedule context refines meal suggestions; the system does not claim to detect a person's actual mood.
 
-## Roadmap
+## Per-ingredient pricing and nutrition
 
-- `v0.1.0`: initial prototype
-- `v0.2.0`: improve matching and ranking
-- `v0.3.0`: improve dataset and preprocessing
-- `v0.4.0`: tests and error handling
-- `v0.5.0`: interface and documentation improvements
-- `v1.0.0`: first stable release
+Create `data/ingredient_catalog.csv` from `data/ingredient_catalog_template.csv` with columns `ingredient_name,price_per_100g,kcal_per_100g`. Prices and nutrition are stored per ingredient, not in a recipe-level lookup table.
 
-Research/learning prototype; not medical or price-verified advice.
+A numeric estimate requires each recipe ingredient to have a quantity in grams. The custom recipe form and CLI collect quantities. The public Food.com source dataset generally provides ingredient names without dependable quantities, so exact ingredient-derived totals cannot be calculated for those existing recipes until quantities are supplied. Missing data is reported rather than fabricated.
+
+## Custom recipes
+
+- In the Streamlit app, use the **Create your recipe** tab and enter ingredient quantities in grams.
+- For a separate terminal workflow, run `python create_recipe.py`. Optional: `python create_recipe.py --output path/to/recipes.csv`.
+- Both workflows save recipe ingredients as structured per-ingredient records.
+
+## Data preparation
+
+Place Food.com `RAW_recipes.csv` beside `preprocess.py`, then run `python preprocess.py`. It creates `data/recipes_cleaned.csv` and `data/ingredients_classified.csv`. Categories: Common (>=25%), Moderately common (>=10%), Specialized (>=3%), Rare / recipe-specific (<3%). The distinctiveness score complements frequency; rarity alone is not proof that an ingredient defines a recipe.
+
+## Important limitations
+
+- Seller inventory and ingredient prices must be supplied by the retailer; templates contain headers only.
+- Discount percentages are illustrative outputs of configurable business rules, not a universal optimal pricing strategy.
+- Schedule context is selected by the user; no private calendar or emotion inference is performed.
+- Calories and costs are only estimated when quantity and reference data are available.
+- This is a research prototype; validate pricing, stock reservations, taxes, and local food/nutrition data before commercial deployment.
