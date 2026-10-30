@@ -33,8 +33,11 @@ The discount engine considers combinations of 2–4 eligible items. An item is e
 - Recipes are ranked by cart overlap, then fewer missing ingredients, then cooking time.
 - Recipes requiring **zero additional ingredients** receive a prominent success highlight.
 - Recipes using at least three items from a larger cart are explicitly identified.
-- Ingredient category filtering and ordering are available. Changing the category does not silently remove already selected cart items.
-- Ingredient categories are based on recipe frequency; the distinctiveness score is inverse document frequency (IDF), so higher values indicate ingredients concentrated in fewer recipes.
+- The ingredient selector is simplified: less-frequently used ingredients appear first, with no category-filter maze.
+- Approved household pantry staples are hidden from the selector by default, but customers can opt to show and select them.
+- Pantry identification is hybrid: a manually maintained approved list defines staples, while preprocessing generates high-frequency candidates (>=25% of recipes) for human review. Frequency alone never automatically makes an ingredient a pantry staple.
+- Pantry ingredients remain in recipe instructions and are excluded only from the count of additional items the customer must obtain.
+- Ingredient catalog prices are shown beside selected ingredients when available. Recipe-level totals require quantities; existing source recipes generally lack reliable ingredient quantities, so no total is fabricated.
 - Local system time selects a broad meal period. Optional schedule context refines meal suggestions; the system does not claim to detect a person's actual mood.
 
 ## Per-ingredient pricing and nutrition
