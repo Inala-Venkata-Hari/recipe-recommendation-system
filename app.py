@@ -110,7 +110,7 @@ tabs = st.tabs(["Customer recommendations", "Seller inventory & combo offers", "
 
 with tabs[0]:
     st.header("1. Meal preference and context")
-    preference = st.radio("Choose a preference", ["Balanced meal", "Low calorie", "Quick meal", "Budget-friendly"], horizontal=True)
+    sort_preference = st.radio("Sort recipes by", ["Calories", "Time Taken", "Budget Friendly"], horizontal=True)
     now = datetime.now().astimezone()
     hour = now.hour
     meal_period = "Breakfast" if 5 <= hour < 11 else "Lunch" if 11 <= hour < 16 else "Dinner" if 17 <= hour < 22 else "Light meal"
@@ -199,14 +199,46 @@ with tabs[0]:
         else:
             max_matches = int(matches["_match_count"].max())
             st.caption(f"Top matches use {max_matches} of your {len(selected)} selected items.")
-            if preference == "Low calorie":
-                matches = matches[matches["calories_per_serving"].notna() & (matches["calories_per_serving"] <= 500)]
-            elif preference == "Quick meal":
-                matches = matches[matches["minutes"].notna() & (matches["minutes"] <= 30)]
-            elif preference == "Balanced meal":
-                matches = matches[matches["calories_per_serving"].notna() & (matches["calories_per_serving"] <= 600) & matches["minutes"].notna() & (matches["minutes"] <= 45)]
-            if matches.empty:
-                st.warning("No matching recipes satisfy this preference.")
+            # The selected category is the only primary sorting criterion.
+            # Every category uses fewer additional ingredients as its first tie-breaker.
+            cost_column = "estimated_cost" if "estimated_cost" in matches.columns else None
+            if cost_column:
+                matches[cost_column] = pd.to_numeric(matches[cost_column], errors="coerce")
+
+            if sort_preference == "Calories":
+                sort_columns = ["calories_per_serving", "_required_count", "minutes"]
+                ascending = [True, True, True]
+                if cost_column:
+                    sort_columns.append(cost_column)
+                    ascending.append(True)
+            elif sort_preference == "Time Taken":
+                sort_columns = ["minutes", "_required_count"]
+                ascending = [True, True]
+                if cost_column:
+                    sort_columns.append(cost_column)
+                    ascending.append(True)
+                sort_columns.append("calories_per_serving")
+                ascending.append(True)
+            else:  # Budget Friendly
+                if cost_column and matches[cost_column].notna().any():
+                    sort_columns = [cost_column, "_required_count", "minutes", "calories_per_serving"]
+                    ascending = [True, True, True, True]
+                else:
+                    st.warning(
+                        "Budget Friendly is selected, but reliable recipe costs are unavailable. "
+                        "The current recipe dataset does not contain ingredient quantities, so "
+                        "cost cannot be calculated from ingredient names alone. Showing recipes "
+                        "with fewer additional ingredients first until recipe cost data is added."
+                    )
+                    sort_columns = ["_required_count", "minutes", "calories_per_serving"]
+                    ascending = [True, True, True]
+
+            matches = matches.sort_values(
+                sort_columns,
+                ascending=ascending,
+                na_position="last",
+                kind="stable",
+            )
             for _, recipe in matches.iterrows():
                 with st.container(border=True):
                     st.subheader(str(recipe["name"]))
