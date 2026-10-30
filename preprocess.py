@@ -1,5 +1,6 @@
 """Create reduced recipe and ingredient-frequency classification datasets."""
 import ast
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -75,11 +76,16 @@ def main():
             "ingredient_name": item,
             "recipe_frequency": count,
             "frequency_ratio": round(ratio, 4),
+            "distinctiveness_score": round(math.log((total + 1) / (count + 1)), 4),
             "ingredient_frequency_category": category,
         })
-    pd.DataFrame(rows).sort_values("recipe_frequency", ascending=False).to_csv(
-        DATA_DIR / "ingredients_classified.csv", index=False
+    classified = pd.DataFrame(rows)
+    classified = classified.sort_values(
+        ["recipe_frequency", "distinctiveness_score", "ingredient_name"],
+        ascending=[False, False, True],
+        kind="stable",
     )
+    classified.to_csv(DATA_DIR / "ingredients_classified.csv", index=False)
     print("Created " + str(len(df)) + " recipes and " + str(len(rows)) + " unique ingredients.")
 
 
