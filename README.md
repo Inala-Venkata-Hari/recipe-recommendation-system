@@ -39,7 +39,7 @@ The discount engine considers combinations of 2–4 eligible items. An item is e
 - Approved additional staples are saved in `data/pantry_ingredients.csv`; the app creates this file when the first candidates are approved. Review this file to manage household-specific assumptions.
 - Run `python preprocess.py` to regenerate `data/pantry_candidates.csv` from the current recipe sample.
 - Pantry ingredients remain in recipe instructions and are excluded only from the count of additional items the customer must obtain.
-- Ingredient catalog prices are shown beside selected ingredients when available. Recipe-level totals require quantities; existing source recipes generally lack reliable ingredient quantities, so no total is fabricated.
+- Ingredient catalog prices are shown beside selected ingredients. Customers can enter a quantity in grams to see each item total and the combined selected-cart total. Recipe-level totals for existing source recipes still require recipe quantities, which the source generally does not provide, so no total is fabricated.
 - Local system time selects a broad meal period. Optional schedule context refines meal suggestions; the system does not claim to detect a person's actual mood.
 
 ## Per-ingredient pricing and nutrition
