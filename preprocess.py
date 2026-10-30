@@ -86,6 +86,11 @@ def main():
         kind="stable",
     )
     classified.to_csv(DATA_DIR / "ingredients_classified.csv", index=False)
+
+    # High-frequency ingredients become review candidates, never automatic pantry staples.
+    candidates = classified[classified["frequency_ratio"] >= 0.25][["ingredient_name", "recipe_frequency", "frequency_ratio"]].copy()
+    candidates = candidates.sort_values(["frequency_ratio", "ingredient_name"], ascending=[False, True], kind="stable")
+    candidates.to_csv(DATA_DIR / "pantry_candidates.csv", index=False)
     print("Created " + str(len(df)) + " recipes and " + str(len(rows)) + " unique ingredients.")
 
 
