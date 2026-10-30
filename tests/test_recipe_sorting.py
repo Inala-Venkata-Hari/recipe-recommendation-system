@@ -35,6 +35,13 @@ class RecipeSortingTests(unittest.TestCase):
         self.assertFalse(cost_available)
         self.assertEqual(result["name"].tolist(), ["C", "D", "A", "B"])
 
+    def test_budget_sort_places_unknown_costs_last(self):
+        data = self.recipes.copy()
+        data.loc[data["name"] == "A", "estimated_cost"] = None
+        result, cost_available = sort_recipes(data, "Budget Friendly")
+        self.assertTrue(cost_available)
+        self.assertEqual(result["name"].tolist(), ["D", "B", "C", "A"])
+
     def test_missing_primary_values_are_sorted_last(self):
         data = self.recipes.copy()
         data.loc[data["name"] == "D", "calories_per_serving"] = None
