@@ -49,9 +49,13 @@ The discount engine considers combinations of 2–4 eligible items. An item is e
 
 ## Per-ingredient pricing and nutrition
 
-Create `data/ingredient_catalog.csv` from `data/ingredient_catalog_template.csv` with columns `ingredient_name,price_per_100g,kcal_per_100g`. Prices and nutrition are stored per ingredient, not in a recipe-level lookup table.
+Run `python preprocess.py` to create or update `data/ingredient_catalog.csv`. It automatically adds one row for every ingredient found in the recipe dataset, with columns `ingredient_name,price_per_100g,kcal_per_100g`. Existing prices and nutrition values are preserved when preprocessing is run again.
 
-A numeric estimate requires each recipe ingredient to have a quantity in grams. The custom recipe form and CLI collect quantities. The public Food.com source dataset generally provides ingredient names without dependable quantities, so exact ingredient-derived totals cannot be calculated for those existing recipes until quantities are supplied. Missing data is reported rather than fabricated.
+Open the **Ingredient price catalog** tab in the app and enter each ingredient's market price per 100 g (and calories per 100 g when available). For example, if rice costs ₹60 per kg, enter ₹6 per 100 g. The customer cart then accepts a quantity in grams and calculates each ingredient's estimated cost as:
+
+`item cost = (quantity in grams / 100) × price per 100 g`
+
+The catalog is ingredient-level data, not recipe-level data. A numeric recipe estimate still requires the quantity of every ingredient. The Food.com source dataset generally provides ingredient names without dependable quantities, so existing source recipes cannot yet receive exact ingredient-derived costs. Missing data is reported rather than fabricated.
 
 ## Custom recipes
 
