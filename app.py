@@ -107,7 +107,7 @@ if not pantry_df.empty:
     pantry_items = DEFAULT_PANTRY | set(pantry_df.loc[enabled_values, "ingredient_name"].map(normalize_ingredient))
 else:
     pantry_items = DEFAULT_PANTRY
-tabs = st.tabs(["Customer recommendations", "Seller inventory & combo offers", "Create your recipe"])
+tabs = st.tabs(["Customer recommendations", "Seller inventory & combo offers", "Create your recipe", "Ingredient price catalog"])
 
 with tabs[0]:
     st.header("1. Meal preference and context")
@@ -299,3 +299,41 @@ with tabs[2]:
                     st.info(f"Estimated total calories: {kcal} kcal (whole recipe)")
                 if issue:
                     st.warning(issue)
+
+
+with tabs[3]:
+    st.header("Ingredient-wise price catalog")
+    st.write("Enter the market price for each ingredient using a consistent base quantity of 100 grams.")
+    st.caption("Example: if 1 kg of rice costs ₹60, enter ₹6 as the price per 100 g. Leave unknown prices blank; the app will not guess them.")
+    if catalog.empty:
+        st.warning("No ingredient rows found. Run python preprocess.py after adding RAW_recipes.csv.")
+    else:
+        edited_catalog = st.data_editor(
+            catalog,
+            num_rows="dynamic",
+            use_container_width=True,
+            key="ingredient_price_catalog_editor",
+            column_config={
+                "ingredient_name": st.column_config.TextColumn("Ingredient", required=True),
+                "price_per_100g": st.column_config.NumberColumn("Price per 100 g (₹)", min_value=0.0, format="%.2f"),
+                "kcal_per_100g": st.column_config.NumberColumn("Calories per 100 g", min_value=0.0, format="%.1f"),
+            },
+        )
+        if st.button("Save ingredient prices"):
+            save_catalog = edited_catalog.copy()
+            save_catalog["ingredient_name"] = save_catalog["ingredient_name"].fillna("").astype(str).str.strip()
+            save_catalog = save_catalog[save_catalog["ingredient_name"] != ""]
+            save_catalog["_normalized_name"] = save_catalog["ingredient_name"].map(normalize_ingredient)
+            if save_catalog["_normalized_name"].duplicated().any():
+                st.error("Duplicate ingredient names found after normalization. Keep only one row per ingredient.")
+            else:
+                save_catalog = save_catalog.drop(columns=["_normalized_name"])
+                for column in ("price_per_100g", "kcal_per_100g"):
+                    save_catalog[column] = pd.to_numeric(save_catalog[column], errors="coerce")
+                    if (save_catalog[column].dropna() < 0).any():
+                        st.error(f"{column} cannot contain negative values.")
+                        st.stop()
+                save_catalog.to_csv(CATALOG_FILE, index=False)
+                st.success("Ingredient price catalog saved.")
+                st.cache_data.clear()
+                st.rerun()
