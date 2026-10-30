@@ -48,21 +48,39 @@ def read_csv_or_empty(path, columns):
 
 
 def ingredient_estimate(ingredients, catalog):
-    """Calculate totals only when each ingredient has a known quantity and catalog rate."""
+    """Calculate cost and calories independently when quantities and rates exist."""
     if catalog.empty:
         return None, None, "Add data/ingredient_catalog.csv with price_per_100g and kcal_per_100g."
     lookup = {normalize_ingredient(r.ingredient_name): r for r in catalog.itertuples()}
-    cost = calories = 0.0
+    cost_total = calories_total = 0.0
+    cost_complete = calories_complete = True
+    issues = []
     for item in ingredients:
         if not isinstance(item, dict) or not item.get("name") or item.get("quantity_g") is None:
-            return None, None, "Ingredient quantities are missing; names alone cannot produce reliable totals."
+            cost_complete = calories_complete = False
+            issues.append("Ingredient quantities are missing; names alone cannot produce reliable totals.")
+            continue
         row = lookup.get(normalize_ingredient(item["name"]))
-        if row is None or pd.isna(row.price_per_100g) or pd.isna(row.kcal_per_100g):
-            return None, None, f"Price/nutrition data is missing for {item['name']}."
+        if row is None:
+            cost_complete = calories_complete = False
+            issues.append(f"Catalog data is missing for {item['name']}.")
+            continue
         factor = float(item["quantity_g"]) / 100
-        cost += float(row.price_per_100g) * factor
-        calories += float(row.kcal_per_100g) * factor
-    return round(cost, 2), round(calories), None
+        price = getattr(row, "price_per_100g", None)
+        kcal = getattr(row, "kcal_per_100g", None)
+        if price is None or pd.isna(price):
+            cost_complete = False
+            issues.append(f"Price is missing for {item['name']}.")
+        else:
+            cost_total += float(price) * factor
+        if kcal is None or pd.isna(kcal):
+            calories_complete = False
+            issues.append(f"Nutrition data is missing for {item['name']}.")
+        else:
+            calories_total += float(kcal) * factor
+    cost = round(cost_total, 2) if cost_complete else None
+    calories = round(calories_total) if calories_complete else None
+    return cost, calories, "; ".join(dict.fromkeys(issues)) or None
 
 
 st.set_page_config(page_title="Smart Cart Recipe Recommender", page_icon="🍲", layout="wide")
@@ -238,7 +256,9 @@ with tabs[2]:
                 record = {"name": name.strip(), "servings": int(servings), "minutes": int(minutes), "ingredients": json.dumps(parsed), "steps": json.dumps([x.strip() for x in instructions.splitlines() if x.strip()]), "estimated_cost": cost, "estimated_calories": kcal}
                 pd.DataFrame([record]).to_csv(CUSTOM_FILE, mode="a", header=not CUSTOM_FILE.exists(), index=False)
                 st.success("Recipe saved.")
+                if cost is not None:
+                    st.info(f"Estimated total ingredient cost: ₹{cost:.2f} (whole recipe)")
+                if kcal is not None:
+                    st.info(f"Estimated total calories: {kcal} kcal (whole recipe)")
                 if issue:
                     st.warning(issue)
-                else:
-                    st.info(f"Estimated ingredient cost: {cost:.2f} · Estimated calories: {kcal} kcal (whole recipe)")
