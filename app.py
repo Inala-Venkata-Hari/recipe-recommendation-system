@@ -144,10 +144,34 @@ with tabs[0]:
     )
     st.write(f"Items in cart: **{len(selected)}**")
     if selected:
-        price_rows = [{"Ingredient": item.title(), "Catalog price (per 100 g)": price_lookup.get(normalize_ingredient(item))} for item in selected]
-        if any(row["Catalog price (per 100 g)"] is not None for row in price_rows):
-            st.caption("Available ingredient prices from your catalog (per 100 g). Recipe totals require ingredient quantities.")
-            st.dataframe(pd.DataFrame(price_rows), hide_index=True, use_container_width=True)
+        st.caption("Enter the quantity you intend to buy/use. Prices are estimates based on the catalog rate per 100 g.")
+        price_rows = []
+        cart_total = 0.0
+        priced_items = 0
+        for item in selected:
+            quantity_g = st.number_input(
+                f"{item.title()} quantity (g)",
+                min_value=1.0,
+                value=100.0,
+                step=50.0,
+                key=f"cart_quantity_{normalize_ingredient(item)}",
+            )
+            rate = price_lookup.get(normalize_ingredient(item))
+            line_total = round(rate * quantity_g / 100, 2) if rate is not None else None
+            if line_total is not None:
+                cart_total += line_total
+                priced_items += 1
+            price_rows.append({
+                "Ingredient": item.title(),
+                "Quantity (g)": quantity_g,
+                "Price / 100 g (₹)": rate,
+                "Estimated item total (₹)": line_total,
+            })
+        st.dataframe(pd.DataFrame(price_rows), hide_index=True, use_container_width=True)
+        if priced_items == len(selected):
+            st.metric("Estimated total for selected ingredients", f"₹{cart_total:.2f}")
+        else:
+            st.warning(f"Total is partial: catalog prices are missing for {len(selected) - priced_items} selected ingredient(s).")
 
     with st.expander("Review frequency-based pantry candidates"):
         st.caption("These ingredients occur frequently in the recipe dataset. Frequency makes them candidates only; approve them only if they are normally stocked in your target households.")
