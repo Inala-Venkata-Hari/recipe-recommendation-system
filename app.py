@@ -91,13 +91,24 @@ with tabs[0]:
     all_ingredients = sorted({item for values in recipes["ingredients"] for item in values}, key=str.casefold)
     if not classified.empty:
         category_order = {"Common": 0, "Moderately common": 1, "Specialized": 2, "Rare / recipe-specific": 3}
-        sort_choice = st.selectbox("Ingredient ordering", ["Most frequently used first", "Specialized / unique first", "Alphabetical"])
         freq = classified.set_index("ingredient_name").to_dict("index")
+        category_filter = st.selectbox("Filter ingredient category", ["All categories", "Common", "Moderately common", "Specialized", "Rare / recipe-specific"])
+        sort_choice = st.selectbox("Ingredient ordering", ["Most frequently used first", "Specialized / unique first", "Alphabetical"])
         if sort_choice == "Most frequently used first":
             all_ingredients.sort(key=lambda x: (category_order.get(freq.get(x, {}).get("ingredient_frequency_category"), 4), -freq.get(x, {}).get("recipe_frequency", 0), x.casefold()))
         elif sort_choice == "Specialized / unique first":
             all_ingredients.sort(key=lambda x: (-category_order.get(freq.get(x, {}).get("ingredient_frequency_category"), -1), freq.get(x, {}).get("recipe_frequency", 0), x.casefold()))
-    selected = st.multiselect("Search and select items individually (bulk add has been removed)", all_ingredients, key="cart_ingredients")
+        if category_filter != "All categories":
+            visible = [x for x in all_ingredients if freq.get(x, {}).get("ingredient_frequency_category") == category_filter]
+        else:
+            visible = all_ingredients
+    else:
+        visible = all_ingredients
+    # Keep already-selected items available if the filter changes, so a category
+    # switch never silently discards a cart selection.
+    selected_before_filter = st.session_state.get("cart_ingredients", [])
+    options = list(dict.fromkeys(visible + selected_before_filter))
+    selected = st.multiselect("Search and select items individually (bulk add has been removed)", options, key="cart_ingredients")
     st.write(f"Items in cart: **{len(selected)}**")
 
     st.header("3. Recipes using your cart items")
