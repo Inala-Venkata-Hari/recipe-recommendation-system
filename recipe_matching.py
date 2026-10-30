@@ -3,7 +3,7 @@ import pandas as pd
 from ingredient_normalization import normalize_ingredient, normalize_ingredient_list
 
 
-def find_ranked_matches(recipes, selected):
+def find_ranked_matches(recipes, selected, pantry_items=None):
     """Rank recipes by cart overlap, then by how few extra ingredients they need.
 
     Primary score: more selected cart ingredients matched is better.
@@ -17,6 +17,7 @@ def find_ranked_matches(recipes, selected):
         empty["_required_count"] = pd.Series(dtype=int)
         return empty
 
+    pantry_keys = {normalize_ingredient(item) for item in (pantry_items or set()) if normalize_ingredient(item)}
     selected_by_key = {}
     for ingredient in selected:
         key = normalize_ingredient(ingredient)
@@ -35,12 +36,11 @@ def find_ranked_matches(recipes, selected):
     results = recipes.copy()
     results["_matched_ingredients"] = results["ingredients"].apply(matched_for_recipe)
     results["_match_count"] = results["_matched_ingredients"].apply(len)
+    results["_pantry_ingredients"] = results["ingredients"].apply(
+        lambda items: sorted(normalized_recipe_items(items).intersection(pantry_keys))
+    )
     results["_required_count"] = results["ingredients"].apply(
-        lambda items: max(
-            len(normalized_recipe_items(items))
-            - len(normalized_recipe_items(items).intersection(selected_by_key)),
-            0,
-        )
+        lambda items: len(normalized_recipe_items(items) - set(selected_by_key) - pantry_keys)
     )
 
     # A recipe with no matching cart items is not a useful recommendation.
