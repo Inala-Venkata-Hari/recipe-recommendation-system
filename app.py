@@ -209,6 +209,17 @@ with tabs[0]:
                     "are ordered by fewer additional ingredients, then shorter cooking time. "
                     "Add recipe ingredient quantities and catalog prices to enable cost sorting."
                 )
+            elif (
+                sort_preference == "Budget Friendly"
+                and "estimated_cost" in matches.columns
+                and matches["estimated_cost"].isna().any()
+            ):
+                missing_costs = int(matches["estimated_cost"].isna().sum())
+                st.warning(
+                    f"{missing_costs} recipe(s) have no reliable cost estimate and are "
+                    "placed after recipes with known costs. Their actual affordability "
+                    "cannot be compared until ingredient quantities and prices are available."
+                )
             for _, recipe in matches.iterrows():
                 with st.container(border=True):
                     st.subheader(str(recipe["name"]))
