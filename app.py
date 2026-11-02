@@ -119,7 +119,11 @@ def add_recipe_cost_estimates(recipes, catalog):
 
     results = recipes.copy()
     results["estimated_cost"] = results.apply(estimate, axis=1)
-    servings = pd.to_numeric(results.get("servings", 1), errors="coerce").replace(0, pd.NA)
+    if "servings" in results.columns:
+        servings = pd.to_numeric(results["servings"], errors="coerce")
+    else:
+        servings = pd.Series(1.0, index=results.index)
+    servings = servings.where(servings > 0)
     results["estimated_cost_per_serving"] = (results["estimated_cost"] / servings).round(2)
     return results
 
