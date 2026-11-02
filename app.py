@@ -12,8 +12,17 @@ from recipe_sorting import sort_recipes
 from inventory_discounts import generate_combo_offers
 
 ROOT = Path(__file__).parent
-# Set RECIPE_DATA_DIR to switch between the real data and an isolated test dataset.
-DATA_DIR = Path(os.environ.get("RECIPE_DATA_DIR", ROOT / "data"))
+# An explicit RECIPE_DATA_DIR always wins. Otherwise, use the bundled synthetic
+# demo dataset when present so its recipe quantities and ingredient prices load
+# together; fall back to the regular data directory for normal deployments.
+configured_data_dir = os.environ.get("RECIPE_DATA_DIR")
+SYNTHETIC_DATA_DIR = ROOT / "data" / "synthetic_demo"
+DATA_DIR = (
+    Path(configured_data_dir)
+    if configured_data_dir
+    else SYNTHETIC_DATA_DIR if (SYNTHETIC_DATA_DIR / "recipes_cleaned.csv").exists()
+    else ROOT / "data"
+)
 DATA_FILE = DATA_DIR / "recipes_cleaned.csv"
 CLASSIFICATION_FILE = DATA_DIR / "ingredients_classified.csv"
 INVENTORY_FILE = DATA_DIR / "seller_inventory.csv"
@@ -48,7 +57,7 @@ def load_recipes():
 
 
 def read_csv_or_empty(path, columns):
-    return pd.read_csv(path) if path.exists() else pd.DataFrame(columns=columns)
+    return pd.read_csv(path) if path.exists() and path.stat().st_size > 0 else pd.DataFrame(columns=columns)
 
 
 def ingredient_estimate(ingredients, catalog):
