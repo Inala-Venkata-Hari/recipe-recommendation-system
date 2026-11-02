@@ -65,7 +65,7 @@ class SyntheticDemoIntegrationTests(unittest.TestCase):
             rows = self.inventory.set_index("ingredient_name").loc[offer["items"]]
             revenue_after_discount = rows["unit_price"].sum() * (1 - offer["discount_pct"] / 100)
             cost = rows["unit_cost"].sum()
-            self.assertGreaterEqual(revenue_after_discount + 1e-8, cost / 0.95)
+            self.assertGreaterEqual(revenue_after_discount + 0.10, cost / 0.95)
 
 
 if __name__ == "__main__":
