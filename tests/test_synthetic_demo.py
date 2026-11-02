@@ -17,14 +17,32 @@ class SyntheticDemoIntegrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.recipes = pd.read_csv(DATA / "recipes_cleaned.csv")
-        for column in ("ingredients", "tags", "steps", "nutrition"):
+        for column in ("ingredients", "ingredient_quantities", "tags", "steps", "nutrition"):
             cls.recipes[column] = cls.recipes[column].apply(ast.literal_eval)
         cls.recipes["ingredients"] = cls.recipes["ingredients"].apply(normalize_ingredient_list)
         cls.recipes["minutes"] = pd.to_numeric(cls.recipes["minutes"], errors="coerce")
         cls.recipes["calories_per_serving"] = pd.to_numeric(
             cls.recipes["calories_per_serving"], errors="coerce"
         )
+        cls.catalog = pd.read_csv(DATA / "ingredient_catalog.csv")
         cls.inventory = pd.read_csv(DATA / "seller_inventory.csv")
+
+    def test_all_synthetic_recipes_have_quantities_and_calculable_costs(self):
+        prices = dict(zip(self.catalog["ingredient_name"], self.catalog["price_per_100g"]))
+        self.assertTrue(self.recipes["ingredient_quantities"].apply(bool).all())
+        costs = []
+        for _, recipe in self.recipes.iterrows():
+            self.assertEqual(
+                {item["name"] for item in recipe["ingredient_quantities"]},
+                set(recipe["ingredients"]),
+            )
+            total = sum(
+                item["quantity_g"] * prices[item["name"]] / 100
+                for item in recipe["ingredient_quantities"]
+            )
+            costs.append(round(total, 2))
+        self.assertEqual(len(costs), 15)
+        self.assertTrue(all(cost > 0 for cost in costs))
 
     def test_demo_dataset_has_expected_scope_and_unique_ingredients(self):
         self.assertEqual(len(self.recipes), 15)
@@ -49,8 +67,8 @@ class SyntheticDemoIntegrationTests(unittest.TestCase):
             with self.subTest(criterion=criterion):
                 sorted_matches, cost_available = sort_recipes(matches, criterion)
                 self.assertFalse(sorted_matches.empty)
-                # The source recipe dataset intentionally has no reliable recipe costs.
-                self.assertFalse(cost_available)
+                if criterion == "Budget Friendly":
+                    self.assertTrue(cost_available)
 
     def test_seller_inventory_generates_margin_safe_combo_offers(self):
         offers = generate_combo_offers(
