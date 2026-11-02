@@ -38,7 +38,7 @@ def parse_list(value):
 @st.cache_data
 def load_recipes():
     df = pd.read_csv(DATA_FILE)
-    for column in ("ingredients", "tags", "steps", "nutrition"):
+    for column in ("ingredients", "ingredient_quantities", "tags", "steps", "nutrition"):
         if column in df:
             df[column] = df[column].apply(parse_list)
     df["ingredients"] = df["ingredients"].apply(normalize_ingredient_list)
@@ -87,6 +87,43 @@ def ingredient_estimate(ingredients, catalog):
     return cost, calories, "; ".join(dict.fromkeys(issues)) or None
 
 
+def add_recipe_cost_estimates(recipes, catalog):
+    """Calculate recipe costs only when all ingredient quantities and prices exist."""
+    lookup = {}
+    if not catalog.empty:
+        for row in catalog.itertuples():
+            try:
+                lookup[normalize_ingredient(row.ingredient_name)] = float(row.price_per_100g)
+            except (TypeError, ValueError):
+                continue
+
+    def estimate(row):
+        items = row.get("ingredient_quantities", [])
+        if not isinstance(items, list) or not items:
+            return None
+        total = 0.0
+        for item in items:
+            if not isinstance(item, dict) or not item.get("name") or item.get("quantity_g") is None:
+                return None
+            rate = lookup.get(normalize_ingredient(item["name"]))
+            if rate is None:
+                return None
+            try:
+                quantity = float(item["quantity_g"])
+            except (TypeError, ValueError):
+                return None
+            if quantity <= 0:
+                return None
+            total += quantity * rate / 100
+        return round(total, 2)
+
+    results = recipes.copy()
+    results["estimated_cost"] = results.apply(estimate, axis=1)
+    servings = pd.to_numeric(results.get("servings", 1), errors="coerce").replace(0, pd.NA)
+    results["estimated_cost_per_serving"] = (results["estimated_cost"] / servings).round(2)
+    return results
+
+
 st.set_page_config(page_title="Smart Cart Recipe Recommender", page_icon="🍲", layout="wide")
 st.title("🍲 Smart Cart: Inventory-Aware Recipe Recommendations")
 st.caption("Seller inventory and supply conditions drive combination offers; recipes make those offers useful to customers.")
@@ -98,6 +135,7 @@ if not DATA_FILE.exists():
 recipes = load_recipes()
 classified = read_csv_or_empty(CLASSIFICATION_FILE, ["ingredient_name", "recipe_frequency", "frequency_ratio", "ingredient_frequency_category"])
 catalog = read_csv_or_empty(CATALOG_FILE, ["ingredient_name", "price_per_100g", "kcal_per_100g"])
+recipes = add_recipe_cost_estimates(recipes, catalog)
 pantry_df = read_csv_or_empty(PANTRY_FILE, ["ingredient_name", "enabled", "notes"])
 pantry_candidates = read_csv_or_empty(PANTRY_CANDIDATES_FILE, ["ingredient_name", "recipe_frequency", "frequency_ratio"])
 # Core pantry staples are explicitly curated; the CSV adds household-specific approvals.
@@ -238,7 +276,13 @@ with tabs[0]:
                     a, b = st.columns(2)
                     a.metric("Cooking time", f"{int(recipe['minutes'])} min" if pd.notna(recipe["minutes"]) else "Unavailable")
                     b.metric("Dataset calories / serving", f"{round(recipe['calories_per_serving'])} kcal" if pd.notna(recipe["calories_per_serving"]) else "Unavailable")
-                    st.caption("Existing dataset recipes do not provide reliable per-ingredient quantities, so an exact total recipe cost cannot be calculated from ingredient names alone. Catalog prices are shown above when available.")
+                    if pd.notna(recipe.get("estimated_cost")):
+                        cost_col, serving_col = st.columns(2)
+                        cost_col.metric("Estimated recipe cost", f"₹{recipe['estimated_cost']:.2f}")
+                        serving_col.metric("Estimated cost / serving", f"₹{recipe['estimated_cost_per_serving']:.2f}")
+                        st.caption("Estimate based on synthetic ingredient quantities and current catalog rates.")
+                    else:
+                        st.warning("Recipe cost unavailable: ingredient quantities or catalog prices are missing.")
                     with st.expander("Cooking instructions"):
                         for i, step in enumerate(recipe.get("steps", []), 1):
                             st.write(f"{i}. {step}")
