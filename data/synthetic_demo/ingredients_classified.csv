@@ -15,15 +15,15 @@ paneer,2,0.1333,Specialized
 peanuts,2,0.1333,Specialized
 potato,2,0.1333,Specialized
 spring onion,2,0.1333,Specialized
-chilli powder,3,0.2000,Specialized
-lemon,3,0.2000,Specialized
-turmeric,3,0.2000,Specialized
+chilli powder,3,0.2,Specialized
+lemon,3,0.2,Specialized
+turmeric,3,0.2,Specialized
 carrot,4,0.2667,Common
 ginger,4,0.2667,Common
 peas,4,0.2667,Common
 soy sauce,4,0.2667,Common
 cumin,5,0.3333,Common
-rice,6,0.4000,Common
+rice,6,0.4,Common
 garlic,7,0.4667,Common
 tomato,7,0.4667,Common
-onion,9,0.6000,Common
+onion,9,0.6,Common
