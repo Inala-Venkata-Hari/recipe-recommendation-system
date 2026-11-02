@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feat/inventory-aware-recommendations
+      - small-test
   pull_request:
     branches:
       - main
