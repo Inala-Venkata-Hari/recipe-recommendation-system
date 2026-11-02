@@ -248,11 +248,9 @@ with tabs[0]:
             matches, budget_cost_available = sort_recipes(matches, sort_preference)
             if sort_preference == "Budget Friendly" and not budget_cost_available:
                 st.warning(
-                    "Budget Friendly sorting is currently unavailable for these recipes. "
-                    "The source dataset does not provide ingredient quantities, and no "
-                    "reliable recipe-level cost estimates are available. For now, recipes "
-                    "are ordered by fewer additional ingredients, then shorter cooking time. "
-                    "Add recipe ingredient quantities and catalog prices to enable cost sorting."
+                    "Budget Friendly sorting cannot calculate costs for these matches because "
+                    "some recipes are missing ingredient quantities or catalog prices. "
+                    "Those recipes are ordered after recipes with known costs."
                 )
             elif (
                 sort_preference == "Budget Friendly"
