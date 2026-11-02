@@ -38,7 +38,7 @@ def sort_recipes(matches, criterion):
         columns = ["minutes", "_required_count"]
         ascending = [True, True]
         if cost_available:
-            columns.append("estimated_cost")
+            columns.append(cost_column)
             ascending.append(True)
         columns.append("calories_per_serving")
         ascending.append(True)
