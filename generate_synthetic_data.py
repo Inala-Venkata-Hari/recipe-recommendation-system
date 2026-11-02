@@ -28,6 +28,38 @@ RECIPES = [
     ("S015", "Potato Lemon Chaat", ["potato", "lemon", "peanuts", "coriander", "chilli powder"], 15, 260),
 ]
 
+QUANTITY_G = {
+    "rice": 150,
+    "tomato": 100,
+    "onion": 60,
+    "garlic": 10,
+    "cumin": 3,
+    "carrot": 60,
+    "peas": 50,
+    "ginger": 10,
+    "chickpeas": 140,
+    "turmeric": 3,
+    "paneer": 150,
+    "cream": 40,
+    "chilli powder": 4,
+    "egg": 100,
+    "soy sauce": 15,
+    "spring onion": 20,
+    "lemon": 30,
+    "peanuts": 25,
+    "curry leaves": 3,
+    "mustard seeds": 3,
+    "potato": 180,
+    "chicken": 180,
+    "noodles": 150,
+    "cabbage": 70,
+    "capsicum": 60,
+    "lentils": 140,
+    "cucumber": 70,
+    "coriander": 10
+}
+
+
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
     recipe_rows = []
@@ -37,6 +69,11 @@ def main():
             "id": recipe_id,
             "name": name,
             "ingredients": repr(ingredients),
+            "ingredient_quantities": repr([
+                {"name": ingredient, "quantity_g": QUANTITY_G[ingredient]}
+                for ingredient in ingredients
+            ]),
+            "servings": 2,
             "n_ingredients": len(ingredients),
             "minutes": minutes,
             "nutrition": repr([calories, 0, 0, 0, 0, 0, 0]),
