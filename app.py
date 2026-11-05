@@ -9,7 +9,7 @@ import streamlit as st
 from ingredient_normalization import normalize_ingredient, normalize_ingredient_list
 from recipe_matching import find_ranked_matches
 from recipe_sorting import sort_recipes
-from inventory_discounts import generate_combo_offers
+from inventory_discounts import generate_combo_offers, score_inventory
 
 ROOT = Path(__file__).parent
 # An explicit RECIPE_DATA_DIR always wins. Otherwise, use the bundled synthetic
@@ -96,50 +96,14 @@ def ingredient_estimate(ingredients, catalog):
     return cost, calories, "; ".join(dict.fromkeys(issues)) or None
 
 
-def add_recipe_cost_estimates(recipes, catalog):
-    """Calculate recipe costs only when all ingredient quantities and prices exist."""
-    lookup = {}
-    if not catalog.empty:
-        for row in catalog.itertuples():
-            try:
-                lookup[normalize_ingredient(row.ingredient_name)] = float(row.price_per_100g)
-            except (TypeError, ValueError):
-                continue
-
-    def estimate(row):
-        items = row.get("ingredient_quantities", [])
-        if not isinstance(items, list) or not items:
-            return None
-        total = 0.0
-        for item in items:
-            if not isinstance(item, dict) or not item.get("name") or item.get("quantity_g") is None:
-                return None
-            rate = lookup.get(normalize_ingredient(item["name"]))
-            if rate is None:
-                return None
-            try:
-                quantity = float(item["quantity_g"])
-            except (TypeError, ValueError):
-                return None
-            if quantity <= 0:
-                return None
-            total += quantity * rate / 100
-        return round(total, 2)
-
-    results = recipes.copy()
-    results["estimated_cost"] = results.apply(estimate, axis=1)
-    if "servings" in results.columns:
-        servings = pd.to_numeric(results["servings"], errors="coerce")
-    else:
-        servings = pd.Series(1.0, index=results.index)
-    servings = servings.where(servings > 0)
-    results["estimated_cost_per_serving"] = (results["estimated_cost"] / servings).round(2)
-    return results
+from recipe_costs import add_recipe_cost_estimates
 
 
 st.set_page_config(page_title="Smart Cart Recipe Recommender", page_icon="🍲", layout="wide")
 st.title("🍲 Smart Cart: Inventory-Aware Recipe Recommendations")
 st.caption("Seller inventory and supply conditions drive combination offers; recipes make those offers useful to customers.")
+if DATA_DIR == SYNTHETIC_DATA_DIR:
+    st.info("Presentation demo • Synthetic inventory, prices and nutrition; no measured sales uplift. Snapshot date: 2026-11-05.")
 
 if not DATA_FILE.exists():
     st.error(f"Recipe data not found in {DATA_DIR}. Run python generate_synthetic_data.py or python preprocess.py.")
@@ -162,6 +126,72 @@ if not pantry_df.empty:
 else:
     pantry_items = DEFAULT_PANTRY
 tabs = st.tabs(["Customer recommendations", "Seller inventory & combo offers", "Create your recipe", "Ingredient price catalog"])
+
+offers = []
+with tabs[1]:
+    st.header("Seller inventory drives combination discounts")
+    st.write("Discounts increase with stock age, expiry risk and expected excess, while preserving the seller's minimum margin.")
+    st.caption("Upload a CSV with: ingredient_name, stock_qty, required_qty, unit_cost, unit_price.")
+    st.caption("Optional batch columns: batch_id, received_date, expiry_date, avg_daily_sales, target_holding_days, markdown_window_days. Quantities and prices must use the same stock unit. Missing signals use surplus stock as a fallback.")
+    st.caption("Recipe-frequency policy: Common ×1.0, Moderately common ×1.1, Specialized ×1.2, Rare ×1.3. The multiplier boosts existing inventory urgency; it does not measure sales demand. Unknown ingredients use ×1.0.")
+    with st.expander("Classification-based discount parameters"):
+        from inventory_discounts import classification_parameters
+        st.dataframe(pd.DataFrame([
+            {"ingredient_name": name, "frequency_ratio": values[0], "category": values[1], "discount_multiplier": values[2]}
+            for name, values in classification_parameters(classified).items()
+        ]), width="stretch")
+    assessment_date = st.date_input("Inventory assessment date", value=datetime(2026, 11, 5).date() if DATA_DIR == SYNTHETIC_DATA_DIR else datetime.now().date())
+    upload = st.file_uploader("Upload current inventory", type=["csv"])
+    inventory = pd.read_csv(upload) if upload is not None else read_csv_or_empty(INVENTORY_FILE, ["ingredient_name", "stock_qty", "required_qty", "unit_cost", "unit_price"])
+    if inventory.empty:
+        st.warning("No inventory loaded. Add data/seller_inventory.csv or upload an inventory CSV.")
+    else:
+        scored = score_inventory(inventory, today=assessment_date, classified=classified)
+        st.subheader("Inventory decisions")
+        st.dataframe(scored, width="stretch")
+        if not scored.empty:
+            excluded = scored[~scored["eligible"]]
+            st.metric("Excluded batches", len(excluded))
+            if not excluded.empty:
+                st.dataframe(excluded[[c for c in ["ingredient_name", "batch_id", "exclusion_reason"] if c in excluded]], width="stretch")
+        if scored.empty:
+            st.warning("Inventory requires ingredient_name, stock_qty, required_qty, unit_cost and unit_price.")
+        elif (~scored["eligible"]).any():
+            st.warning("Some rows are excluded; inspect exclusion_reason above. Expiry dates are treated as exclusive.")
+        max_discount = st.slider("Maximum discount (%)", 0, 40, 15)
+        minimum_margin = st.slider("Minimum seller margin after discount (%)", 0, 30, 5)
+        min_items = st.selectbox("Minimum items per combo", [2, 3], index=0)
+        max_items = st.selectbox("Maximum items per combo", [2, 3, 4], index=2)
+        offers = generate_combo_offers(inventory, max_discount=max_discount, min_items=min_items, max_items=max_items, minimum_margin_pct=minimum_margin, today=assessment_date, classified=classified)
+        if not offers:
+            st.info("No eligible combinations. Items need markdown urgency and sufficient margin after discount.")
+        if offers:
+            st.subheader("Seller decision dashboard")
+            st.caption("Each row is an alternative offer. Offers can share stock; totals are not additive. Prices are in INR; stock units are specified per ingredient.")
+            left, middle, right = st.columns(3)
+            left.metric("Available offers", len(offers))
+            middle.metric("Largest discount", f"{max(o['discount_pct'] for o in offers):.1f}%")
+            right.metric("Lowest offer margin", f"{min(o['margin_pct'] for o in offers):.1f}%")
+            decisions = pd.DataFrame([{
+                "Combo": " + ".join(o["items"]), "Quantities": o["quantity_description"],
+                "Batches": ", ".join(o["batch_ids"]), "Discount (%)": o["discount_pct"],
+                "Original price (INR)": o["original_price"], "Offer price (INR)": o["offer_price"],
+                "Cost (INR)": o["cost"], "Profit (INR)": o["profit"],
+                "Margin (%)": round(o["margin_pct"], 2), "Savings (INR)": o["savings"],
+                "Margin cap applied": o["margin_limited"], "Reason breakdown": o["breakdown"]
+            } for o in offers])
+            st.dataframe(decisions, width="stretch", hide_index=True)
+            st.download_button("Download proposed offers (CSV)", decisions.to_csv(index=False).encode("utf-8"),
+                               file_name=f"proposed_offers_{assessment_date}.csv", mime="text/csv")
+            for offer in offers[:10]:
+                with st.expander(f"{' + '.join(offer['items'])} — {offer['discount_pct']}% off"):
+                    st.write(offer["quantity_description"])
+                    st.caption(offer["reason"])
+                    st.write(offer["breakdown"])
+                    useful = recipes[recipes["ingredients"].apply(lambda items: set(offer["items"]).issubset(set(items)))]
+                    if not useful.empty:
+                        st.write("Use together in: " + ", ".join(useful["name"].astype(str).head(3)))
+
 
 with tabs[0]:
     st.header("1. Meal preference and context")
@@ -201,6 +231,7 @@ with tabs[0]:
     if selected:
         st.caption("Enter the quantity you intend to buy/use. Prices are estimates based on the catalog rate per 100 g.")
         price_rows = []
+        cart_item_costs = {}
         cart_total = 0.0
         priced_items = 0
         for item in selected:
@@ -213,6 +244,7 @@ with tabs[0]:
             )
             rate = price_lookup.get(normalize_ingredient(item))
             line_total = round(rate * quantity_g / 100, 2) if rate is not None else None
+            cart_item_costs[normalize_ingredient(item)] = line_total
             if line_total is not None:
                 cart_total += line_total
                 priced_items += 1
@@ -276,12 +308,24 @@ with tabs[0]:
                 with st.container(border=True):
                     st.subheader(str(recipe["name"]))
                     used = recipe["_matched_ingredients"]
-                    st.write(f"**Uses {len(used)} of your {len(selected)} cart items:** " + ", ".join(used))
+                    used_labels = []
+                    used_costs = []
+                    for item in used:
+                        item_cost = cart_item_costs.get(normalize_ingredient(item))
+                        used_costs.append(item_cost)
+                        used_labels.append(f"{item} (₹{item_cost:.2f})" if item_cost is not None else f"{item} (cost unavailable)")
+                    total_label = (
+                        f" — **Matched cart cost: ₹{sum(used_costs):.2f}**"
+                        if all(cost is not None for cost in used_costs)
+                        else " — **Matched cart cost unavailable**"
+                    )
+                    st.write(f"**Uses {len(used)} of your {len(selected)} cart items:** " + ", ".join(used_labels) + total_label)
+                    st.caption("Matched cart cost uses your entered cart quantities; recipe cost below uses recipe quantities.")
                     if len(selected) > 3 and len(used) >= 3:
                         st.success("This recipe uses at least 3 items from your selected cart.")
                     required = int(recipe["_required_count"])
                     if required == 0:
-                        st.success("✓ ZERO ADDITIONAL INGREDIENTS REQUIRED — everything needed is already in your cart.")
+                        st.success("✓ ZERO ADDITIONAL INGREDIENTS REQUIRED — everything needed is already in your cart or enabled pantry.")
                     else:
                         st.write(f"Additional ingredients required: **{required}**")
                     a, b = st.columns(2)
@@ -294,30 +338,29 @@ with tabs[0]:
                         st.caption("Estimate based on synthetic ingredient quantities and current catalog rates.")
                     else:
                         st.warning("Recipe cost unavailable: ingredient quantities or catalog prices are missing.")
-                    with st.expander("Cooking instructions"):
-                        for i, step in enumerate(recipe.get("steps", []), 1):
-                            st.write(f"{i}. {step}")
-
-with tabs[1]:
-    st.header("Seller inventory drives combination discounts")
-    st.write("Offers are generated from surplus stock while protecting the seller's minimum margin.")
-    st.caption("Upload a CSV with: ingredient_name, stock_qty, required_qty, unit_cost, unit_price.")
-    upload = st.file_uploader("Upload current inventory", type=["csv"])
-    inventory = pd.read_csv(upload) if upload is not None else read_csv_or_empty(INVENTORY_FILE, ["ingredient_name", "stock_qty", "required_qty", "unit_cost", "unit_price"])
-    if inventory.empty:
-        st.warning("No inventory loaded. Add data/seller_inventory.csv or upload an inventory CSV.")
-    else:
-        st.dataframe(inventory, use_container_width=True)
-        max_discount = st.slider("Maximum discount (%)", 0, 40, 15)
-        minimum_margin = st.slider("Minimum seller margin after discount (%)", 0, 30, 5)
-        min_items = st.selectbox("Minimum items per combo", [2, 3], index=0)
-        max_items = st.selectbox("Maximum items per combo", [2, 3, 4], index=2)
-        offers = generate_combo_offers(inventory, max_discount=max_discount, min_items=min_items, max_items=max_items, minimum_margin_pct=minimum_margin)
-        if not offers:
-            st.info("No eligible combinations. Items need surplus stock and positive margin after discount.")
-        for offer in offers[:25]:
-            st.success(f"{' + '.join(offer['items'])} — {offer['discount_pct']}% off")
-            st.caption(offer["reason"])
+                    additional_items = sorted(
+                        set(normalize_ingredient_list(recipe["ingredients"]))
+                        - set(normalize_ingredient_list(selected))
+                        - set(pantry_items)
+                    )
+                    if additional_items:
+                        st.write("**Additional items to get:** " + ", ".join(additional_items))
+                        relevant_offers = [
+                            offer for offer in offers
+                            if set(normalize_ingredient_list(offer["items"])).issubset(set(additional_items))
+                        ]
+                        if relevant_offers:
+                            st.success("Discounted combinations are available for your additional items")
+                            for offer in relevant_offers[:3]:
+                                st.write(
+                                    f"**{' + '.join(offer['items'])} — {offer['discount_pct']:.1f}% off** · "
+                                    f"₹{offer['offer_price']:.2f} (regular ₹{offer['original_price']:.2f}) · "
+                                    f"Save ₹{offer['savings']:.2f}"
+                                )
+                                st.caption("Bundle quantities: " + offer["quantity_description"])
+                            st.caption("Alternative bundle offers; choose one. Bundle prices apply to the listed stock quantities and do not replace the whole-recipe cost estimate. Other additional items are priced separately.")
+                        else:
+                            st.caption("No discounted combination is available for these additional items under the current seller settings.")
 
 with tabs[2]:
     st.header("Create and save your own recipe")

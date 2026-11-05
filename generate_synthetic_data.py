@@ -5,6 +5,7 @@ Run: python generate_synthetic_data.py
 """
 from pathlib import Path
 import ast
+from datetime import date, timedelta
 import pandas as pd
 
 ROOT = Path(__file__).parent
@@ -91,7 +92,7 @@ def main():
             "ingredient_name": name,
             "recipe_frequency": count,
             "frequency_ratio": round(count / total, 4),
-            "ingredient_frequency_category": "Common" if count / total >= .25 else "Specialized",
+            "ingredient_frequency_category": ("Common" if count / total >= .25 else "Moderately common" if count / total >= .10 else "Specialized" if count / total >= .03 else "Rare / recipe-specific"),
         }
         for name, count in counts.items()
     ]).sort_values(["recipe_frequency", "ingredient_name"], ascending=[True, True])
@@ -104,16 +105,32 @@ def main():
     ])
     catalog.to_csv(OUTPUT / "ingredient_catalog.csv", index=False)
 
-    inventory = pd.DataFrame([
-        {"ingredient_name": "rice", "stock_qty": 180, "required_qty": 40, "unit_cost": 42, "unit_price": 60},
-        {"ingredient_name": "tomato", "stock_qty": 150, "required_qty": 35, "unit_cost": 18, "unit_price": 30},
-        {"ingredient_name": "onion", "stock_qty": 200, "required_qty": 50, "unit_cost": 20, "unit_price": 34},
-        {"ingredient_name": "paneer", "stock_qty": 65, "required_qty": 25, "unit_cost": 210, "unit_price": 280},
-        {"ingredient_name": "noodles", "stock_qty": 90, "required_qty": 20, "unit_cost": 28, "unit_price": 45},
-        {"ingredient_name": "chickpeas", "stock_qty": 110, "required_qty": 30, "unit_cost": 55, "unit_price": 78},
-        {"ingredient_name": "chicken", "stock_qty": 45, "required_qty": 40, "unit_cost": 170, "unit_price": 210},
-    ])
-    inventory.to_csv(OUTPUT / "seller_inventory.csv", index=False)
+    # Fixed snapshot makes presentation results reproducible. Units are 100 g packs.
+    today = date(2026, 11, 5)
+    rates = dict(zip(catalog.ingredient_name, catalog.price_per_100g))
+    scenarios = [
+        # ingredient, stock, reserve, age, days left, daily sales, holding target, window, cost fraction, label
+        ("rice", 180, 40, 2, 180, 8, 120, 30, .65, "Fresh staple"),
+        ("tomato", 150, 35, 8, 2, 12, 7, 7, .60, "Near expiry / excess stock"),
+        ("onion", 200, 50, 18, 8, 8, 14, 14, .65, "Aging slow mover"),
+        ("paneer", 65, 25, 5, 1, 5, 5, 5, .75, "Urgent perishable"),
+        ("noodles", 90, 20, 12, 90, 2, 90, 21, .65, "Shelf-stable surplus"),
+        ("chickpeas", 110, 30, 15, 120, 2, 90, 30, .70, "Shelf-stable surplus"),
+        ("chicken", 45, 40, 3, 2, 8, 4, 4, .97, "Very narrow margin"),
+        ("cream", 25, 5, 8, -1, 2, 5, 5, .65, "Expired: must exclude"),
+        ("cucumber", 0, 0, 2, 5, 3, 7, 4, .65, "Zero stock: must exclude"),
+        ("lentils", 30, 30, 0, 120, 2, 90, 30, .65, "Fresh, no excess: no urgency"),
+        ("capsicum", 60, 10, 9, 3, 4, 7, 7, .65, "Specialized ingredient / aging"),
+        ("peas", 80, 20, 10, 5, 5, 10, 7, .65, "Moderately common / surplus"),
+    ]
+    records = []
+    for i, (name, stock, reserve, age, left, sales, target, window, fraction, label) in enumerate(scenarios):
+        records.append(dict(ingredient_name=name, batch_id=f"DEMO-{i+1:02}",
+            stock_qty=stock, required_qty=reserve, unit_cost=round(rates[name]*fraction, 2),
+            unit_price=rates[name], stock_unit="100 g pack", received_date=(today-timedelta(days=age)).isoformat(),
+            expiry_date=(today+timedelta(days=left)).isoformat(), avg_daily_sales=sales,
+            target_holding_days=target, markdown_window_days=window, scenario=label))
+    pd.DataFrame(records).to_csv(OUTPUT / "seller_inventory.csv", index=False)
     pd.DataFrame(columns=["ingredient_name", "enabled", "notes"]).to_csv(OUTPUT / "pantry_ingredients.csv", index=False)
     pd.DataFrame(columns=["ingredient_name", "recipe_frequency", "frequency_ratio"]).to_csv(OUTPUT / "pantry_candidates.csv", index=False)
     print(f"Generated {len(recipe_rows)} synthetic recipes and {len(counts)} ingredients in {OUTPUT}")

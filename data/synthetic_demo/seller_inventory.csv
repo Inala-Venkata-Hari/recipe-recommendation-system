@@ -1,8 +1,13 @@
-ingredient_name,stock_qty,required_qty,unit_cost,unit_price
-rice,180,40,42,60
-tomato,150,35,18,30
-onion,200,50,20,34
-paneer,65,25,210,280
-noodles,90,20,28,45
-chickpeas,110,30,55,78
-chicken,45,40,170,210
+ingredient_name,batch_id,stock_qty,required_qty,unit_cost,unit_price,stock_unit,received_date,expiry_date,avg_daily_sales,target_holding_days,markdown_window_days,scenario
+rice,DEMO-01,180,40,28.02,43.1,100 g pack,2026-11-03,2027-05-04,8,120,30,Fresh staple
+tomato,DEMO-02,150,35,28.92,48.2,100 g pack,2026-10-28,2026-11-07,12,7,7,Near expiry / excess stock
+onion,DEMO-03,200,50,22.49,34.6,100 g pack,2026-10-18,2026-11-13,8,14,14,Aging slow mover
+paneer,DEMO-04,65,25,27.22,36.3,100 g pack,2026-10-31,2026-11-06,5,5,5,Urgent perishable
+noodles,DEMO-05,90,20,21.39,32.9,100 g pack,2026-10-24,2027-02-03,2,90,21,Shelf-stable surplus
+chickpeas,DEMO-06,110,30,7.56,10.8,100 g pack,2026-10-21,2027-03-05,2,90,30,Shelf-stable surplus
+chicken,DEMO-07,45,40,8.83,9.1,100 g pack,2026-11-02,2026-11-07,8,4,4,Very narrow margin
+cream,DEMO-08,25,5,10.34,15.9,100 g pack,2026-10-28,2026-11-04,2,5,5,Expired: must exclude
+cucumber,DEMO-09,0,0,11.44,17.6,100 g pack,2026-11-03,2026-11-10,3,7,4,Zero stock: must exclude
+lentils,DEMO-10,30,30,19.18,29.5,100 g pack,2026-11-05,2027-03-05,2,90,30,"Fresh, no excess: no urgency"
+capsicum,DEMO-11,60,10,3.71,5.7,100 g pack,2026-10-27,2026-11-08,4,7,7,Specialized ingredient / aging
+peas,DEMO-12,80,20,25.81,39.7,100 g pack,2026-10-26,2026-11-10,5,10,7,Moderately common / surplus

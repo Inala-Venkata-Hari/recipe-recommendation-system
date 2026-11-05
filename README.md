@@ -24,7 +24,13 @@ Upload an inventory CSV or create `data/seller_inventory.csv` using `data/seller
 - `unit_cost`: seller's cost per item/unit
 - `unit_price`: normal selling price per item/unit
 
-The discount engine considers combinations of 2–4 eligible items. An item is eligible only when stock exceeds required supply and unit price exceeds unit cost. Discount scales with the average surplus-stock ratio, is capped by the seller-configured maximum, and is further capped to preserve the configured minimum margin. These are initial configurable rules; production use should incorporate demand forecasts, expiry dates, replenishment lead time, and transaction data.
+The discount engine uses age-aware dynamic markdowns. Each batch receives an urgency score: 35% stock age / target holding days, 40% expiry risk (1 minus days remaining / markdown window), and 25% expected unsold stock / current stock. Scores are bounded to 0–1. Expected unsold stock is max(0, stock minus average daily sales times days remaining). Without demand or expiry data, the excess signal uses the surplus ratio. Missing age/expiry signals are omitted and remaining weights renormalized. These weights are configurable implementation assumptions, not fitted demand estimates.
+
+Optional inventory columns: `batch_id`, `received_date`, `expiry_date` (ISO dates), `avg_daily_sales`, `target_holding_days`, `markdown_window_days`. Sales and stock must use the same unit; cost and price are per stock unit. Set holding targets and markdown windows per ingredient. Assessment date is selectable in the seller tab. Invalid dates, future receipts, negative/nonfinite required numeric values, and batches expiring on or before assessment date are excluded. Missing optional values fall back rather than being inferred.
+
+Offers combine 2–4 distinct ingredients, one stock unit each, using the earliest-expiring eligible batch per ingredient (oldest receipt breaks ties). Proposed discount equals maximum discount times average urgency. The existing gross-margin floor caps the offer; discounts round down to 0.1% to preserve that floor. Offers display urgency and recipes using all offered ingredients. Scores are a prioritization heuristic, not a guarantee of increased sales. Evaluate units sold, waste and gross profit against the surplus-only baseline before tuning weights.
+
+Synthetic demo inventory is a reproducible snapshot dated 2026-11-05. The seller tab defaults to that assessment date for this dataset. `python generate_synthetic_data.py` recreates the same snapshot and rewrites all synthetic files, including pantry files.
 
 ## Customer recommendations
 
@@ -100,3 +106,17 @@ streamlit run app.py
 ```
 
 The generated dataset contains 15 sample recipes, ingredient-frequency records, an ingredient catalog, and seller inventory rows. Prices and nutrition values are intentionally fictional and must never be treated as market or dietary facts. To return to the normal dataset, unset `RECIPE_DATA_DIR` and run the app normally.
+
+
+### Classification-based discount parameters
+
+The seller tab joins inventory to the active `ingredients_classified.csv` using normalized ingredient names. Numeric `frequency_ratio` determines category: >=0.25 Common (multiplier 1.0), >=0.10 Moderately common (1.1), >=0.03 Specialized (1.2), otherwise Rare / recipe-specific (1.3). Input category labels are recomputed to avoid inconsistent labels. Missing/invalid ratios and conflicting duplicate classifications use the neutral unclassified multiplier 1.0.
+
+Per-item discount priority = min(1, inventory urgency × category multiplier). Combo discount = maximum discount × mean item priority, further capped by the existing margin floor and rounded down. Offers sort by this adjusted priority. Classification alone cannot make zero-urgency or expired inventory eligible. This policy assumes less recipe versatility warrants a modest markdown boost; multipliers are heuristic policy constants, not learned demand elasticities. Classification does not determine shelf life, costs, or sales velocity. Without classification input the Python API preserves previous behavior. The app displays the derived parameter table and per-batch scores.
+
+
+### Seller decision dashboard and presentation data
+
+Offers display original/offer price, acquisition cost, profit, savings, gross margin, margin-cap status, quantities, batch IDs and age/expiry/excess/classification breakdowns. Download all proposed offers as CSV. Each row is an alternative offer, not a stock allocation; shared inventory means totals must not be added. Selling prices round upward to cents after percentage rounding to preserve the margin floor.
+
+The improved demo includes 12 inventory scenarios in 100 g packs, with unit prices matching the 28-entry ingredient catalog. Cases include fresh, aging, urgent expiry, low margin, expired, zero-stock and no-urgency items. Classification labels now correctly follow all frequency thresholds. Recipe cost estimation is shared between app and tests. See [PRESENTATION_GUIDE.md](PRESENTATION_GUIDE.md) for the walkthrough, provenance and limitations.
