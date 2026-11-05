@@ -1,0 +1,25 @@
+name: Build DSF PowerPoint
+on:
+  push:
+    branches: [small-test]
+    paths:
+      - 'presentations/dsf_smart_cart_presentation.html'
+      - 'presentations/build_pptx.py'
+      - '.github/workflows/build-dsf-pptx.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install python-pptx
+      - run: python presentations/build_pptx.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dsf-smart-cart-powerpoint
+          path: presentations/dsf_smart_cart_presentation.pptx
