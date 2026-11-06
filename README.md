@@ -125,3 +125,20 @@ The improved demo includes 12 inventory scenarios in 100 g packs, with unit pric
 ### Simulated checkout
 
 Customer recipe cards can add discounted combos to the cart. Supported combos specify 100 g packs and unique inventory batches. Selected combos are revalidated against regenerated offers, batch stock, current prices/settings and cart quantities at checkout. Overlapping ingredients cannot receive multiple combo discounts. Extra grams and regular items use catalog estimates. The checkout shows regular total, savings and final total, and produces a downloadable simulated receipt. No payment or persistent stock deduction occurs. Reset demo clears this session's cart, combos, uploads, receipt and controls without modifying saved CSVs.
+
+
+### Publish promotions before the customer demonstration
+
+In the seller tab, select draft offers, choose an exclusive promotion end date and click Publish selected offers. Customers and checkout use only active published offers. End dates are capped at batch expiry. Pause selected offers withdraws them immediately on the next rerun; selected carts must remove invalid combos before checking out. Changed draft prices, costs, quantities or eligibility require republishing. Published snapshots are saved in the active data directory as published_offers.json and survive app restarts and session reset. Reset demo does not erase publications. This is a local demonstration with shared files, not an authenticated multi-user seller service.
+
+
+### Promotion discovery and activity history
+
+Sellers can select all draft offers for bulk publishing, or pick individual offers. Publication activity history records changed publish/pause events with India-time timestamps, assessment date, combo price, discount and end date; it can be exported as CSV. This local demo history is not an authenticated audit trail. History and publications persist across session resets and app restarts.
+
+Customers can browse active published offers before choosing recipes. Search by ingredient, sort by highest rupee savings, lowest bundle price or ending soon, and navigate eight offers per page. Add this published combo updates the cart and effective price; overlapping selections are disabled. A paused or invalid offer is excluded from the browser and blocks a previously selected discounted checkout until removed.
+
+
+### Schedule-aware combo discovery
+
+Published offers can be prioritized by recipes that fit the selected schedule: busy/short break <=30 minutes, late study/work <=20 minutes, family >=2 recorded servings, after workout contains lentils/chickpeas/paneer/egg/chicken (an ingredient heuristic, not a calculated protein claim). A matching recipe must use every ingredient in the bundle. The customer sees supporting recipe names and can turn prioritization off. Unmatched offers remain available. Recipe order still uses ascending additional-item count, and automatic combo selection still maximizes savings. Schedule context changes neither pricing nor publication/checkout eligibility.

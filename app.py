@@ -1,4 +1,6 @@
 import ast
+from schedule_offers import RULES, schedule_offer_matches, recipe_fits_schedule
+from offer_publishing import promotion_id, publish_snapshot, active_promotions, save_promotions, load_promotions, promotion_history, record_promotion_changes, browse_promotions
 from inventory_batches import create_batch
 from catalog_import import merge_catalog
 from checkout import offer_key, checkout_lines, validate_bundles, best_missing_combos
@@ -292,6 +294,66 @@ with tabs[1]:
                     if not useful.empty:
                         st.write("Use together in: " + ", ".join(useful["name"].astype(str).head(3)))
 
+    st.subheader("Publish customer offers")
+    st.caption("Draft changes do not publish new prices. Changed or invalid published offers are hidden until republished. End dates are exclusive and capped at the earliest batch expiry. Dates use the inventory assessment date for this demo.")
+    promotion_file = DATA_DIR / "published_offers.json"
+    try:
+        published = load_promotions(promotion_file)
+    except (ValueError, KeyError):
+        published = []
+        st.error("Published offer data could not be read. Publish a new offer set to replace it.")
+    labels = {promotion_id(o): " + ".join(o["items"]) + f" — {o['discount_pct']:.1f}% off (₹{o['offer_price']:.2f})" for o in offers}
+    select_all_drafts = st.checkbox("Select all draft offers for publishing", value=False)
+    chosen_drafts = st.multiselect("Draft offers to publish", list(labels), format_func=lambda key: labels[key], key="publish_draft_ids", disabled=select_all_drafts)
+    if select_all_drafts:
+        chosen_drafts = list(labels)
+    st.caption(f"{len(chosen_drafts)} draft offers selected. Customers see only offers that you publish.")
+    promotion_until = st.date_input("Promotion end date (exclusive)", value=assessment_date + timedelta(days=7))
+    if st.button("Publish selected offers", disabled=not chosen_drafts):
+        try:
+            snapshots = publish_snapshot([o for o in offers if promotion_id(o) in chosen_drafts], inventory, promotion_until, assessment_date)
+        except ValueError as exc:
+            st.error(str(exc))
+        else:
+            replaced = {o["promotion_id"] for o in snapshots}
+            previous_publications = list(published)
+            published = [o for o in published if o["promotion_id"] not in replaced] + snapshots
+            save_promotions(promotion_file, published)
+            record_promotion_changes(promotion_file, previous_publications, published, "Published", assessment_date)
+            st.success(f"Published {len(snapshots)} offers. Customers can now select them.")
+    if published:
+        pause_choices = st.multiselect("Published offers to pause", [o["promotion_id"] for o in published if not o.get("paused")],
+            format_func=lambda key: next(" + ".join(o["items"]) for o in published if o["promotion_id"] == key))
+        if st.button("Pause selected offers", disabled=not pause_choices):
+            previous_publications = [dict(o) for o in published]
+            for offer in published:
+                if offer["promotion_id"] in pause_choices:
+                    offer["paused"] = True
+            save_promotions(promotion_file, published)
+            record_promotion_changes(promotion_file, previous_publications, published, "Paused", assessment_date)
+            st.success("Selected offers paused. Customers cannot apply them at checkout.")
+    customer_offers = active_promotions(published, offers, assessment_date)
+    active_ids = {o["promotion_id"] for o in customer_offers}
+    st.metric("Active published offers", len(customer_offers))
+    if published:
+        st.dataframe(pd.DataFrame([{"Combo": " + ".join(o["items"]), "Price (INR)": o["offer_price"],
+            "Ends before": o["valid_until"], "Status": "Paused" if o.get("paused") else "Active" if o["promotion_id"] in active_ids else "Expired or requires republishing"} for o in published]), hide_index=True, width="stretch")
+
+    with st.expander("Publication activity history"):
+        st.caption("Local demo activity log; timestamps use India time. This is not an authenticated seller audit trail.")
+        try:
+            history = promotion_history(promotion_file)
+        except (ValueError, TypeError):
+            history = []
+            st.error("Publication history could not be read.")
+        if history:
+            history_frame = pd.DataFrame(history[::-1])
+            st.dataframe(history_frame, hide_index=True, width="stretch")
+            st.download_button("Download publication history (CSV)", history_frame.to_csv(index=False).encode("utf-8"),
+                               file_name="publication_history.csv", mime="text/csv")
+        else:
+            st.info("No publication changes have been recorded yet.")
+
 
 with tabs[0]:
     st.header("1. Meal preference and context")
@@ -303,6 +365,43 @@ with tabs[0]:
     schedule = st.selectbox("Optional schedule context", ["No schedule preference", "Busy / short break", "After workout", "Late study/work", "Family meal"])
     context = {"Busy / short break": "quick meals", "After workout": "protein-conscious meals", "Late study/work": "light and convenient meals", "Family meal": "shareable meals"}.get(schedule, meal_period.lower() + " options")
     st.caption(f"Contextual suggestion: {context}. Time and schedule do not determine a person's actual mood.")
+
+    schedule_matches = schedule_offer_matches(customer_offers, recipes, schedule)
+    if schedule in RULES:
+        st.caption("Schedule matching rule: " + RULES[schedule] + ". Matches indicate recipe suitability, not that the bundle contains every recipe ingredient.")
+        if schedule == "After workout":
+            st.caption("Ingredient-based suggestion only; protein content and nutritional suitability are not calculated.")
+        if customer_offers and not schedule_matches:
+            st.info("No published combo currently matches this schedule rule. All other active offers remain available.")
+    with st.expander("Browse published combo offers", expanded=bool(customer_offers)):
+        if customer_offers:
+            offer_query = st.text_input("Search offers by ingredient", key="customer_offer_search")
+            offer_sort = st.selectbox("Order offers by", ["Highest savings", "Lowest bundle price", "Ending soon"])
+            browsed = browse_promotions(customer_offers, offer_query, offer_sort)
+            if schedule in RULES:
+                prioritize_context = st.checkbox("Show schedule-matching offers first", value=True)
+                if prioritize_context:
+                    browsed.sort(key=lambda offer: promotion_id(offer) not in schedule_matches)
+            st.caption(f"{len(browsed)} matching active offers. Prices are for the specified bundle quantities.")
+            page_count = max(1, (len(browsed) + 7) // 8)
+            page = st.selectbox("Offer page", list(range(1, page_count + 1)))
+            occupied = {name for combo in st.session_state.get("chosen_combos", []) for name in combo["items"]}
+            for offer in browsed[(page-1)*8:page*8]:
+                st.write(f"**{' + '.join(offer['items'])}** — ₹{offer['offer_price']:.2f} · Save ₹{offer['savings']:.2f} ({offer['discount_pct']:.1f}%)")
+                st.caption(offer["quantity_description"] + " · Valid before " + offer["valid_until"])
+                if promotion_id(offer) in schedule_matches:
+                    st.caption("Fits your schedule via: " + ", ".join(schedule_matches[promotion_id(offer)][:3]))
+                rows = inventory[inventory["ingredient_name"].isin(offer["items"])]
+                supported = "stock_unit" in rows and "batch_id" in rows and rows["stock_unit"].eq("100 g pack").all()
+                overlap = bool(occupied.intersection(offer["items"]))
+                st.button("Add this published combo", key=f"browse_combo_{offer['promotion_id']}",
+                          on_click=add_combo, args=(offer,), disabled=overlap or not supported)
+                if overlap:
+                    st.caption("A selected combo already covers one or more of these ingredients.")
+                elif not supported:
+                    st.caption("Seller must specify 100 g packs and batch IDs to enable demo checkout.")
+        else:
+            st.info("No published offers are available. The seller can publish eligible draft offers in the inventory tab.")
 
     st.header("2. Select cart ingredients")
     all_ingredients = list({item for values in recipes["ingredients"] for item in values})
@@ -360,7 +459,7 @@ with tabs[0]:
             try:
                 effective_lines = checkout_lines(
                     {normalize_ingredient(n): float(st.session_state.get(f"cart_quantity_{normalize_ingredient(n)}", 100)) for n in selected},
-                    price_lookup, st.session_state.get("chosen_combos", []), offers, inventory)
+                    price_lookup, st.session_state.get("chosen_combos", []), customer_offers, inventory)
             except ValueError as exc:
                 st.warning("Discounted total unavailable: " + str(exc))
             else:
@@ -420,6 +519,8 @@ with tabs[0]:
             for _, recipe in matches.iterrows():
                 with st.container(border=True):
                     st.subheader(str(recipe["name"]))
+                    if recipe_fits_schedule(recipe, schedule):
+                        st.caption("Fits your schedule: " + RULES[schedule])
                     used = recipe["_matched_ingredients"]
                     used_labels = []
                     used_costs = []
@@ -460,12 +561,13 @@ with tabs[0]:
                         if not isinstance(recipe_quantities, list):
                             recipe_quantities = []
                         st.button("Add missing items to cart", key=f"add_missing_{recipe['id']}",
-                                  on_click=add_missing_items, args=(additional_items, recipe_quantities, offers, inventory))
+                                  on_click=add_missing_items, args=(additional_items, recipe_quantities, customer_offers, inventory))
                         st.caption("Automatically applies the highest total savings from non-overlapping eligible combos for these missing items. Discounted items use at least one 100 g pack; other items use recipe quantities (or 100 g if unknown).")
                         relevant_offers = [
-                            offer for offer in offers
+                            offer for offer in customer_offers
                             if set(normalize_ingredient_list(offer["items"])).issubset(set(additional_items))
                         ]
+                        relevant_offers.sort(key=lambda offer: -offer["savings"])
                         if relevant_offers:
                             st.success("Discounted combinations are available for your additional items")
                             for offer in relevant_offers[:3]:
@@ -474,7 +576,7 @@ with tabs[0]:
                                     f"₹{offer['offer_price']:.2f} (regular ₹{offer['original_price']:.2f}) · "
                                     f"Save ₹{offer['savings']:.2f}"
                                 )
-                                st.caption("Bundle quantities: " + offer["quantity_description"])
+                                st.caption("Bundle quantities: " + offer["quantity_description"] + " · Valid before " + offer["valid_until"])
                                 bundle_rows = inventory[inventory["ingredient_name"].isin(offer["items"])]
                                 checkout_supported = (
                                     "stock_unit" in bundle_rows and "batch_id" in bundle_rows
@@ -486,7 +588,7 @@ with tabs[0]:
                                     st.caption("Checkout needs defined 100 g packs and unique batch IDs for this inventory.")
                             st.caption("Alternative bundle offers; choose one. Bundle prices apply to the listed stock quantities and do not replace the whole-recipe cost estimate. Other additional items are priced separately.")
                         else:
-                            st.caption("No discounted combination is available for these additional items under the current seller settings.")
+                            st.caption("No published discounted combination is available for these additional items.")
 
     st.header("4. Simulated checkout")
     st.caption("Demo only: no payment is collected and no stock is reserved or deducted. Combo validation uses the seller assessment date and settings. Non-combo items use catalog price estimates.")
@@ -499,7 +601,7 @@ with tabs[0]:
     if selected:
         quantities = {normalize_ingredient(name): float(st.session_state.get(f"cart_quantity_{normalize_ingredient(name)}", 100)) for name in selected}
         try:
-            lines = checkout_lines(quantities, price_lookup, chosen, offers, inventory)
+            lines = checkout_lines(quantities, price_lookup, chosen, customer_offers, inventory)
         except ValueError as exc:
             st.error(str(exc))
         else:
@@ -522,7 +624,7 @@ with tabs[0]:
             if st.button("Confirm simulated checkout"):
                 # Revalidate immediately before generating the receipt.
                 try:
-                    confirmed = checkout_lines(quantities, price_lookup, chosen, offers, inventory)
+                    confirmed = checkout_lines(quantities, price_lookup, chosen, customer_offers, inventory)
                 except ValueError as exc:
                     st.error(str(exc))
                 else:

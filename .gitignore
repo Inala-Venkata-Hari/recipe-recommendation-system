@@ -3,3 +3,7 @@ __pycache__/
 *.py[cod]
 .streamlit/secrets.toml
 RAW_recipes.csv
+
+data/**/published_offers.json
+
+data/**/offer_history.json
