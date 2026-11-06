@@ -73,8 +73,10 @@ def score_inventory(inventory, today=None, classified=None):
             reason = "Expired or expires today"
         if pd.notna(received) and pd.notna(expiry) and expiry <= received:
             reason = "Expiry must follow received date"
-        if stock <= 0 or price <= cost:
-            reason = reason or "No stock or positive margin"
+        if stock < 1:
+            reason = reason or "Insufficient stock for one whole stock unit"
+        if price <= cost:
+            reason = reason or "No positive margin"
         signals = []
         age_score = expiry_score = None
         age = None

@@ -120,3 +120,8 @@ Per-item discount priority = min(1, inventory urgency × category multiplier). C
 Offers display original/offer price, acquisition cost, profit, savings, gross margin, margin-cap status, quantities, batch IDs and age/expiry/excess/classification breakdowns. Download all proposed offers as CSV. Each row is an alternative offer, not a stock allocation; shared inventory means totals must not be added. Selling prices round upward to cents after percentage rounding to preserve the margin floor.
 
 The improved demo includes 12 inventory scenarios in 100 g packs, with unit prices matching the 28-entry ingredient catalog. Cases include fresh, aging, urgent expiry, low margin, expired, zero-stock and no-urgency items. Classification labels now correctly follow all frequency thresholds. Recipe cost estimation is shared between app and tests. See [PRESENTATION_GUIDE.md](PRESENTATION_GUIDE.md) for the walkthrough, provenance and limitations.
+
+
+### Simulated checkout
+
+Customer recipe cards can add discounted combos to the cart. Supported combos specify 100 g packs and unique inventory batches. Selected combos are revalidated against regenerated offers, batch stock, current prices/settings and cart quantities at checkout. Overlapping ingredients cannot receive multiple combo discounts. Extra grams and regular items use catalog estimates. The checkout shows regular total, savings and final total, and produces a downloadable simulated receipt. No payment or persistent stock deduction occurs. Reset demo clears this session's cart, combos, uploads, receipt and controls without modifying saved CSVs.

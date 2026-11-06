@@ -1,6 +1,9 @@
 import ast
+from inventory_batches import create_batch
+from catalog_import import merge_catalog
+from checkout import offer_key, checkout_lines, validate_bundles, best_missing_combos
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -99,8 +102,55 @@ def ingredient_estimate(ingredients, catalog):
 from recipe_costs import add_recipe_cost_estimates
 
 
+def add_missing_items(items, recipe_quantities, current_offers, current_inventory):
+    cart = list(st.session_state.get("cart_ingredients", []))
+    quantities = {
+        normalize_ingredient(entry["name"]): float(entry["quantity_g"])
+        for entry in recipe_quantities
+        if isinstance(entry, dict) and entry.get("name") and entry.get("quantity_g") is not None
+    }
+    for item in items:
+        if item not in cart:
+            cart.append(item)
+            amount = quantities.get(normalize_ingredient(item), 100.0)
+            st.session_state[f"cart_quantity_{normalize_ingredient(item)}"] = max(1.0, amount)
+    st.session_state["cart_ingredients"] = cart
+    automatic = best_missing_combos(items, current_offers, current_inventory,
+                                    st.session_state.get("chosen_combos", []))
+    for offer in automatic:
+        add_combo(offer)
+    st.session_state.pop("demo_receipt", None)
+
+
+def add_combo(offer):
+    chosen = st.session_state.get("chosen_combos", [])
+    occupied = {name for existing in chosen for name in existing["items"]}
+    if occupied.intersection(offer["items"]):
+        st.session_state["combo_message"] = "Remove the overlapping combo before choosing this one."
+        return
+    cart = list(st.session_state.get("cart_ingredients", []))
+    for name in offer["items"]:
+        if name not in cart:
+            cart.append(name)
+        key = f"cart_quantity_{normalize_ingredient(name)}"
+        st.session_state[key] = max(100.0, float(st.session_state.get(key, 0)))
+    st.session_state["cart_ingredients"] = cart
+    st.session_state["chosen_combos"] = chosen + [offer]
+    st.session_state.pop("demo_receipt", None)
+
+
+def remove_combo(index):
+    st.session_state["chosen_combos"].pop(index)
+    st.session_state.pop("demo_receipt", None)
+
+
+def reset_demo():
+    st.session_state.clear()
+
+
 st.set_page_config(page_title="Smart Cart Recipe Recommender", page_icon="🍲", layout="wide")
 st.title("🍲 Smart Cart: Inventory-Aware Recipe Recommendations")
+st.button("Reset demo", on_click=reset_demo, help="Reset this session’s cart, combos, receipt, upload and controls. Saved CSV files are unchanged.")
 st.caption("Seller inventory and supply conditions drive combination offers; recipes make those offers useful to customers.")
 if DATA_DIR == SYNTHETIC_DATA_DIR:
     st.info("Presentation demo • Synthetic inventory, prices and nutrition; no measured sales uplift. Snapshot date: 2026-11-05.")
@@ -142,9 +192,56 @@ with tabs[1]:
         ]), width="stretch")
     assessment_date = st.date_input("Inventory assessment date", value=datetime(2026, 11, 5).date() if DATA_DIR == SYNTHETIC_DATA_DIR else datetime.now().date())
     upload = st.file_uploader("Upload current inventory", type=["csv"])
-    inventory = pd.read_csv(upload) if upload is not None else read_csv_or_empty(INVENTORY_FILE, ["ingredient_name", "stock_qty", "required_qty", "unit_cost", "unit_price"])
+    try:
+        inventory = pd.read_csv(upload) if upload is not None else read_csv_or_empty(INVENTORY_FILE, ["ingredient_name", "stock_qty", "required_qty", "unit_cost", "unit_price"])
+    except (pd.errors.ParserError, pd.errors.EmptyDataError, UnicodeDecodeError, ValueError):
+        st.error("Could not read inventory. Upload a UTF-8 CSV with a header row and consistent columns.")
+        inventory = pd.DataFrame()
+    st.download_button("Download inventory CSV template", (ROOT / "data" / "seller_inventory_template.csv").read_bytes(),
+                       file_name="seller_inventory_template.csv", mime="text/csv")
+    if st.session_state.get("batch_notice"):
+        st.success(st.session_state.pop("batch_notice"))
+    with st.expander("Create inventory batch from ingredient catalog"):
+        st.caption("New batches use the catalog selling price per 100 g. Stock, daily sales and costs are per 100 g pack. Existing batches retain their saved prices; changing the catalog does not silently reprice them.")
+        if upload is not None:
+            st.info("Clear the inventory upload to create a batch in the saved inventory.")
+        elif catalog.empty:
+            st.info("Upload or fill the ingredient price catalog first.")
+        else:
+            batch_ingredient = st.selectbox("Batch ingredient", sorted(catalog.ingredient_name.dropna().unique()), key="batch_ingredient")
+            catalog_row = catalog[catalog.ingredient_name == batch_ingredient].iloc[0]
+            batch_price = pd.to_numeric(catalog_row.price_per_100g, errors="coerce")
+            st.write(f"Catalog selling price: ₹{batch_price:.2f} / 100 g pack" if pd.notna(batch_price) else "Catalog price is missing.")
+            frequency = classification_parameters(classified).get(normalize_ingredient(batch_ingredient))
+            if frequency:
+                st.caption(f"Recipe frequency: {frequency[0]:.1%} · {frequency[1]} · discount urgency multiplier ×{frequency[2]:.1f}")
+            else:
+                st.caption("Unclassified ingredient: neutral discount multiplier ×1.0.")
+            with st.form("create_inventory_batch"):
+                batch_id = st.text_input("New batch ID")
+                batch_stock = st.number_input("Stock (100 g packs)", min_value=1, value=50)
+                batch_required = st.number_input("Required supply (100 g packs)", min_value=0, value=10)
+                batch_cost = st.number_input("Acquisition cost per 100 g pack (₹)", min_value=0.0, value=1.0, step=0.1)
+                batch_received = st.date_input("Batch received date", value=assessment_date)
+                batch_expiry = st.date_input("Batch expiry date", value=assessment_date + timedelta(days=7))
+                batch_sales = st.number_input("Average daily sales (100 g packs)", min_value=0.0, value=2.0)
+                batch_holding = st.number_input("Target holding days", min_value=1, value=7)
+                batch_window = st.number_input("Markdown window days", min_value=1, value=7)
+                if st.form_submit_button("Create batch and calculate discounts"):
+                    try:
+                        record = create_batch(catalog, inventory, batch_ingredient, batch_id, batch_stock,
+                                              batch_required, batch_cost, batch_received, batch_expiry,
+                                              batch_sales, batch_holding, batch_window, assessment_date)
+                    except ValueError as exc:
+                        st.error(str(exc))
+                    else:
+                        INVENTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+                        pd.concat([inventory, pd.DataFrame([record])], ignore_index=True).to_csv(INVENTORY_FILE, index=False)
+                        st.session_state["batch_notice"] = "Batch created from catalog price. Frequency-based discounts have been recalculated."
+                        st.session_state.pop("demo_receipt", None)
+                        st.rerun()
     if inventory.empty:
-        st.warning("No inventory loaded. Add data/seller_inventory.csv or upload an inventory CSV.")
+        st.warning("No inventory loaded. Create a batch from the catalog or upload an inventory CSV.")
     else:
         scored = score_inventory(inventory, today=assessment_date, classified=classified)
         st.subheader("Inventory decisions")
@@ -162,7 +259,10 @@ with tabs[1]:
         minimum_margin = st.slider("Minimum seller margin after discount (%)", 0, 30, 5)
         min_items = st.selectbox("Minimum items per combo", [2, 3], index=0)
         max_items = st.selectbox("Maximum items per combo", [2, 3, 4], index=2)
-        offers = generate_combo_offers(inventory, max_discount=max_discount, min_items=min_items, max_items=max_items, minimum_margin_pct=minimum_margin, today=assessment_date, classified=classified)
+        if min_items > max_items:
+            st.warning("Maximum items per combo must be at least the minimum. Adjust the combo size controls.")
+        else:
+            offers = generate_combo_offers(inventory, max_discount=max_discount, min_items=min_items, max_items=max_items, minimum_margin_pct=minimum_margin, today=assessment_date, classified=classified)
         if not offers:
             st.info("No eligible combinations. Items need markdown urgency and sufficient margin after discount.")
         if offers:
@@ -195,7 +295,7 @@ with tabs[1]:
 
 with tabs[0]:
     st.header("1. Meal preference and context")
-    sort_preference = st.radio("Sort recipes by", ["Calories", "Time Taken", "Budget Friendly"], horizontal=True)
+    sort_preference = st.radio("Break ties after fewest additional items by", ["Calories", "Time Taken", "Budget Friendly"], horizontal=True)
     now = datetime.now().astimezone()
     hour = now.hour
     meal_period = "Breakfast" if 5 <= hour < 11 else "Lunch" if 11 <= hour < 16 else "Dinner" if 17 <= hour < 22 else "Light meal"
@@ -235,10 +335,10 @@ with tabs[0]:
         cart_total = 0.0
         priced_items = 0
         for item in selected:
+            st.session_state.setdefault(f"cart_quantity_{normalize_ingredient(item)}", 100.0)
             quantity_g = st.number_input(
                 f"{item.title()} quantity (g)",
                 min_value=1.0,
-                value=100.0,
                 step=50.0,
                 key=f"cart_quantity_{normalize_ingredient(item)}",
             )
@@ -254,9 +354,21 @@ with tabs[0]:
                 "Price / 100 g (₹)": rate,
                 "Estimated item total (₹)": line_total,
             })
-        st.dataframe(pd.DataFrame(price_rows), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(price_rows), hide_index=True, width="stretch")
         if priced_items == len(selected):
-            st.metric("Estimated total for selected ingredients", f"₹{cart_total:.2f}")
+            st.metric("Regular catalog estimate", f"₹{cart_total:.2f}")
+            try:
+                effective_lines = checkout_lines(
+                    {normalize_ingredient(n): float(st.session_state.get(f"cart_quantity_{normalize_ingredient(n)}", 100)) for n in selected},
+                    price_lookup, st.session_state.get("chosen_combos", []), offers, inventory)
+            except ValueError as exc:
+                st.warning("Discounted total unavailable: " + str(exc))
+            else:
+                effective_total = sum(line["Payable (INR)"] for line in effective_lines)
+                applied_savings = sum(line["Savings (INR)"] for line in effective_lines)
+                left, right = st.columns(2)
+                left.metric("Effective cart price", f"₹{effective_total:.2f}")
+                right.metric("Applied combo savings", f"₹{applied_savings:.2f}")
         else:
             st.warning(f"Total is partial: catalog prices are missing for {len(selected) - priced_items} selected ingredient(s).")
 
@@ -267,7 +379,7 @@ with tabs[0]:
         else:
             approved = pantry_items
             pending = pantry_candidates[~pantry_candidates["ingredient_name"].map(normalize_ingredient).isin(approved)]
-            st.dataframe(pending.head(50), hide_index=True, use_container_width=True)
+            st.dataframe(pending.head(50), hide_index=True, width="stretch")
             to_approve = st.multiselect("Select candidates to add to the pantry list", pending["ingredient_name"].tolist())
             if st.button("Approve selected pantry candidates", disabled=not to_approve):
                 additions = pd.DataFrame([{"ingredient_name": name, "enabled": True, "notes": "Approved from recipe-frequency candidates"} for name in to_approve])
@@ -286,12 +398,13 @@ with tabs[0]:
         else:
             max_matches = int(matches["_match_count"].max())
             st.caption(f"Your recommendations match up to {max_matches} of your {len(selected)} selected cart items.")
+            st.caption("Recipes are always sorted by additional ingredients required: 0, 1, 2, … . Your selected preference breaks ties only.")
             matches, budget_cost_available = sort_recipes(matches, sort_preference)
             if sort_preference == "Budget Friendly" and not budget_cost_available:
                 st.warning(
                     "Budget Friendly sorting cannot calculate costs for these matches because "
                     "some recipes are missing ingredient quantities or catalog prices. "
-                    "Those recipes are ordered after recipes with known costs."
+                    "Those recipes are ordered after recipes with known costs within the same additional-item count."
                 )
             elif (
                 sort_preference == "Budget Friendly"
@@ -301,7 +414,7 @@ with tabs[0]:
                 missing_costs = int(matches["estimated_cost"].isna().sum())
                 st.warning(
                     f"{missing_costs} recipe(s) have no reliable cost estimate and are "
-                    "placed after recipes with known costs. Their actual affordability "
+                    "placed after recipes with known costs within the same additional-item count. Their actual affordability "
                     "cannot be compared until ingredient quantities and prices are available."
                 )
             for _, recipe in matches.iterrows():
@@ -321,8 +434,6 @@ with tabs[0]:
                     )
                     st.write(f"**Uses {len(used)} of your {len(selected)} cart items:** " + ", ".join(used_labels) + total_label)
                     st.caption("Matched cart cost uses your entered cart quantities; recipe cost below uses recipe quantities.")
-                    if len(selected) > 3 and len(used) >= 3:
-                        st.success("This recipe uses at least 3 items from your selected cart.")
                     required = int(recipe["_required_count"])
                     if required == 0:
                         st.success("✓ ZERO ADDITIONAL INGREDIENTS REQUIRED — everything needed is already in your cart or enabled pantry.")
@@ -345,6 +456,12 @@ with tabs[0]:
                     )
                     if additional_items:
                         st.write("**Additional items to get:** " + ", ".join(additional_items))
+                        recipe_quantities = recipe.get("ingredient_quantities", [])
+                        if not isinstance(recipe_quantities, list):
+                            recipe_quantities = []
+                        st.button("Add missing items to cart", key=f"add_missing_{recipe['id']}",
+                                  on_click=add_missing_items, args=(additional_items, recipe_quantities, offers, inventory))
+                        st.caption("Automatically applies the highest total savings from non-overlapping eligible combos for these missing items. Discounted items use at least one 100 g pack; other items use recipe quantities (or 100 g if unknown).")
                         relevant_offers = [
                             offer for offer in offers
                             if set(normalize_ingredient_list(offer["items"])).issubset(set(additional_items))
@@ -358,9 +475,67 @@ with tabs[0]:
                                     f"Save ₹{offer['savings']:.2f}"
                                 )
                                 st.caption("Bundle quantities: " + offer["quantity_description"])
+                                bundle_rows = inventory[inventory["ingredient_name"].isin(offer["items"])]
+                                checkout_supported = (
+                                    "stock_unit" in bundle_rows and "batch_id" in bundle_rows
+                                    and bundle_rows["stock_unit"].eq("100 g pack").all()
+                                )
+                                st.button("Add discounted combo to cart", key=f"add_combo_{recipe['id']}_{offer_key(offer)}",
+                                          on_click=add_combo, args=(offer,), disabled=not checkout_supported)
+                                if not checkout_supported:
+                                    st.caption("Checkout needs defined 100 g packs and unique batch IDs for this inventory.")
                             st.caption("Alternative bundle offers; choose one. Bundle prices apply to the listed stock quantities and do not replace the whole-recipe cost estimate. Other additional items are priced separately.")
                         else:
                             st.caption("No discounted combination is available for these additional items under the current seller settings.")
+
+    st.header("4. Simulated checkout")
+    st.caption("Demo only: no payment is collected and no stock is reserved or deducted. Combo validation uses the seller assessment date and settings. Non-combo items use catalog price estimates.")
+    if st.session_state.get("combo_message"):
+        st.warning(st.session_state.pop("combo_message"))
+    chosen = st.session_state.get("chosen_combos", [])
+    for index, combo in enumerate(chosen):
+        st.write("Selected combo: **" + " + ".join(combo["items"]) + f"** — ₹{combo['offer_price']:.2f}")
+        st.button("Remove combo", key=f"remove_combo_{index}", on_click=remove_combo, args=(index,))
+    if selected:
+        quantities = {normalize_ingredient(name): float(st.session_state.get(f"cart_quantity_{normalize_ingredient(name)}", 100)) for name in selected}
+        try:
+            lines = checkout_lines(quantities, price_lookup, chosen, offers, inventory)
+        except ValueError as exc:
+            st.error(str(exc))
+        else:
+            checkout_df = pd.DataFrame(lines)
+            st.dataframe(checkout_df, hide_index=True, width="stretch")
+            available_ingredients = set(normalize_ingredient_list(selected)) | set(pantry_items)
+            ready_recipes = recipes[recipes["ingredients"].apply(
+                lambda items: bool(normalize_ingredient_list(items))
+                and set(normalize_ingredient_list(items)).issubset(available_ingredients)
+            )]
+            if not ready_recipes.empty:
+                st.success("With these items, you can make: " + ", ".join(ready_recipes["name"].astype(str)) + ".")
+                st.caption("Based on ingredient availability, including enabled pantry staples; check recipe quantities before cooking.")
+            regular = round(sum(line["Regular (INR)"] for line in lines), 2)
+            payable = round(sum(line["Payable (INR)"] for line in lines), 2)
+            a, b, c = st.columns(3)
+            a.metric("Regular cart total", f"₹{regular:.2f}")
+            b.metric("Combo savings", f"₹{regular-payable:.2f}")
+            c.metric("Final demo total", f"₹{payable:.2f}")
+            if st.button("Confirm simulated checkout"):
+                # Revalidate immediately before generating the receipt.
+                try:
+                    confirmed = checkout_lines(quantities, price_lookup, chosen, offers, inventory)
+                except ValueError as exc:
+                    st.error(str(exc))
+                else:
+                    receipt = pd.DataFrame(confirmed)
+                    receipt["Assessment date"] = str(assessment_date)
+                    receipt["Status"] = "SIMULATED — no payment or stock deduction"
+                    st.session_state["demo_receipt"] = receipt.to_csv(index=False).encode("utf-8")
+            if st.session_state.get("demo_receipt"):
+                st.success("Simulated receipt ready. This is a snapshot of the confirmed cart.")
+                st.download_button("Download simulated receipt (CSV)", st.session_state["demo_receipt"],
+                                   file_name="simulated_receipt.csv", mime="text/csv")
+    else:
+        st.info("Select cart ingredients or add a discounted combo to preview checkout.")
 
 with tabs[2]:
     st.header("Create and save your own recipe")
@@ -406,13 +581,36 @@ with tabs[3]:
     st.header("Ingredient-wise price catalog")
     st.write("Enter the market price for each ingredient using a consistent base quantity of 100 grams.")
     st.caption("Example: if 1 kg of rice costs ₹60, enter ₹6 as the price per 100 g. Leave unknown prices blank; the app will not guess them.")
+    st.download_button("Download price catalog CSV template",
+                       "ingredient_name,price_per_100g,kcal_per_100g\n", file_name="ingredient_catalog_template.csv", mime="text/csv")
+    catalog_upload = st.file_uploader("Upload ingredient price catalog (CSV)", type=["csv"], key="catalog_csv_upload")
+    st.caption("Required: ingredient_name, price_per_100g. Optional: kcal_per_100g. Matching ingredients are updated; other ingredients are retained. Blank values clear the uploaded field; an omitted calorie column preserves existing calories.")
+    if catalog_upload is not None:
+        try:
+            imported = pd.read_csv(catalog_upload)
+            merged_catalog = merge_catalog(catalog, imported)
+        except (ValueError, pd.errors.ParserError, pd.errors.EmptyDataError, UnicodeDecodeError) as exc:
+            st.error("Catalog upload could not be applied: " + str(exc))
+        else:
+            st.write(f"Preview: {len(imported)} uploaded ingredient rows")
+            st.dataframe(imported, hide_index=True, width="stretch")
+            if st.button("Apply uploaded catalog"):
+                CATALOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+                merged_catalog.to_csv(CATALOG_FILE, index=False)
+                st.session_state.pop("ingredient_price_catalog_editor", None)
+                st.session_state.pop("demo_receipt", None)
+                st.session_state["catalog_upload_notice"] = "Uploaded ingredient prices saved. Cart and recipe estimates have been refreshed."
+                st.cache_data.clear()
+                st.rerun()
+    if st.session_state.get("catalog_upload_notice"):
+        st.success(st.session_state.pop("catalog_upload_notice"))
     if catalog.empty:
-        st.warning("No ingredient rows found. Run python preprocess.py after adding RAW_recipes.csv.")
+        st.info("Upload a CSV to create your ingredient catalog.")
     else:
         edited_catalog = st.data_editor(
             catalog,
             num_rows="dynamic",
-            use_container_width=True,
+            width="stretch",
             key="ingredient_price_catalog_editor",
             column_config={
                 "ingredient_name": st.column_config.TextColumn("Ingredient", required=True),

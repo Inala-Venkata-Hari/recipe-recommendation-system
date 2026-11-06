@@ -48,3 +48,12 @@ class AgeDiscountTests(unittest.TestCase):
         row = batch()
         row['stock_qty'] = float('inf')
         self.assertFalse(score_inventory(pd.DataFrame([row]), TODAY).iloc[0].eligible)
+
+
+class WholeUnitStockTests(unittest.TestCase):
+    def test_fractional_stock_does_not_generate_whole_unit_offer(self):
+        rows=[batch('a'),batch('b')]
+        for row in rows:
+            row['stock_qty']=.5
+        self.assertEqual(generate_combo_offers(pd.DataFrame(rows),today=TODAY),[])
+        self.assertTrue(score_inventory(pd.DataFrame(rows),TODAY).exclusion_reason.str.contains('Insufficient stock').all())

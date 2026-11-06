@@ -8,8 +8,8 @@ SORT_OPTIONS = ("Calories", "Time Taken", "Budget Friendly")
 def sort_recipes(matches, criterion):
     """Return (sorted_matches, budget_cost_available).
 
-    All three criteria use fewer additional ingredients as the first tie-breaker.
-    Missing primary values are always placed last. Stable sorting preserves the
+    All modes sort by additional ingredient count ascending first.
+    The selected preference breaks ties; missing values sort last within a group. Stable sorting preserves the
     incoming order when all available sort keys tie.
     """
     if criterion not in SORT_OPTIONS:
@@ -29,13 +29,13 @@ def sort_recipes(matches, criterion):
     cost_available = cost_column in results.columns and results[cost_column].notna().any()
 
     if criterion == "Calories":
-        columns = ["calories_per_serving", "_required_count", "minutes"]
+        columns = ["_required_count", "calories_per_serving", "minutes"]
         ascending = [True, True, True]
         if cost_available:
             columns.append(cost_column)
             ascending.append(True)
     elif criterion == "Time Taken":
-        columns = ["minutes", "_required_count"]
+        columns = ["_required_count", "minutes"]
         ascending = [True, True]
         if cost_available:
             columns.append(cost_column)
@@ -43,7 +43,7 @@ def sort_recipes(matches, criterion):
         columns.append("calories_per_serving")
         ascending.append(True)
     elif cost_available:
-        columns = [cost_column, "_required_count", "minutes", "calories_per_serving"]
+        columns = ["_required_count", cost_column, "minutes", "calories_per_serving"]
         ascending = [True, True, True, True]
     else:
         # Do not invent a recipe cost from ingredient names or per-100g prices.
