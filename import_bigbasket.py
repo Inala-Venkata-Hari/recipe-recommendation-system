@@ -4,6 +4,7 @@ Or: python import_bigbasket.py --url https://.../bigbasket.csv
 This never modifies small-test, synthetic_demo or existing recipe/inventory data.
 """
 import argparse
+import math
 import json
 import re
 from pathlib import Path
@@ -27,13 +28,14 @@ def norm(value):
 
 def pack_grams(text):
     text = str(text).lower()
-    if re.search(r"\d\s*[x×*]\s*\d|pack of\s*\d|combo|\d\s*(?:ml|litre|liters)\b", text):
+    if re.search(r"\+|\beach\b|\d+(?:\.\d+)?\s*[-–]\s*\d+(?:\.\d+)?\s*(?:kgs?|gms?|grams?)\b|\d\s*[x×*]\s*\d|pack of\s*\d|combo|\bextra\b|\bfree\b|protein|\d\s*(?:ml|litre|liters)\b", text):
         return None
     match = re.findall(r"(?<!\w)(\d+(?:\.\d+)?)\s*(kg|kgs|g|gm|gms|grams?)\b", text)
     if len(match) != 1:
         return None
     value, unit = match[0]
-    return float(value) * (1000 if unit.startswith("k") else 1)
+    grams = float(value) * (1000 if unit.startswith("k") else 1)
+    return grams if grams > 0 else None
 
 def import_catalog(df, source):
     available = {norm(x).replace(" ", "_"): x for x in df.columns}
@@ -45,17 +47,17 @@ def import_catalog(df, source):
     for name in ALIASES:
         if name not in output:
             output[name] = pd.NA
+    output["source_product_id"] = df["index_items"].astype(str) if "index_items" in df else df.index.astype(str)
     original_rows = len(output)
     output["product_name"] = output["product_name"].astype("string").str.strip()
     output["sale_price"] = pd.to_numeric(output["sale_price"], errors="coerce")
     output["market_price"] = pd.to_numeric(output["market_price"], errors="coerce")
     output = output.dropna(subset=["product_name", "sale_price"])
-    output = output[(output.product_name.str.len() > 1) & (output.sale_price > 0)]
+    output = output[(output.product_name.str.len() > 1) & (output.sale_price > 0) & output.sale_price.map(lambda value: math.isfinite(value))]
     output = output.drop_duplicates(subset=["product_name", "brand", "sale_price", "type"])
     output["category"] = output["category"].fillna("Unknown")
-    nonfood = ("beauty", "hygiene", "household", "cleaning", "garden", "pet", "stationery", "electronics")
-    output["grocery_candidate"] = ~output["category"].astype(str).str.casefold().apply(
-        lambda category: any(word in category for word in nonfood))
+    food_categories = {"Gourmet & World Food", "Snacks & Branded Foods", "Foodgrains Oil & Masala", "Beverages", "Bakery Cakes & Dairy", "Fruits & Vegetables", "Eggs Meat & Fish"}
+    output["grocery_candidate"] = output["category"].isin(food_categories)
     output["normalized_product"] = output["product_name"].map(norm)
     output["pack_grams"] = [pack_grams(f"{name} {kind}") for name, kind in zip(output["product_name"], output["type"])]
     output["listed_price_per_100g"] = (output["sale_price"] * 100 /

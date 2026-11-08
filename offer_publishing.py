@@ -71,7 +71,7 @@ def promotion_history(path):
         return []
 
 
-def record_promotion_changes(path, before, after, action, assessment_date):
+def record_promotion_changes(path, before, after, action, assessment_date, currency="INR"):
     """Record changed promotions; repeated identical publication is not a new event."""
     from datetime import datetime
     from zoneinfo import ZoneInfo
@@ -82,7 +82,7 @@ def record_promotion_changes(path, before, after, action, assessment_date):
     events = promotion_history(path)
     timestamp = datetime.now(ZoneInfo('Asia/Kolkata')).isoformat(timespec='seconds')
     for offer in changed:
-        events.append(dict(timestamp=timestamp, assessment_date=str(assessment_date), action=action,
+        events.append(dict(timestamp=timestamp, assessment_date=str(assessment_date), action=action, currency=currency,
                            promotion_id=offer['promotion_id'], items=' + '.join(offer['items']),
                            price=offer['offer_price'], discount_pct=offer['discount_pct'],
                            valid_until=offer['valid_until']))

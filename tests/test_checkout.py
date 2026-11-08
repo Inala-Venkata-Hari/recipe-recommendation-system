@@ -50,3 +50,10 @@ class AutomaticComboTests(unittest.TestCase):
         self.assertEqual(best_missing_combos(['a'],offers,inventory),[])
         result=best_missing_combos(list('abcd'),offers,inventory,chosen=[offers[0]])
         self.assertEqual(result,[])
+
+class MixedCartOfferTests(unittest.TestCase):
+    def test_offer_can_cover_one_existing_and_one_missing_item(self):
+        from checkout import relevant_recipe_offers
+        offers=[dict(items=['rice','beans'],savings=.3),dict(items=['rice','cake'],savings=1),dict(items=['rice'],savings=.2)]
+        self.assertEqual(relevant_recipe_offers(['rice','beans'],['beans'],offers),[offers[0]])
+        self.assertEqual(relevant_recipe_offers(['rice','beans'],[],offers),[])

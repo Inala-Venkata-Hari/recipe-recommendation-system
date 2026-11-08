@@ -142,3 +142,8 @@ Customers can browse active published offers before choosing recipes. Search by 
 ### Schedule-aware combo discovery
 
 Published offers can be prioritized by recipes that fit the selected schedule: busy/short break <=30 minutes, late study/work <=20 minutes, family >=2 recorded servings, after workout contains lentils/chickpeas/paneer/egg/chicken (an ingredient heuristic, not a calculated protein claim). A matching recipe must use every ingredient in the bundle. The customer sees supporting recipe names and can turn prioritization off. Unmatched offers remain available. Recipe order still uses ascending additional-item count, and automatic combo selection still maximizes savings. Schedule context changes neither pricing nor publication/checkout eligibility.
+
+
+## Full USDA USD workflow
+
+Run `python build_usda_trial.py --download` and `streamlit run usda_trial.py --server.port 8503` for the code-linked USDA customer/seller experiment. It includes seller batches/uploads/edits, age/frequency discounts, publication/pause/history, price overrides, customer automatic best-savings combos, simulated checkout and printable USD invoices. USDA reference facts remain separate from user-entered or explicitly simulated inventory. See [USDA_TRIAL.md](USDA_TRIAL.md) for a reproducible demonstration, schedule rules and data limits. The original INR app remains available separately.

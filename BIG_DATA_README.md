@@ -30,7 +30,7 @@ Outputs are isolated under `data/bigbasket_import/`:
 - `product_catalog.csv` — normalized actual third-party catalog listings, with provenance.
 - `import_summary.json` — counts, source and time of import.
 
-**The source CSV is not bundled in the repo** because no reuse/redistribution license was confirmed and no actual source CSV could be downloaded in the development environment. Run the importer with the real source file to populate it. Do not describe an unpopulated import as completed.
+**The source CSV is not bundled in the repo** because no reuse/redistribution license was confirmed. On 2026-11-08, a third-party processed snapshot was downloaded locally from `https://raw.githubusercontent.com/arnavification/bigbasket_sql/main/data.csv`. It contains 26,127 source rows, not the approximately 27,555 rows advertised for the original dataset. The existing importer produced 26,117 distinct valid listings, 12,801 heuristic grocery candidates and 139 listings with explicitly parseable mass-based pack sizes. Raw data, generated outputs and the source/hash manifest remain local and are ignored by Git. This import is not yet connected to `app.py`.
 
 ## Relationship to the recipe recommender
 
@@ -45,3 +45,30 @@ A BigBasket product listing does not contain `stock_qty`, `required_qty`, `unit_
 - Recipe-to-product matching: reviewed matches and coverage/precision metrics; ambiguous matches stay unmatched.
 - Separate Instacart experiment: association rules (support, confidence, lift) with a temporal customer-level evaluation.
 - Seller decision comparison: synthetic inventory urgency baseline vs heuristic changes; no real sales uplift claims without outcomes.
+
+
+## Selected replacement recipe dataset
+
+The main app now prefers the locally imported DataHive real recipe profile (39,447 records) over synthetic_demo. See [RECIPE_DATA_COMPARISON.md](RECIPE_DATA_COMPARISON.md) for the measured comparison, licensing, missing metadata and reproduction command. Run `python import_real_recipes.py --download` to recreate the profile on another machine. Recipe-to-BigBasket mapping is still pending; real recipe prices and seller batches are not invented.
+
+
+## Active quantity-aware price source and recipe filter
+
+The app now uses [BigBasket Products by Chinmay Shanbhag](https://www.kaggle.com/datasets/chinmayshanbhag/big-basket-products), version 1, a historical listing snapshot last updated by its publisher on 2022-08-21. The actual file has 8,208 products and a separate Quantity column; 1,761 food listings have positive prices and exact gram/kg pack quantities.
+
+Reproduce the current local profile:
+
+```bash
+python import_real_recipes.py --download
+python import_bigbasket_quantity.py --download
+python build_price_compatible_recipes.py
+streamlit run app.py
+```
+
+The price downloader verifies the source CSV checksum. Volume/piece/multipack listings, non-food categories and invalid prices are excluded. Product URLs, original quantities, source prices and explicit ingredient mapping methods are retained. `product_ingredient_aliases.json` contains exact named-product aliases; no fuzzy name matching is used. Unlisted exact ingredient/product names may match literally, subject to `product_mapping_exclusions.json` for contextually incorrect products.
+
+The imported catalog currently prices **75 recipe ingredient names**. The strict full-quantity/full-price rule initially retained 14 recipes, but further checks excluded incomplete recipe records, product-state mismatches and misleading literal matches (including dried pineapple and cream-filled wafers). The active profile now retains **6 recipes**, all with calculable ingredient costs, out of 39,447 source records. The excluded-recipe and missing-price reports remain local. `recipe_quality_exclusions.json` documents reviewed source issues. These checks do not establish the accuracy of every upstream recipe or measured food yield.
+
+`BigBasket-priced recipes only` is the default profile and its sourced price catalog is read-only. Manual/synthetic prices cannot enter it through the editor. Source archives and the separate synthetic demo are preserved. Catalog rates are prorated historical INR/100g estimates; costs do not include pack-size purchase minimums, preparation yield, taxes or delivery. Cooking time and verified per-serving calorie basis remain unknown and are not fabricated.
+
+Raw and generated third-party data remain ignored by Git, including `data/bigbasket_quantity/` and `data/price_compatible_recipes/`. No reuse license was confirmed for the inspected grocery data; source files are not redistributed by this change. Seller acquisition costs, stock and expiry must still be supplied separately.

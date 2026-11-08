@@ -1,9 +1,12 @@
 import ast
+import json
+import io
+import math
 from schedule_offers import RULES, schedule_offer_matches, recipe_fits_schedule
 from offer_publishing import promotion_id, publish_snapshot, active_promotions, save_promotions, load_promotions, promotion_history, record_promotion_changes, browse_promotions
 from inventory_batches import create_batch
 from catalog_import import merge_catalog
-from checkout import offer_key, checkout_lines, validate_bundles, best_missing_combos
+from checkout import offer_key, checkout_lines, validate_bundles, best_missing_combos, relevant_recipe_offers
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -17,24 +20,6 @@ from recipe_sorting import sort_recipes
 from inventory_discounts import generate_combo_offers, score_inventory
 
 ROOT = Path(__file__).parent
-# An explicit RECIPE_DATA_DIR always wins. Otherwise, use the bundled synthetic
-# demo dataset when present so its recipe quantities and ingredient prices load
-# together; fall back to the regular data directory for normal deployments.
-configured_data_dir = os.environ.get("RECIPE_DATA_DIR")
-SYNTHETIC_DATA_DIR = ROOT / "data" / "synthetic_demo"
-DATA_DIR = (
-    Path(configured_data_dir)
-    if configured_data_dir
-    else SYNTHETIC_DATA_DIR if (SYNTHETIC_DATA_DIR / "recipes_cleaned.csv").exists()
-    else ROOT / "data"
-)
-DATA_FILE = DATA_DIR / "recipes_cleaned.csv"
-CLASSIFICATION_FILE = DATA_DIR / "ingredients_classified.csv"
-INVENTORY_FILE = DATA_DIR / "seller_inventory.csv"
-CATALOG_FILE = DATA_DIR / "ingredient_catalog.csv"
-PANTRY_FILE = DATA_DIR / "pantry_ingredients.csv"
-PANTRY_CANDIDATES_FILE = DATA_DIR / "pantry_candidates.csv"
-CUSTOM_FILE = DATA_DIR / "custom_recipes.csv"
 
 
 def parse_list(value):
@@ -50,8 +35,8 @@ def parse_list(value):
 
 
 @st.cache_data
-def load_recipes():
-    df = pd.read_csv(DATA_FILE)
+def load_recipes(recipe_path, modified_ns):
+    df = pd.read_csv(recipe_path)
     for column in ("ingredients", "ingredient_quantities", "tags", "steps", "nutrition"):
         if column in df:
             df[column] = df[column].apply(parse_list)
@@ -104,7 +89,7 @@ def ingredient_estimate(ingredients, catalog):
 from recipe_costs import add_recipe_cost_estimates
 
 
-def add_missing_items(items, recipe_quantities, current_offers, current_inventory):
+def add_missing_items(items, recipe_quantities, current_offers, current_inventory, required_items=None):
     cart = list(st.session_state.get("cart_ingredients", []))
     quantities = {
         normalize_ingredient(entry["name"]): float(entry["quantity_g"])
@@ -117,7 +102,9 @@ def add_missing_items(items, recipe_quantities, current_offers, current_inventor
             amount = quantities.get(normalize_ingredient(item), 100.0)
             st.session_state[f"cart_quantity_{normalize_ingredient(item)}"] = max(1.0, amount)
     st.session_state["cart_ingredients"] = cart
-    automatic = best_missing_combos(items, current_offers, current_inventory,
+    required_items = required_items or items
+    useful = relevant_recipe_offers(required_items, items, current_offers)
+    automatic = best_missing_combos(required_items, useful, current_inventory,
                                     st.session_state.get("chosen_combos", []))
     for offer in automatic:
         add_combo(offer)
@@ -151,9 +138,58 @@ def reset_demo():
 
 
 st.set_page_config(page_title="Smart Cart Recipe Recommender", page_icon="🍲", layout="wide")
+
+configured_data_dir = os.environ.get("RECIPE_DATA_DIR")
+SYNTHETIC_DATA_DIR = ROOT / "data" / "synthetic_demo"
+REAL_DATA_DIR = ROOT / "data" / "real_recipes"
+PRICE_COMPATIBLE_DIR = ROOT / "data" / "price_compatible_recipes"
+if configured_data_dir:
+    DATA_DIR = Path(configured_data_dir)
+else:
+    profiles = {}
+    if (PRICE_COMPATIBLE_DIR / "recipes_cleaned.csv").exists():
+        profiles["BigBasket-priced recipes only"] = PRICE_COMPATIBLE_DIR
+    if (REAL_DATA_DIR / "recipes_cleaned.csv").exists():
+        profiles["Full recipe source archive — unfiltered"] = REAL_DATA_DIR
+    profiles["Synthetic presentation demo"] = SYNTHETIC_DATA_DIR
+    profiles["Food.com sample"] = ROOT / "data"
+    selected_profile = st.sidebar.selectbox("Recipe dataset", list(profiles))
+    DATA_DIR = profiles[selected_profile]
+DATA_FILE = DATA_DIR / "recipes_cleaned.csv"
+CLASSIFICATION_FILE = DATA_DIR / "ingredients_classified.csv"
+INVENTORY_FILE = DATA_DIR / "seller_inventory.csv"
+CATALOG_FILE = DATA_DIR / "ingredient_catalog.csv"
+PANTRY_FILE = DATA_DIR / "pantry_ingredients.csv"
+PANTRY_CANDIDATES_FILE = DATA_DIR / "pantry_candidates.csv"
+CUSTOM_FILE = DATA_DIR / "custom_recipes.csv"
+# Keep cart quantities and chosen bundles separate when changing dataset profiles.
+if st.session_state.get("active_data_directory") != str(DATA_DIR):
+    for key in list(st.session_state):
+        if key.startswith("cart_quantity_") or key in {"cart_ingredients", "chosen_combos", "demo_receipt", "publish_draft_ids", "ingredient_price_catalog_editor"}:
+            del st.session_state[key]
+    st.session_state["active_data_directory"] = str(DATA_DIR)
 st.title("🍲 Smart Cart: Inventory-Aware Recipe Recommendations")
 st.button("Reset demo", on_click=reset_demo, help="Reset this session’s cart, combos, receipt, upload and controls. Saved CSV files are unchanged.")
 st.caption("Seller inventory and supply conditions drive combination offers; recipes make those offers useful to customers.")
+if DATA_DIR == PRICE_COMPATIBLE_DIR:
+    manifest = json.loads((DATA_DIR / "dataset_manifest.json").read_text())
+    st.info(f"Strict real-price subset: {manifest['usable_unique_recipes']:,} retained / {manifest['source_recipe_count']:,} source recipes. Every required ingredient needs a known BigBasket unit price and a valid recipe gram quantity.")
+    st.caption("Prices: historical BigBasket listings from the dataset updated August 2022—not live quotes. Estimates prorate listed pack prices to recipe grams and exclude pack-purchase minimums and preparation yields.")
+    st.caption(f"{manifest['priced_ingredients']} recipe ingredient names have mapped product prices. {manifest.get('quality_exclusions', 0)} source records are excluded for documented quality or product-state mismatches.")
+    with st.expander("View ingredient-to-product price mappings"):
+        st.dataframe(pd.read_csv(CATALOG_FILE), hide_index=True, width="stretch")
+    if manifest["usable_unique_recipes"] == 0:
+        st.warning("No recipes satisfy the real-price rule with the current BigBasket snapshot. No prices, weights or calories have been invented. The full source is preserved in the dataset selector for inspection.")
+        with st.expander("Why recipes were excluded and which prices are needed", expanded=True):
+            st.write(f"Only {manifest['priced_ingredients']} recipe ingredients have mapped products with usable pack weights. Most source listings omit the pack size, so their pack price cannot safely be converted to a price per 100 g.")
+            needed = pd.read_csv(DATA_DIR / "missing_prices.csv")
+            st.dataframe(needed.head(20), hide_index=True, width="stretch")
+            st.download_button("Download missing ingredient prices (CSV)", needed.to_csv(index=False), file_name="missing_ingredient_prices.csv", mime="text/csv")
+            st.caption("Add sourced product pack sizes and verified ingredient mappings, then run python build_price_compatible_recipes.py to rebuild this subset. A plain catalog edit does not qualify as an observed BigBasket price.")
+if DATA_DIR == REAL_DATA_DIR:
+    manifest = json.loads((DATA_DIR / "dataset_manifest.json").read_text())
+    st.info(f"Real recipe dataset • {manifest['usable_unique_recipes']:,} recipes • Publisher: DataHive AI • CC BY-NC 4.0. Source gram weights may be estimates. Cooking times and verified per-serving calories are unavailable.")
+    st.caption("Recipe prices require entered or approved product mappings. Seller stock and procurement costs are not supplied by the recipe dataset.")
 if DATA_DIR == SYNTHETIC_DATA_DIR:
     st.info("Presentation demo • Synthetic inventory, prices and nutrition; no measured sales uplift. Snapshot date: 2026-11-05.")
 
@@ -161,10 +197,14 @@ if not DATA_FILE.exists():
     st.error(f"Recipe data not found in {DATA_DIR}. Run python generate_synthetic_data.py or python preprocess.py.")
     st.stop()
 
-recipes = load_recipes()
+recipes = load_recipes(str(DATA_FILE), DATA_FILE.stat().st_mtime_ns)
 classified = read_csv_or_empty(CLASSIFICATION_FILE, ["ingredient_name", "recipe_frequency", "frequency_ratio", "ingredient_frequency_category"])
 catalog = read_csv_or_empty(CATALOG_FILE, ["ingredient_name", "price_per_100g", "kcal_per_100g"])
-recipes = add_recipe_cost_estimates(recipes, catalog)
+@st.cache_data
+def price_recipe_dataset(recipe_path, modified_ns, catalog_csv):
+    return add_recipe_cost_estimates(load_recipes(recipe_path, modified_ns), pd.read_csv(io.StringIO(catalog_csv)))
+
+recipes = price_recipe_dataset(str(DATA_FILE), DATA_FILE.stat().st_mtime_ns, catalog.to_csv(index=False))
 pantry_df = read_csv_or_empty(PANTRY_FILE, ["ingredient_name", "enabled", "notes"])
 pantry_candidates = read_csv_or_empty(PANTRY_CANDIDATES_FILE, ["ingredient_name", "recipe_frequency", "frequency_ratio"])
 # Core pantry staples are explicitly curated; the CSV adds household-specific approvals.
@@ -416,7 +456,9 @@ with tabs[0]:
     if not catalog.empty and "ingredient_name" in catalog.columns and "price_per_100g" in catalog.columns:
         for row in catalog.itertuples():
             try:
-                price_lookup[normalize_ingredient(row.ingredient_name)] = float(row.price_per_100g)
+                rate = float(row.price_per_100g)
+                if math.isfinite(rate) and rate >= 0:
+                    price_lookup[normalize_ingredient(row.ingredient_name)] = rate
             except (TypeError, ValueError):
                 pass
     selected = st.multiselect(
@@ -516,9 +558,16 @@ with tabs[0]:
                     "placed after recipes with known costs within the same additional-item count. Their actual affordability "
                     "cannot be compared until ingredient quantities and prices are available."
                 )
-            for _, recipe in matches.iterrows():
+            page_count = max(1, (len(matches) + 19) // 20)
+            recipe_page = st.selectbox("Recipe results page", list(range(1, page_count + 1)))
+            st.caption(f"Showing recipes {(recipe_page-1)*20+1}–{min(recipe_page*20,len(matches))} of {len(matches):,}")
+            for _, recipe in matches.iloc[(recipe_page-1)*20:recipe_page*20].iterrows():
                 with st.container(border=True):
                     st.subheader(str(recipe["name"]))
+                    if pd.notna(recipe.get("source_url")):
+                        st.link_button("Original recipe source", str(recipe["source_url"]))
+                    if "quantity_complete" in recipe and not recipe["quantity_complete"]:
+                        st.caption("Some ingredient weights are missing; whole-recipe cost is unavailable.")
                     if recipe_fits_schedule(recipe, schedule):
                         st.caption("Fits your schedule: " + RULES[schedule])
                     used = recipe["_matched_ingredients"]
@@ -547,7 +596,7 @@ with tabs[0]:
                         cost_col, serving_col = st.columns(2)
                         cost_col.metric("Estimated recipe cost", f"₹{recipe['estimated_cost']:.2f}")
                         serving_col.metric("Estimated cost / serving", f"₹{recipe['estimated_cost_per_serving']:.2f}")
-                        st.caption("Estimate based on synthetic ingredient quantities and current catalog rates.")
+                        st.caption("Estimate based on dataset ingredient quantities and current catalog rates.")
                     else:
                         st.warning("Recipe cost unavailable: ingredient quantities or catalog prices are missing.")
                     additional_items = sorted(
@@ -561,13 +610,10 @@ with tabs[0]:
                         if not isinstance(recipe_quantities, list):
                             recipe_quantities = []
                         st.button("Add missing items to cart", key=f"add_missing_{recipe['id']}",
-                                  on_click=add_missing_items, args=(additional_items, recipe_quantities, customer_offers, inventory))
-                        st.caption("Automatically applies the highest total savings from non-overlapping eligible combos for these missing items. Discounted items use at least one 100 g pack; other items use recipe quantities (or 100 g if unknown).")
-                        relevant_offers = [
-                            offer for offer in customer_offers
-                            if set(normalize_ingredient_list(offer["items"])).issubset(set(additional_items))
-                        ]
-                        relevant_offers.sort(key=lambda offer: -offer["savings"])
+                                  on_click=add_missing_items, args=(additional_items, recipe_quantities, customer_offers, inventory, sorted(set(normalize_ingredient_list(recipe["ingredients"])) & (set(normalize_ingredient_list(selected)) | set(additional_items)))))
+                        st.caption("Automatically applies the highest total savings from non-overlapping eligible combos covering missing items and ingredients already in your cart. Discounted items use at least one 100 g pack; other items use recipe quantities (or 100 g if unknown).")
+                        allowed_combo_items = set(normalize_ingredient_list(recipe["ingredients"])) & (set(normalize_ingredient_list(selected)) | set(additional_items))
+                        relevant_offers = relevant_recipe_offers(allowed_combo_items, additional_items, customer_offers)
                         if relevant_offers:
                             st.success("Discounted combinations are available for your additional items")
                             for offer in relevant_offers[:3]:
@@ -681,60 +727,66 @@ with tabs[2]:
 
 with tabs[3]:
     st.header("Ingredient-wise price catalog")
-    st.write("Enter the market price for each ingredient using a consistent base quantity of 100 grams.")
-    st.caption("Example: if 1 kg of rice costs ₹60, enter ₹6 as the price per 100 g. Leave unknown prices blank; the app will not guess them.")
-    st.download_button("Download price catalog CSV template",
-                       "ingredient_name,price_per_100g,kcal_per_100g\n", file_name="ingredient_catalog_template.csv", mime="text/csv")
-    catalog_upload = st.file_uploader("Upload ingredient price catalog (CSV)", type=["csv"], key="catalog_csv_upload")
-    st.caption("Required: ingredient_name, price_per_100g. Optional: kcal_per_100g. Matching ingredients are updated; other ingredients are retained. Blank values clear the uploaded field; an omitted calorie column preserves existing calories.")
-    if catalog_upload is not None:
-        try:
-            imported = pd.read_csv(catalog_upload)
-            merged_catalog = merge_catalog(catalog, imported)
-        except (ValueError, pd.errors.ParserError, pd.errors.EmptyDataError, UnicodeDecodeError) as exc:
-            st.error("Catalog upload could not be applied: " + str(exc))
-        else:
-            st.write(f"Preview: {len(imported)} uploaded ingredient rows")
-            st.dataframe(imported, hide_index=True, width="stretch")
-            if st.button("Apply uploaded catalog"):
-                CATALOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-                merged_catalog.to_csv(CATALOG_FILE, index=False)
-                st.session_state.pop("ingredient_price_catalog_editor", None)
-                st.session_state.pop("demo_receipt", None)
-                st.session_state["catalog_upload_notice"] = "Uploaded ingredient prices saved. Cart and recipe estimates have been refreshed."
-                st.cache_data.clear()
-                st.rerun()
-    if st.session_state.get("catalog_upload_notice"):
-        st.success(st.session_state.pop("catalog_upload_notice"))
-    if catalog.empty:
-        st.info("Upload a CSV to create your ingredient catalog.")
+    if DATA_DIR == PRICE_COMPATIBLE_DIR:
+        st.info("This profile uses only sourced BigBasket prices. Its catalog is read-only so manual or synthetic prices cannot enter the verified recipe subset.")
+        st.dataframe(catalog, hide_index=True, width="stretch")
+        st.download_button("Download sourced price mappings (CSV)", catalog.to_csv(index=False), file_name="sourced_price_mappings.csv", mime="text/csv")
+        st.caption("Update the source import or reviewed ingredient mappings and rebuild the compatible subset to change these prices. Use another profile for editable demo prices.")
     else:
-        edited_catalog = st.data_editor(
-            catalog,
-            num_rows="dynamic",
-            width="stretch",
-            key="ingredient_price_catalog_editor",
-            column_config={
-                "ingredient_name": st.column_config.TextColumn("Ingredient", required=True),
-                "price_per_100g": st.column_config.NumberColumn("Price per 100 g (₹)", min_value=0.0, format="%.2f"),
-                "kcal_per_100g": st.column_config.NumberColumn("Calories per 100 g", min_value=0.0, format="%.1f"),
-            },
-        )
-        if st.button("Save ingredient prices"):
-            save_catalog = edited_catalog.copy()
-            save_catalog["ingredient_name"] = save_catalog["ingredient_name"].fillna("").astype(str).str.strip()
-            save_catalog = save_catalog[save_catalog["ingredient_name"] != ""]
-            save_catalog["_normalized_name"] = save_catalog["ingredient_name"].map(normalize_ingredient)
-            if save_catalog["_normalized_name"].duplicated().any():
-                st.error("Duplicate ingredient names found after normalization. Keep only one row per ingredient.")
+        st.write("Enter the market price for each ingredient using a consistent base quantity of 100 grams.")
+        st.caption("Example: if 1 kg of rice costs ₹60, enter ₹6 as the price per 100 g. Leave unknown prices blank; the app will not guess them.")
+        st.download_button("Download price catalog CSV template",
+                           "ingredient_name,price_per_100g,kcal_per_100g\n", file_name="ingredient_catalog_template.csv", mime="text/csv")
+        catalog_upload = st.file_uploader("Upload ingredient price catalog (CSV)", type=["csv"], key="catalog_csv_upload")
+        st.caption("Required: ingredient_name, price_per_100g. Optional: kcal_per_100g. Matching ingredients are updated; other ingredients are retained. Blank values clear the uploaded field; an omitted calorie column preserves existing calories.")
+        if catalog_upload is not None:
+            try:
+                imported = pd.read_csv(catalog_upload)
+                merged_catalog = merge_catalog(catalog, imported)
+            except (ValueError, pd.errors.ParserError, pd.errors.EmptyDataError, UnicodeDecodeError) as exc:
+                st.error("Catalog upload could not be applied: " + str(exc))
             else:
-                save_catalog = save_catalog.drop(columns=["_normalized_name"])
-                for column in ("price_per_100g", "kcal_per_100g"):
-                    save_catalog[column] = pd.to_numeric(save_catalog[column], errors="coerce")
-                    if (save_catalog[column].dropna() < 0).any():
-                        st.error(f"{column} cannot contain negative values.")
-                        st.stop()
-                save_catalog.to_csv(CATALOG_FILE, index=False)
-                st.success("Ingredient price catalog saved.")
-                st.cache_data.clear()
-                st.rerun()
+                st.write(f"Preview: {len(imported)} uploaded ingredient rows")
+                st.dataframe(imported, hide_index=True, width="stretch")
+                if st.button("Apply uploaded catalog"):
+                    CATALOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+                    merged_catalog.to_csv(CATALOG_FILE, index=False)
+                    st.session_state.pop("ingredient_price_catalog_editor", None)
+                    st.session_state.pop("demo_receipt", None)
+                    st.session_state["catalog_upload_notice"] = "Uploaded ingredient prices saved. Cart and recipe estimates have been refreshed."
+                    st.cache_data.clear()
+                    st.rerun()
+        if st.session_state.get("catalog_upload_notice"):
+            st.success(st.session_state.pop("catalog_upload_notice"))
+        if catalog.empty:
+            st.info("Upload a CSV to create your ingredient catalog.")
+        else:
+            edited_catalog = st.data_editor(
+                catalog,
+                num_rows="dynamic",
+                width="stretch",
+                key="ingredient_price_catalog_editor",
+                column_config={
+                    "ingredient_name": st.column_config.TextColumn("Ingredient", required=True),
+                    "price_per_100g": st.column_config.NumberColumn("Price per 100 g (₹)", min_value=0.0, format="%.2f"),
+                    "kcal_per_100g": st.column_config.NumberColumn("Calories per 100 g", min_value=0.0, format="%.1f"),
+                },
+            )
+            if st.button("Save ingredient prices"):
+                save_catalog = edited_catalog.copy()
+                save_catalog["ingredient_name"] = save_catalog["ingredient_name"].fillna("").astype(str).str.strip()
+                save_catalog = save_catalog[save_catalog["ingredient_name"] != ""]
+                save_catalog["_normalized_name"] = save_catalog["ingredient_name"].map(normalize_ingredient)
+                if save_catalog["_normalized_name"].duplicated().any():
+                    st.error("Duplicate ingredient names found after normalization. Keep only one row per ingredient.")
+                else:
+                    save_catalog = save_catalog.drop(columns=["_normalized_name"])
+                    for column in ("price_per_100g", "kcal_per_100g"):
+                        save_catalog[column] = pd.to_numeric(save_catalog[column], errors="coerce")
+                        if (save_catalog[column].dropna() < 0).any():
+                            st.error(f"{column} cannot contain negative values.")
+                            st.stop()
+                    save_catalog.to_csv(CATALOG_FILE, index=False)
+                    st.success("Ingredient price catalog saved.")
+                    st.cache_data.clear()
+                    st.rerun()

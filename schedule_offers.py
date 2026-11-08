@@ -25,7 +25,7 @@ def recipe_fits_schedule(recipe, schedule):
 
 
 def schedule_offer_matches(offers, recipes, schedule):
-    if schedule not in RULES:
+    if not offers or schedule not in RULES:
         return {}
     eligible = [row for row in recipes.to_dict('records') if recipe_fits_schedule(row,schedule)]
     result = {}

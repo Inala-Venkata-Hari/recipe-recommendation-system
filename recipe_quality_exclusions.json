@@ -1,0 +1,7 @@
+{
+  "http://www.delish.com/cooking/recipe-ideas/recipes/a25698/blueberry-buttermilk-coffee-cake-1769/": "Source ingredient list appears to describe topping only; blueberries and buttermilk are absent.",
+  "https://www.taste.com.au/recipes/peanut-brittle-2/acb7563a-0ecd-4a29-8ad7-d2942d1ac09f": "Original ingredient line requires unsalted roasted peanuts; only raw peanut SKU mapping is available.",
+  "https://www.sunset.com/recipe/lemon-grass-ginger-iced-tea": "Original ingredient line specifies green tea bags, while structured food says tea; matched generic tea product is not verified as equivalent.",
+  "http://ninerecipes.com/garlic-honey-7-days-body/": "Remedy-style source record with an unverified health claim, not a meal recipe.",
+  "https://food52.com/recipes/77160-almond-butter": "Original optional ingredient line lists alternatives represented only as salt in the structured source; requires review."
+}
