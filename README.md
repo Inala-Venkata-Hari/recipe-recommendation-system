@@ -142,3 +142,8 @@ Customers can browse active published offers before choosing recipes. Search by 
 ### Schedule-aware combo discovery
 
 Published offers can be prioritized by recipes that fit the selected schedule: busy/short break <=30 minutes, late study/work <=20 minutes, family >=2 recorded servings, after workout contains lentils/chickpeas/paneer/egg/chicken (an ingredient heuristic, not a calculated protein claim). A matching recipe must use every ingredient in the bundle. The customer sees supporting recipe names and can turn prioritization off. Unmatched offers remain available. Recipe order still uses ascending additional-item count, and automatic combo selection still maximizes savings. Schedule context changes neither pricing nor publication/checkout eligibility.
+
+
+### Printable checkout invoice
+
+Confirmation now generates a self-contained HTML invoice instead of a customer CSV receipt. It includes an invoice reference, issue timestamp in India time, assessment date, item/quantity/batch details, regular prices, combo savings and final total. Preview it in checkout or download and open it in a browser, then Print / Save as PDF. Invoice fields are HTML-escaped. This is a simulated document, not a tax invoice or payment confirmation; taxes and delivery are not calculated. Seller data exports remain CSV.

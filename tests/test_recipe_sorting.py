@@ -48,6 +48,14 @@ class RecipeSortingTests(unittest.TestCase):
         result, _ = sort_recipes(data, "Calories")
         self.assertEqual(result["name"].tolist(), ["C", "A", "D", "B"])
 
+    def test_cart_matches_override_cost_time_and_additional_count(self):
+        data = self.recipes.copy()
+        data["_match_count"] = [3, 2, 1, 3]
+        for mode in ("Calories", "Time Taken", "Budget Friendly"):
+            with self.subTest(mode=mode):
+                result, _ = sort_recipes(data, mode)
+                self.assertEqual(result["name"].tolist(), ["D", "A", "B", "C"])
+
     def test_unknown_sort_option_is_rejected(self):
         with self.assertRaises(ValueError):
             sort_recipes(self.recipes, "Popularity")

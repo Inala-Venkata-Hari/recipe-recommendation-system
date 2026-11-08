@@ -8,7 +8,8 @@ SORT_OPTIONS = ("Calories", "Time Taken", "Budget Friendly")
 def sort_recipes(matches, criterion):
     """Return (sorted_matches, budget_cost_available).
 
-    All modes sort by additional ingredient count ascending first.
+    All modes sort by matched cart ingredient count descending first, then
+    additional ingredient count ascending.
     The selected preference breaks ties; missing values sort last within a group. Stable sorting preserves the
     incoming order when all available sort keys tie.
     """
@@ -16,7 +17,7 @@ def sort_recipes(matches, criterion):
         raise ValueError(f"Unknown recipe sorting criterion: {criterion}")
 
     results = matches.copy()
-    for column in ("calories_per_serving", "minutes", "estimated_cost", "estimated_cost_per_serving", "_required_count"):
+    for column in ("calories_per_serving", "minutes", "estimated_cost", "estimated_cost_per_serving", "_required_count", "_match_count"):
         if column in results.columns:
             results[column] = pd.to_numeric(results[column], errors="coerce")
 
@@ -49,6 +50,10 @@ def sort_recipes(matches, criterion):
         # Do not invent a recipe cost from ingredient names or per-100g prices.
         columns = ["_required_count", "minutes", "calories_per_serving"]
         ascending = [True, True, True]
+
+    if "_match_count" in results.columns:
+        columns.insert(0, "_match_count")
+        ascending.insert(0, False)
 
     usable_columns = [column for column in columns if column in results.columns]
     usable_ascending = [ascending[i] for i, column in enumerate(columns) if column in results.columns]

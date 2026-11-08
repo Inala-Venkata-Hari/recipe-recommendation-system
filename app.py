@@ -1,4 +1,6 @@
 import ast
+from invoice import render_invoice
+import streamlit.components.v1 as components
 from schedule_offers import RULES, schedule_offer_matches, recipe_fits_schedule
 from offer_publishing import promotion_id, publish_snapshot, active_promotions, save_promotions, load_promotions, promotion_history, record_promotion_changes, browse_promotions
 from inventory_batches import create_batch
@@ -357,7 +359,7 @@ with tabs[1]:
 
 with tabs[0]:
     st.header("1. Meal preference and context")
-    sort_preference = st.radio("Break ties after fewest additional items by", ["Calories", "Time Taken", "Budget Friendly"], horizontal=True)
+    sort_preference = st.radio("Break ties after cart matches and additional items by", ["Calories", "Time Taken", "Budget Friendly"], horizontal=True)
     now = datetime.now().astimezone()
     hour = now.hour
     meal_period = "Breakfast" if 5 <= hour < 11 else "Lunch" if 11 <= hour < 16 else "Dinner" if 17 <= hour < 22 else "Light meal"
@@ -497,13 +499,13 @@ with tabs[0]:
         else:
             max_matches = int(matches["_match_count"].max())
             st.caption(f"Your recommendations match up to {max_matches} of your {len(selected)} selected cart items.")
-            st.caption("Recipes are always sorted by additional ingredients required: 0, 1, 2, … . Your selected preference breaks ties only.")
+            st.caption("Recipes using more of your selected cart ingredients appear first, then those needing fewer additional items. Your selected preference breaks ties after both counts.")
             matches, budget_cost_available = sort_recipes(matches, sort_preference)
             if sort_preference == "Budget Friendly" and not budget_cost_available:
                 st.warning(
                     "Budget Friendly sorting cannot calculate costs for these matches because "
                     "some recipes are missing ingredient quantities or catalog prices. "
-                    "Those recipes are ordered after recipes with known costs within the same additional-item count."
+                    "Those recipes are ordered after recipes with known costs within the same matched-cart and additional-item counts."
                 )
             elif (
                 sort_preference == "Budget Friendly"
@@ -513,7 +515,7 @@ with tabs[0]:
                 missing_costs = int(matches["estimated_cost"].isna().sum())
                 st.warning(
                     f"{missing_costs} recipe(s) have no reliable cost estimate and are "
-                    "placed after recipes with known costs within the same additional-item count. Their actual affordability "
+                    "placed after recipes with known costs within the same matched-cart and additional-item counts. Their actual affordability "
                     "cannot be compared until ingredient quantities and prices are available."
                 )
             for _, recipe in matches.iterrows():
@@ -537,7 +539,7 @@ with tabs[0]:
                     st.caption("Matched cart cost uses your entered cart quantities; recipe cost below uses recipe quantities.")
                     required = int(recipe["_required_count"])
                     if required == 0:
-                        st.success("✓ ZERO ADDITIONAL INGREDIENTS REQUIRED — everything needed is already in your cart or enabled pantry.")
+                        st.success("You have picked all the items required.")
                     else:
                         st.write(f"Additional ingredients required: **{required}**")
                     a, b = st.columns(2)
@@ -628,14 +630,21 @@ with tabs[0]:
                 except ValueError as exc:
                     st.error(str(exc))
                 else:
-                    receipt = pd.DataFrame(confirmed)
-                    receipt["Assessment date"] = str(assessment_date)
-                    receipt["Status"] = "SIMULATED — no payment or stock deduction"
-                    st.session_state["demo_receipt"] = receipt.to_csv(index=False).encode("utf-8")
+                    st.session_state["demo_receipt"] = render_invoice(confirmed, assessment_date).encode("utf-8")
             if st.session_state.get("demo_receipt"):
-                st.success("Simulated receipt ready. This is a snapshot of the confirmed cart.")
-                st.download_button("Download simulated receipt (CSV)", st.session_state["demo_receipt"],
-                                   file_name="simulated_receipt.csv", mime="text/csv")
+                receipt_html = st.session_state["demo_receipt"].decode("utf-8")
+                if receipt_html.startswith("<!DOCTYPE html>"):
+                    st.success("Your simulated invoice is ready.")
+                    if hasattr(st, "iframe"):
+                        st.iframe(receipt_html, height=680, alt="Simulated Smart Cart invoice")
+                    else:
+                        components.html(receipt_html, height=680, scrolling=True)
+                    st.download_button("Download invoice (HTML)", st.session_state["demo_receipt"],
+                                       file_name="smart_cart_invoice.html", mime="text/html")
+                    st.caption("Open the downloaded invoice in your browser, then choose Print / Save as PDF. It records the confirmed cart snapshot.")
+                else:
+                    st.info("Confirm simulated checkout again to generate the new invoice format.")
+
     else:
         st.info("Select cart ingredients or add a discounted combo to preview checkout.")
 
