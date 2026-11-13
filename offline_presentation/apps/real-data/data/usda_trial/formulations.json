@@ -1,0 +1,2258 @@
+[
+  {
+    "food_code": 13110000,
+    "name": "Ice cream, NFS",
+    "kcal_per_100g": 221.0,
+    "protein_per_100g": 3.57,
+    "ingredients": [
+      {
+        "food_code": 13110102,
+        "name": "Ice cream, vanilla, with additional ingredients",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.685946,
+        "batch_cost_usd": 0.27437839999999997
+      },
+      {
+        "food_code": 13110100,
+        "name": "Ice cream, vanilla",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.468552,
+        "batch_cost_usd": 0.2811312
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.5555095999999999,
+    "prepared_food_price_per_100g_usd": 0.529172,
+    "fdc_id": 1097923
+  },
+  {
+    "food_code": 14650170,
+    "name": "Alfredo sauce with meat",
+    "kcal_per_100g": 170.0,
+    "protein_per_100g": 6.72,
+    "ingredients": [
+      {
+        "food_code": 14650160,
+        "name": "Alfredo sauce",
+        "grams": 260.0,
+        "price_per_100g_usd": 0.50362,
+        "batch_cost_usd": 1.309412
+      },
+      {
+        "food_code": 21500100,
+        "name": "Ground beef, cooked",
+        "grams": 60.0,
+        "price_per_100g_usd": 1.279787,
+        "batch_cost_usd": 0.7678722
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 320.0,
+    "ingredient_batch_cost_usd": 2.0772842000000002,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1098145
+  },
+  {
+    "food_code": 24102000,
+    "name": "Chicken, NS as to part, baked, broiled, or roasted, NS as to skin eaten",
+    "kcal_per_100g": 165.0,
+    "protein_per_100g": 27.3,
+    "ingredients": [
+      {
+        "food_code": 24122131,
+        "name": "Chicken breast, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 0.5300705
+      },
+      {
+        "food_code": 24142301,
+        "name": "Chicken drumstick, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491169,
+        "batch_cost_usd": 0.09823380000000001
+      },
+      {
+        "food_code": 24152231,
+        "name": "Chicken thigh, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844161,
+        "batch_cost_usd": 0.2532483
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8815526,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1098421
+  },
+  {
+    "food_code": 24102010,
+    "name": "Chicken, NS as to part, baked, broiled, or roasted, skin eaten",
+    "kcal_per_100g": 203.0,
+    "protein_per_100g": 24.7,
+    "ingredients": [
+      {
+        "food_code": 24142300,
+        "name": "Chicken drumstick, baked, broiled, or roasted, skin eaten, from raw",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.43085,
+        "batch_cost_usd": 0.08617000000000001
+      },
+      {
+        "food_code": 24122130,
+        "name": "Chicken breast, baked, broiled, or roasted, skin eaten, from raw",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 0.5300705
+      },
+      {
+        "food_code": 24152230,
+        "name": "Chicken thigh, baked, broiled, or roasted, skin eaten, from raw",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.753168,
+        "batch_cost_usd": 0.22595039999999997
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8421909,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1098422
+  },
+  {
+    "food_code": 24102020,
+    "name": "Chicken, NS as to part, baked, broiled, or roasted, skin not eaten",
+    "kcal_per_100g": 165.0,
+    "protein_per_100g": 27.3,
+    "ingredients": [
+      {
+        "food_code": 24142301,
+        "name": "Chicken drumstick, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491169,
+        "batch_cost_usd": 0.09823380000000001
+      },
+      {
+        "food_code": 24122131,
+        "name": "Chicken breast, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 0.5300705
+      },
+      {
+        "food_code": 24152231,
+        "name": "Chicken thigh, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844161,
+        "batch_cost_usd": 0.2532483
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8815526,
+    "prepared_food_price_per_100g_usd": 0.974085,
+    "fdc_id": 1098423
+  },
+  {
+    "food_code": 24103000,
+    "name": "Chicken, NS as to part, stewed, NS as to skin eaten",
+    "kcal_per_100g": 158.0,
+    "protein_per_100g": 26.0,
+    "ingredients": [
+      {
+        "food_code": 24153220,
+        "name": "Chicken thigh, stewed, skin not eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844161,
+        "batch_cost_usd": 0.2532483
+      },
+      {
+        "food_code": 24123120,
+        "name": "Chicken breast, stewed, skin not eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 0.5300705
+      },
+      {
+        "food_code": 24143220,
+        "name": "Chicken drumstick, stewed, skin not eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491169,
+        "batch_cost_usd": 0.09823380000000001
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8815526,
+    "prepared_food_price_per_100g_usd": 0.974085,
+    "fdc_id": 1098427
+  },
+  {
+    "food_code": 24103020,
+    "name": "Chicken, NS as to part, stewed, skin not eaten",
+    "kcal_per_100g": 158.0,
+    "protein_per_100g": 26.0,
+    "ingredients": [
+      {
+        "food_code": 24143220,
+        "name": "Chicken drumstick, stewed, skin not eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491169,
+        "batch_cost_usd": 0.09823380000000001
+      },
+      {
+        "food_code": 24123120,
+        "name": "Chicken breast, stewed, skin not eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 0.5300705
+      },
+      {
+        "food_code": 24153220,
+        "name": "Chicken thigh, stewed, skin not eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844161,
+        "batch_cost_usd": 0.2532483
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8815526,
+    "prepared_food_price_per_100g_usd": 0.974085,
+    "fdc_id": 1098429
+  },
+  {
+    "food_code": 24103050,
+    "name": "Chicken, NS as to part, grilled without sauce, NS as to skin eaten",
+    "kcal_per_100g": 179.0,
+    "protein_per_100g": 26.7,
+    "ingredients": [
+      {
+        "food_code": 24123301,
+        "name": "Chicken breast, grilled without sauce, skin not eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.059939,
+        "batch_cost_usd": 0.5299695
+      },
+      {
+        "food_code": 24142501,
+        "name": "Chicken drumstick, grilled without sauce, skin not eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491169,
+        "batch_cost_usd": 0.09823380000000001
+      },
+      {
+        "food_code": 24154011,
+        "name": "Chicken thigh, grilled without sauce, skin not eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844161,
+        "batch_cost_usd": 0.2532483
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8814516,
+    "prepared_food_price_per_100g_usd": 0.974085,
+    "fdc_id": 1098430
+  },
+  {
+    "food_code": 24103060,
+    "name": "Chicken, NS as to part, grilled without sauce, skin not eaten",
+    "kcal_per_100g": 179.0,
+    "protein_per_100g": 26.7,
+    "ingredients": [
+      {
+        "food_code": 24142501,
+        "name": "Chicken drumstick, grilled without sauce, skin not eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491169,
+        "batch_cost_usd": 0.09823380000000001
+      },
+      {
+        "food_code": 24154011,
+        "name": "Chicken thigh, grilled without sauce, skin not eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844161,
+        "batch_cost_usd": 0.2532483
+      },
+      {
+        "food_code": 24123301,
+        "name": "Chicken breast, grilled without sauce, skin not eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.059939,
+        "batch_cost_usd": 0.5299695
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8814516,
+    "prepared_food_price_per_100g_usd": 0.974085,
+    "fdc_id": 1098432
+  },
+  {
+    "food_code": 24103070,
+    "name": "Chicken, NS as to part, grilled with sauce, NS as to skin eaten",
+    "kcal_per_100g": 180.0,
+    "protein_per_100g": 22.0,
+    "ingredients": [
+      {
+        "food_code": 24142511,
+        "name": "Chicken drumstick, grilled with sauce, skin not eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491598,
+        "batch_cost_usd": 0.09831960000000001
+      },
+      {
+        "food_code": 24123311,
+        "name": "Chicken breast, grilled with sauce, skin not eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.06026,
+        "batch_cost_usd": 0.53013
+      },
+      {
+        "food_code": 24154021,
+        "name": "Chicken thigh, grilled with sauce, skin not eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844218,
+        "batch_cost_usd": 0.2532654
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.881715,
+    "prepared_food_price_per_100g_usd": 0.974085,
+    "fdc_id": 1098433
+  },
+  {
+    "food_code": 24103075,
+    "name": "Chicken, NS as to part, grilled with sauce, skin eaten",
+    "kcal_per_100g": 211.0,
+    "protein_per_100g": 19.9,
+    "ingredients": [
+      {
+        "food_code": 24142510,
+        "name": "Chicken drumstick, grilled with sauce, skin eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.431226,
+        "batch_cost_usd": 0.08624520000000001
+      },
+      {
+        "food_code": 24123310,
+        "name": "Chicken breast, grilled with sauce, skin eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.059673,
+        "batch_cost_usd": 0.5298365
+      },
+      {
+        "food_code": 24154020,
+        "name": "Chicken thigh, grilled with sauce, skin eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.753217,
+        "batch_cost_usd": 0.2259651
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8420468000000001,
+    "prepared_food_price_per_100g_usd": 0.842337,
+    "fdc_id": 1098434
+  },
+  {
+    "food_code": 24103080,
+    "name": "Chicken, NS as to part, grilled with sauce, skin not eaten",
+    "kcal_per_100g": 180.0,
+    "protein_per_100g": 22.0,
+    "ingredients": [
+      {
+        "food_code": 24154021,
+        "name": "Chicken thigh, grilled with sauce, skin not eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844218,
+        "batch_cost_usd": 0.2532654
+      },
+      {
+        "food_code": 24123311,
+        "name": "Chicken breast, grilled with sauce, skin not eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.06026,
+        "batch_cost_usd": 0.53013
+      },
+      {
+        "food_code": 24142511,
+        "name": "Chicken drumstick, grilled with sauce, skin not eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491598,
+        "batch_cost_usd": 0.09831960000000001
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.881715,
+    "prepared_food_price_per_100g_usd": 0.842671,
+    "fdc_id": 1098435
+  },
+  {
+    "food_code": 24104051,
+    "name": "Chicken, NS as to part, sauteed, skin not eaten",
+    "kcal_per_100g": 179.0,
+    "protein_per_100g": 26.7,
+    "ingredients": [
+      {
+        "food_code": 24123301,
+        "name": "Chicken breast, grilled without sauce, skin not eaten",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.059939,
+        "batch_cost_usd": 0.5299695
+      },
+      {
+        "food_code": 24154011,
+        "name": "Chicken thigh, grilled without sauce, skin not eaten",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.844161,
+        "batch_cost_usd": 0.2532483
+      },
+      {
+        "food_code": 24142501,
+        "name": "Chicken drumstick, grilled without sauce, skin not eaten",
+        "grams": 20.0,
+        "price_per_100g_usd": 0.491169,
+        "batch_cost_usd": 0.09823380000000001
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.8814516,
+    "prepared_food_price_per_100g_usd": 0.974085,
+    "fdc_id": 1098437
+  },
+  {
+    "food_code": 24123300,
+    "name": "Chicken breast, grilled without sauce, skin eaten",
+    "kcal_per_100g": 206.0,
+    "protein_per_100g": 25.7,
+    "ingredients": [
+      {
+        "food_code": 82101000,
+        "name": "Vegetable oil, NFS",
+        "grams": 2.0,
+        "price_per_100g_usd": 0.418343,
+        "batch_cost_usd": 0.00836686
+      },
+      {
+        "food_code": 24122130,
+        "name": "Chicken breast, baked, broiled, or roasted, skin eaten, from raw",
+        "grams": 98.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 1.03893818
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.04730504,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1098456
+  },
+  {
+    "food_code": 24123301,
+    "name": "Chicken breast, grilled without sauce, skin not eaten",
+    "kcal_per_100g": 176.0,
+    "protein_per_100g": 29.6,
+    "ingredients": [
+      {
+        "food_code": 24122131,
+        "name": "Chicken breast, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 98.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 1.03893818
+      },
+      {
+        "food_code": 82101000,
+        "name": "Vegetable oil, NFS",
+        "grams": 2.0,
+        "price_per_100g_usd": 0.418343,
+        "batch_cost_usd": 0.00836686
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.04730504,
+    "prepared_food_price_per_100g_usd": 1.059939,
+    "fdc_id": 1098457
+  },
+  {
+    "food_code": 24124200,
+    "name": "Chicken breast, sauteed, skin eaten",
+    "kcal_per_100g": 206.0,
+    "protein_per_100g": 25.7,
+    "ingredients": [
+      {
+        "food_code": 24122130,
+        "name": "Chicken breast, baked, broiled, or roasted, skin eaten, from raw",
+        "grams": 98.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 1.03893818
+      },
+      {
+        "food_code": 82101000,
+        "name": "Vegetable oil, NFS",
+        "grams": 2.0,
+        "price_per_100g_usd": 0.418343,
+        "batch_cost_usd": 0.00836686
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.04730504,
+    "prepared_food_price_per_100g_usd": 1.059607,
+    "fdc_id": 1098460
+  },
+  {
+    "food_code": 24124201,
+    "name": "Chicken breast, sauteed, skin not eaten",
+    "kcal_per_100g": 176.0,
+    "protein_per_100g": 29.6,
+    "ingredients": [
+      {
+        "food_code": 82101000,
+        "name": "Vegetable oil, NFS",
+        "grams": 2.0,
+        "price_per_100g_usd": 0.418343,
+        "batch_cost_usd": 0.00836686
+      },
+      {
+        "food_code": 24122131,
+        "name": "Chicken breast, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 98.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 1.03893818
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.04730504,
+    "prepared_food_price_per_100g_usd": 1.060141,
+    "fdc_id": 1098461
+  },
+  {
+    "food_code": 24127201,
+    "name": "Chicken breast, fried, coated, skin / coating not eaten, from raw",
+    "kcal_per_100g": 176.0,
+    "protein_per_100g": 29.6,
+    "ingredients": [
+      {
+        "food_code": 82101000,
+        "name": "Vegetable oil, NFS",
+        "grams": 2.0,
+        "price_per_100g_usd": 0.418343,
+        "batch_cost_usd": 0.00836686
+      },
+      {
+        "food_code": 24122131,
+        "name": "Chicken breast, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 98.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 1.03893818
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.04730504,
+    "prepared_food_price_per_100g_usd": 0.766096,
+    "fdc_id": 1098463
+  },
+  {
+    "food_code": 24127211,
+    "name": "Chicken breast, fried, coated, skin / coating not eaten, from pre-cooked",
+    "kcal_per_100g": 176.0,
+    "protein_per_100g": 29.6,
+    "ingredients": [
+      {
+        "food_code": 82101000,
+        "name": "Vegetable oil, NFS",
+        "grams": 2.0,
+        "price_per_100g_usd": 0.418343,
+        "batch_cost_usd": 0.00836686
+      },
+      {
+        "food_code": 24122131,
+        "name": "Chicken breast, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 98.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 1.03893818
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.04730504,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1098466
+  },
+  {
+    "food_code": 24127501,
+    "name": "Chicken breast, baked, coated, skin / coating not eaten",
+    "kcal_per_100g": 176.0,
+    "protein_per_100g": 29.6,
+    "ingredients": [
+      {
+        "food_code": 82101000,
+        "name": "Vegetable oil, NFS",
+        "grams": 2.0,
+        "price_per_100g_usd": 0.418343,
+        "batch_cost_usd": 0.00836686
+      },
+      {
+        "food_code": 24122131,
+        "name": "Chicken breast, baked, broiled, or roasted, skin not eaten, from raw",
+        "grams": 98.0,
+        "price_per_100g_usd": 1.060141,
+        "batch_cost_usd": 1.03893818
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.04730504,
+    "prepared_food_price_per_100g_usd": 0.766096,
+    "fdc_id": 1098470
+  },
+  {
+    "food_code": 24168020,
+    "name": "Chicken \"wings\" with hot sauce, from other sources",
+    "kcal_per_100g": 265.0,
+    "protein_per_100g": 17.0,
+    "ingredients": [
+      {
+        "food_code": 24168010,
+        "name": "Chicken \"wings\" with hot sauce, from precooked",
+        "grams": 30.0,
+        "price_per_100g_usd": 1.40135,
+        "batch_cost_usd": 0.42040500000000003
+      },
+      {
+        "food_code": 24168000,
+        "name": "Chicken \"wings\" with hot sauce, from fast food / restaurant",
+        "grams": 70.0,
+        "price_per_100g_usd": 1.653577,
+        "batch_cost_usd": 1.1575039
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.5779089000000002,
+    "prepared_food_price_per_100g_usd": 1.653577,
+    "fdc_id": 1098565
+  },
+  {
+    "food_code": 24168022,
+    "name": "Chicken \"wings\", plain, from other sources",
+    "kcal_per_100g": 313.0,
+    "protein_per_100g": 18.0,
+    "ingredients": [
+      {
+        "food_code": 24168002,
+        "name": "Chicken \"wings\", plain, from fast food / restaurant",
+        "grams": 70.0,
+        "price_per_100g_usd": 1.224256,
+        "batch_cost_usd": 0.8569791999999999
+      },
+      {
+        "food_code": 24168012,
+        "name": "Chicken \"wings\", plain, from precooked",
+        "grams": 30.0,
+        "price_per_100g_usd": 1.434172,
+        "batch_cost_usd": 0.4302516
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.2872308,
+    "prepared_food_price_per_100g_usd": 1.224256,
+    "fdc_id": 1098567
+  },
+  {
+    "food_code": 24198737,
+    "name": "Chicken nuggets, from other sources",
+    "kcal_per_100g": 304.0,
+    "protein_per_100g": 15.2,
+    "ingredients": [
+      {
+        "food_code": 24198731,
+        "name": "Chicken nuggets, from fast food",
+        "grams": 70.0,
+        "price_per_100g_usd": 0.732277,
+        "batch_cost_usd": 0.5125938999999999
+      },
+      {
+        "food_code": 24198736,
+        "name": "Chicken nuggets, from frozen",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.732277,
+        "batch_cost_usd": 0.2196831
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.732277,
+    "prepared_food_price_per_100g_usd": 0.732277,
+    "fdc_id": 1098586
+  },
+  {
+    "food_code": 24198747,
+    "name": "Chicken tenders or strips, breaded, from other sources",
+    "kcal_per_100g": 262.0,
+    "protein_per_100g": 17.8,
+    "ingredients": [
+      {
+        "food_code": 24198741,
+        "name": "Chicken tenders or strips, breaded, from fast food",
+        "grams": 70.0,
+        "price_per_100g_usd": 0.968525,
+        "batch_cost_usd": 0.6779675
+      },
+      {
+        "food_code": 24198746,
+        "name": "Chicken tenders or strips, breaded, from frozen",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.969407,
+        "batch_cost_usd": 0.2908221
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.9687895999999999,
+    "prepared_food_price_per_100g_usd": 0.968525,
+    "fdc_id": 1098592
+  },
+  {
+    "food_code": 27116110,
+    "name": "Beef curry with rice",
+    "kcal_per_100g": 118.0,
+    "protein_per_100g": 5.61,
+    "ingredients": [
+      {
+        "food_code": 27116100,
+        "name": "Beef curry",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.966477,
+        "batch_cost_usd": 0.5798862
+      },
+      {
+        "food_code": 56205000,
+        "name": "Rice, cooked, NFS",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.110812,
+        "batch_cost_usd": 0.0443248
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.6242110000000001,
+    "prepared_food_price_per_100g_usd": 0.61725,
+    "fdc_id": 1099194
+  },
+  {
+    "food_code": 27146155,
+    "name": "Chicken curry with rice",
+    "kcal_per_100g": 115.0,
+    "protein_per_100g": 4.95,
+    "ingredients": [
+      {
+        "food_code": 27146150,
+        "name": "Chicken curry",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.749978,
+        "batch_cost_usd": 0.4499868
+      },
+      {
+        "food_code": 56205000,
+        "name": "Rice, cooked, NFS",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.110812,
+        "batch_cost_usd": 0.0443248
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.4943116,
+    "prepared_food_price_per_100g_usd": 0.487402,
+    "fdc_id": 1099247
+  },
+  {
+    "food_code": 27150325,
+    "name": "Fish curry with rice",
+    "kcal_per_100g": 107.0,
+    "protein_per_100g": 4.03,
+    "ingredients": [
+      {
+        "food_code": 56205000,
+        "name": "Rice, cooked, NFS",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.110812,
+        "batch_cost_usd": 0.0443248
+      },
+      {
+        "food_code": 27150320,
+        "name": "Fish curry",
+        "grams": 60.0,
+        "price_per_100g_usd": 1.035956,
+        "batch_cost_usd": 0.6215736000000001
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.6658984000000001,
+    "prepared_food_price_per_100g_usd": 0.658986,
+    "fdc_id": 1099275
+  },
+  {
+    "food_code": 31102000,
+    "name": "Egg, whole, cooked, NS as to cooking method",
+    "kcal_per_100g": 175.0,
+    "protein_per_100g": 12.0,
+    "ingredients": [
+      {
+        "food_code": 31103010,
+        "name": "Egg, whole, boiled or poached ",
+        "grams": 33.333,
+        "price_per_100g_usd": 0.45241,
+        "batch_cost_usd": 0.15080182529999997
+      },
+      {
+        "food_code": 32130010,
+        "name": "Egg omelet or scrambled egg, made with oil",
+        "grams": 33.333,
+        "price_per_100g_usd": 0.398344,
+        "batch_cost_usd": 0.13278000551999997
+      },
+      {
+        "food_code": 31105030,
+        "name": "Egg, whole, fried with oil",
+        "grams": 33.333,
+        "price_per_100g_usd": 0.398344,
+        "batch_cost_usd": 0.13278000551999997
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 99.999,
+    "ingredient_batch_cost_usd": 0.4163618363399999,
+    "prepared_food_price_per_100g_usd": 0.416484,
+    "fdc_id": 1100184
+  },
+  {
+    "food_code": 41100990,
+    "name": "Beans, NFS",
+    "kcal_per_100g": 188.0,
+    "protein_per_100g": 8.34,
+    "ingredients": [
+      {
+        "food_code": 41104010,
+        "name": "Pinto beans, from dried, fat added",
+        "grams": 75.0,
+        "price_per_100g_usd": 0.237387,
+        "batch_cost_usd": 0.17804024999999998
+      },
+      {
+        "food_code": 41102010,
+        "name": "Black beans, from dried, fat added",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.320401,
+        "batch_cost_usd": 0.08010025
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.2581405,
+    "prepared_food_price_per_100g_usd": 0.219299,
+    "fdc_id": 1100362
+  },
+  {
+    "food_code": 41101010,
+    "name": "Beans, from dried, NS as to type, fat added",
+    "kcal_per_100g": 188.0,
+    "protein_per_100g": 8.34,
+    "ingredients": [
+      {
+        "food_code": 41102010,
+        "name": "Black beans, from dried, fat added",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.320401,
+        "batch_cost_usd": 0.08010025
+      },
+      {
+        "food_code": 41104010,
+        "name": "Pinto beans, from dried, fat added",
+        "grams": 75.0,
+        "price_per_100g_usd": 0.237387,
+        "batch_cost_usd": 0.17804024999999998
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.2581405,
+    "prepared_food_price_per_100g_usd": 0.246977,
+    "fdc_id": 1100363
+  },
+  {
+    "food_code": 41101020,
+    "name": "Beans, from dried, NS as to type, no added fat",
+    "kcal_per_100g": 139.0,
+    "protein_per_100g": 8.92,
+    "ingredients": [
+      {
+        "food_code": 41104020,
+        "name": "Pinto beans, from dried, no added fat",
+        "grams": 75.0,
+        "price_per_100g_usd": 0.285413,
+        "batch_cost_usd": 0.21405975
+      },
+      {
+        "food_code": 41102020,
+        "name": "Black beans, from dried, no added fat",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.313588,
+        "batch_cost_usd": 0.078397
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.29245675,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1100364
+  },
+  {
+    "food_code": 41101060,
+    "name": "Beans, from canned, NS as to type, fat added",
+    "kcal_per_100g": 184.0,
+    "protein_per_100g": 7.66,
+    "ingredients": [
+      {
+        "food_code": 41102040,
+        "name": "Black beans, from canned, fat added",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.467461,
+        "batch_cost_usd": 0.11686525
+      },
+      {
+        "food_code": 41104040,
+        "name": "Pinto beans, from canned, fat added",
+        "grams": 75.0,
+        "price_per_100g_usd": 0.386524,
+        "batch_cost_usd": 0.28989299999999996
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.40675825,
+    "prepared_food_price_per_100g_usd": 0.292552,
+    "fdc_id": 1100365
+  },
+  {
+    "food_code": 41101070,
+    "name": "Beans, from canned, NS as to type, no added fat",
+    "kcal_per_100g": 136.0,
+    "protein_per_100g": 7.96,
+    "ingredients": [
+      {
+        "food_code": 41102080,
+        "name": "Black beans, from canned, no added fat",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.313588,
+        "batch_cost_usd": 0.078397
+      },
+      {
+        "food_code": 41104080,
+        "name": "Pinto beans, from canned, no added fat",
+        "grams": 75.0,
+        "price_per_100g_usd": 0.285413,
+        "batch_cost_usd": 0.21405975
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.29245675,
+    "prepared_food_price_per_100g_usd": 0.252847,
+    "fdc_id": 1100366
+  },
+  {
+    "food_code": 41102170,
+    "name": "Black beans with meat",
+    "kcal_per_100g": 177.0,
+    "protein_per_100g": 10.6,
+    "ingredients": [
+      {
+        "food_code": 41102010,
+        "name": "Black beans, from dried, fat added",
+        "grams": 86.0,
+        "price_per_100g_usd": 0.320401,
+        "batch_cost_usd": 0.27554486
+      },
+      {
+        "food_code": 89901004,
+        "name": "Beef, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 1.374702,
+        "batch_cost_usd": 0.09622914000000002
+      },
+      {
+        "food_code": 89901002,
+        "name": "Ham, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 0.912534,
+        "batch_cost_usd": 0.06387738
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.43565138000000003,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1100381
+  },
+  {
+    "food_code": 41104250,
+    "name": "Pinto beans with meat",
+    "kcal_per_100g": 185.0,
+    "protein_per_100g": 10.7,
+    "ingredients": [
+      {
+        "food_code": 89901002,
+        "name": "Ham, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 0.912534,
+        "batch_cost_usd": 0.06387738
+      },
+      {
+        "food_code": 41104010,
+        "name": "Pinto beans, from dried, fat added",
+        "grams": 86.0,
+        "price_per_100g_usd": 0.237387,
+        "batch_cost_usd": 0.20415281999999998
+      },
+      {
+        "food_code": 89901004,
+        "name": "Beef, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 1.374702,
+        "batch_cost_usd": 0.09622914000000002
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.36425934,
+    "prepared_food_price_per_100g_usd": 1.235069,
+    "fdc_id": 1100393
+  },
+  {
+    "food_code": 41106170,
+    "name": "Kidney beans with meat",
+    "kcal_per_100g": 173.0,
+    "protein_per_100g": 10.5,
+    "ingredients": [
+      {
+        "food_code": 41106010,
+        "name": "Kidney beans, from dried, fat added",
+        "grams": 86.0,
+        "price_per_100g_usd": 0.183994,
+        "batch_cost_usd": 0.15823484
+      },
+      {
+        "food_code": 89901004,
+        "name": "Beef, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 1.374702,
+        "batch_cost_usd": 0.09622914000000002
+      },
+      {
+        "food_code": 89901002,
+        "name": "Ham, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 0.912534,
+        "batch_cost_usd": 0.06387738
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.31834136,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1100401
+  },
+  {
+    "food_code": 41205030,
+    "name": "Refried beans with meat",
+    "kcal_per_100g": 99.0,
+    "protein_per_100g": 7.81,
+    "ingredients": [
+      {
+        "food_code": 89901004,
+        "name": "Beef, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 1.374702,
+        "batch_cost_usd": 0.09622914000000002
+      },
+      {
+        "food_code": 41205010,
+        "name": "Refried beans",
+        "grams": 86.0,
+        "price_per_100g_usd": 0.260791,
+        "batch_cost_usd": 0.22428025999999998
+      },
+      {
+        "food_code": 89901002,
+        "name": "Ham, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 0.912534,
+        "batch_cost_usd": 0.06387738
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.38438678,
+    "prepared_food_price_per_100g_usd": 0.422214,
+    "fdc_id": 1100413
+  },
+  {
+    "food_code": 41208100,
+    "name": "Beans with meat, NS as to type",
+    "kcal_per_100g": 183.0,
+    "protein_per_100g": 10.7,
+    "ingredients": [
+      {
+        "food_code": 41101010,
+        "name": "Beans, from dried, NS as to type, fat added",
+        "grams": 86.0,
+        "price_per_100g_usd": 0.246977,
+        "batch_cost_usd": 0.21240022
+      },
+      {
+        "food_code": 89901004,
+        "name": "Beef, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 1.374702,
+        "batch_cost_usd": 0.09622914000000002
+      },
+      {
+        "food_code": 89901002,
+        "name": "Ham, for use with vegetables",
+        "grams": 7.0,
+        "price_per_100g_usd": 0.912534,
+        "batch_cost_usd": 0.06387738
+      }
+    ],
+    "ingredient_count": 3,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.37250674,
+    "prepared_food_price_per_100g_usd": 0.386612,
+    "fdc_id": 1100422
+  },
+  {
+    "food_code": 41311040,
+    "name": "Lentil curry with rice",
+    "kcal_per_100g": 117.0,
+    "protein_per_100g": 3.27,
+    "ingredients": [
+      {
+        "food_code": 56205000,
+        "name": "Rice, cooked, NFS",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.110812,
+        "batch_cost_usd": 0.0443248
+      },
+      {
+        "food_code": 41311030,
+        "name": "Lentil curry",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.695439,
+        "batch_cost_usd": 0.4172634
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.4615882,
+    "prepared_food_price_per_100g_usd": 0.454678,
+    "fdc_id": 1100446
+  },
+  {
+    "food_code": 42500100,
+    "name": "Trail mix with nuts",
+    "kcal_per_100g": 600.0,
+    "protein_per_100g": 20.1,
+    "ingredients": [
+      {
+        "food_code": 43107000,
+        "name": "Mixed seeds",
+        "grams": 20.0,
+        "price_per_100g_usd": 1.062699,
+        "batch_cost_usd": 0.21253980000000003
+      },
+      {
+        "food_code": 42110100,
+        "name": "Mixed nuts, with peanuts, salted",
+        "grams": 80.0,
+        "price_per_100g_usd": 1.24985,
+        "batch_cost_usd": 0.99988
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.2124198,
+    "prepared_food_price_per_100g_usd": 1.405574,
+    "fdc_id": 1100597
+  },
+  {
+    "food_code": 53115100,
+    "name": "Cake or cupcake, marble, without icing or filling",
+    "kcal_per_100g": 336.0,
+    "protein_per_100g": 4.71,
+    "ingredients": [
+      {
+        "food_code": 53105275,
+        "name": "Cake or cupcake, chocolate, devil's food or fudge, without icing or filling",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.016205,
+        "batch_cost_usd": 0.5081025
+      },
+      {
+        "food_code": 53121275,
+        "name": "Cake or cupcake, yellow, without icing or filling",
+        "grams": 50.0,
+        "price_per_100g_usd": 1.15411,
+        "batch_cost_usd": 0.577055
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 1.0851575,
+    "prepared_food_price_per_100g_usd": 1.658663,
+    "fdc_id": 1100922
+  },
+  {
+    "food_code": 53520000,
+    "name": "Doughnut, NFS",
+    "kcal_per_100g": 426.0,
+    "protein_per_100g": 5.52,
+    "ingredients": [
+      {
+        "food_code": 53521110,
+        "name": "Doughnut, yeast type",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.579818,
+        "batch_cost_usd": 0.289909
+      },
+      {
+        "food_code": 53520130,
+        "name": "Doughnut, cake type, powdered sugar",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.753465,
+        "batch_cost_usd": 0.3767325
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.6666415,
+    "prepared_food_price_per_100g_usd": 0.781485,
+    "fdc_id": 1101204
+  },
+  {
+    "food_code": 53520170,
+    "name": "Doughnut holes",
+    "kcal_per_100g": 426.0,
+    "protein_per_100g": 5.52,
+    "ingredients": [
+      {
+        "food_code": 53521110,
+        "name": "Doughnut, yeast type",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.579818,
+        "batch_cost_usd": 0.289909
+      },
+      {
+        "food_code": 53520130,
+        "name": "Doughnut, cake type, powdered sugar",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.753465,
+        "batch_cost_usd": 0.3767325
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.6666415,
+    "prepared_food_price_per_100g_usd": 0.788722,
+    "fdc_id": 1101211
+  },
+  {
+    "food_code": 58106514,
+    "name": "Pizza with pepperoni, from frozen, medium crust",
+    "kcal_per_100g": 271.0,
+    "protein_per_100g": 12.4,
+    "ingredients": [
+      {
+        "food_code": 58106512,
+        "name": "Pizza with pepperoni, from frozen, thin crust",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.72667,
+        "batch_cost_usd": 0.363335
+      },
+      {
+        "food_code": 58106516,
+        "name": "Pizza with pepperoni, from frozen, thick crust",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.783541,
+        "batch_cost_usd": 0.3917705
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.7551055,
+    "prepared_food_price_per_100g_usd": 0.814944,
+    "fdc_id": 1101992
+  },
+  {
+    "food_code": 58145135,
+    "name": "Macaroni or noodles with cheese and meat",
+    "kcal_per_100g": 209.0,
+    "protein_per_100g": 11.8,
+    "ingredients": [
+      {
+        "food_code": 21500100,
+        "name": "Ground beef, cooked",
+        "grams": 341.0,
+        "price_per_100g_usd": 1.279787,
+        "batch_cost_usd": 4.36407367
+      },
+      {
+        "food_code": 58145112,
+        "name": "Macaroni or noodles with cheese, made from packaged mix",
+        "grams": 690.0,
+        "price_per_100g_usd": 0.236959,
+        "batch_cost_usd": 1.6350171
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 1031.0,
+    "ingredient_batch_cost_usd": 5.99909077,
+    "prepared_food_price_per_100g_usd": 1.034043,
+    "fdc_id": 1102203
+  },
+  {
+    "food_code": 58145160,
+    "name": "Macaroni or noodles with cheese and frankfurters or hot dogs",
+    "kcal_per_100g": 212.0,
+    "protein_per_100g": 6.29,
+    "ingredients": [
+      {
+        "food_code": 25210110,
+        "name": "Frankfurter or hot dog, NFS",
+        "grams": 171.0,
+        "price_per_100g_usd": 0.634665,
+        "batch_cost_usd": 1.08527715
+      },
+      {
+        "food_code": 58145112,
+        "name": "Macaroni or noodles with cheese, made from packaged mix",
+        "grams": 690.0,
+        "price_per_100g_usd": 0.236959,
+        "batch_cost_usd": 1.6350171
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 861.0,
+    "ingredient_batch_cost_usd": 2.7202942500000002,
+    "prepared_food_price_per_100g_usd": 0.834787,
+    "fdc_id": 1102206
+  },
+  {
+    "food_code": 58145170,
+    "name": "Macaroni or noodles with cheese and egg",
+    "kcal_per_100g": 184.0,
+    "protein_per_100g": 5.94,
+    "ingredients": [
+      {
+        "food_code": 31105030,
+        "name": "Egg, whole, fried with oil",
+        "grams": 138.0,
+        "price_per_100g_usd": 0.398344,
+        "batch_cost_usd": 0.5497147199999999
+      },
+      {
+        "food_code": 58145112,
+        "name": "Macaroni or noodles with cheese, made from packaged mix",
+        "grams": 690.0,
+        "price_per_100g_usd": 0.236959,
+        "batch_cost_usd": 1.6350171
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 828.0,
+    "ingredient_batch_cost_usd": 2.1847318199999997,
+    "prepared_food_price_per_100g_usd": 0.80908,
+    "fdc_id": 1102207
+  },
+  {
+    "food_code": 58160110,
+    "name": "Beans and white rice",
+    "kcal_per_100g": 164.0,
+    "protein_per_100g": 6.5,
+    "ingredients": [
+      {
+        "food_code": 56205008,
+        "name": "Rice, white, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.089641,
+        "batch_cost_usd": 0.035856400000000004
+      },
+      {
+        "food_code": 41101110,
+        "name": "White beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.270638,
+        "batch_cost_usd": 0.1623828
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.1982392,
+    "prepared_food_price_per_100g_usd": 0.18927,
+    "fdc_id": 1102379
+  },
+  {
+    "food_code": 58160120,
+    "name": "Beans and rice, with tomatoes",
+    "kcal_per_100g": 136.0,
+    "protein_per_100g": 4.7,
+    "ingredients": [
+      {
+        "food_code": 41202510,
+        "name": "Beans and tomatoes, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.242699,
+        "batch_cost_usd": 0.14561939999999998
+      },
+      {
+        "food_code": 56205008,
+        "name": "Rice, white, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.089641,
+        "batch_cost_usd": 0.035856400000000004
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.1814758,
+    "prepared_food_price_per_100g_usd": 0.178637,
+    "fdc_id": 1102380
+  },
+  {
+    "food_code": 58160150,
+    "name": "Kidney beans and white rice",
+    "kcal_per_100g": 157.0,
+    "protein_per_100g": 5.9,
+    "ingredients": [
+      {
+        "food_code": 41106010,
+        "name": "Kidney beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.183994,
+        "batch_cost_usd": 0.11039639999999999
+      },
+      {
+        "food_code": 56205008,
+        "name": "Rice, white, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.089641,
+        "batch_cost_usd": 0.035856400000000004
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.1462528,
+    "prepared_food_price_per_100g_usd": 0.133333,
+    "fdc_id": 1102382
+  },
+  {
+    "food_code": 58160154,
+    "name": "Black beans and white rice",
+    "kcal_per_100g": 160.0,
+    "protein_per_100g": 6.01,
+    "ingredients": [
+      {
+        "food_code": 56205008,
+        "name": "Rice, white, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.089641,
+        "batch_cost_usd": 0.035856400000000004
+      },
+      {
+        "food_code": 41102010,
+        "name": "Black beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.320401,
+        "batch_cost_usd": 0.19224059999999998
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.228097,
+    "prepared_food_price_per_100g_usd": 0.221397,
+    "fdc_id": 1102383
+  },
+  {
+    "food_code": 58160156,
+    "name": "Pinto beans and white rice",
+    "kcal_per_100g": 166.0,
+    "protein_per_100g": 6.09,
+    "ingredients": [
+      {
+        "food_code": 56205008,
+        "name": "Rice, white, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.089641,
+        "batch_cost_usd": 0.035856400000000004
+      },
+      {
+        "food_code": 41104010,
+        "name": "Pinto beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.237387,
+        "batch_cost_usd": 0.14243219999999998
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.1782886,
+    "prepared_food_price_per_100g_usd": 0.167804,
+    "fdc_id": 1102384
+  },
+  {
+    "food_code": 58161320,
+    "name": "Beans and brown rice",
+    "kcal_per_100g": 161.0,
+    "protein_per_100g": 6.52,
+    "ingredients": [
+      {
+        "food_code": 56205018,
+        "name": "Rice, brown, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.743571,
+        "batch_cost_usd": 0.2974284
+      },
+      {
+        "food_code": 41101110,
+        "name": "White beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.270638,
+        "batch_cost_usd": 0.1623828
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.4598112,
+    "prepared_food_price_per_100g_usd": 0.239193,
+    "fdc_id": 1102422
+  },
+  {
+    "food_code": 58161321,
+    "name": "Kidney beans and brown rice",
+    "kcal_per_100g": 154.0,
+    "protein_per_100g": 5.92,
+    "ingredients": [
+      {
+        "food_code": 56205018,
+        "name": "Rice, brown, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.743571,
+        "batch_cost_usd": 0.2974284
+      },
+      {
+        "food_code": 41106010,
+        "name": "Kidney beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.183994,
+        "batch_cost_usd": 0.11039639999999999
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.4078248,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1102423
+  },
+  {
+    "food_code": 58161322,
+    "name": "Black beans and brown rice",
+    "kcal_per_100g": 157.0,
+    "protein_per_100g": 6.03,
+    "ingredients": [
+      {
+        "food_code": 56205018,
+        "name": "Rice, brown, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.743571,
+        "batch_cost_usd": 0.2974284
+      },
+      {
+        "food_code": 41102010,
+        "name": "Black beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.320401,
+        "batch_cost_usd": 0.19224059999999998
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.48966899999999997,
+    "prepared_food_price_per_100g_usd": 0.27132,
+    "fdc_id": 1102424
+  },
+  {
+    "food_code": 58161323,
+    "name": "Pinto beans and brown rice",
+    "kcal_per_100g": 163.0,
+    "protein_per_100g": 6.12,
+    "ingredients": [
+      {
+        "food_code": 56205018,
+        "name": "Rice, brown, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.743571,
+        "batch_cost_usd": 0.2974284
+      },
+      {
+        "food_code": 41104010,
+        "name": "Pinto beans, from dried, fat added",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.237387,
+        "batch_cost_usd": 0.14243219999999998
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.43986059999999993,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1102425
+  },
+  {
+    "food_code": 58174100,
+    "name": "Dosa (Indian), with filling",
+    "kcal_per_100g": 184.0,
+    "protein_per_100g": 5.46,
+    "ingredients": [
+      {
+        "food_code": 55702100,
+        "name": "Dosa (Indian), plain",
+        "grams": 70.0,
+        "price_per_100g_usd": 0.521425,
+        "batch_cost_usd": 0.3649975
+      },
+      {
+        "food_code": 75440400,
+        "name": "Pakora",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.7312,
+        "batch_cost_usd": 0.21935999999999997
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.5843575,
+    "prepared_food_price_per_100g_usd": 0.503233,
+    "fdc_id": 1102518
+  },
+  {
+    "food_code": 61122300,
+    "name": "Orange, canned, NFS",
+    "kcal_per_100g": 46.0,
+    "protein_per_100g": 0.6,
+    "ingredients": [
+      {
+        "food_code": 61122330,
+        "name": "Orange, canned, in syrup",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.368786,
+        "batch_cost_usd": 0.184393
+      },
+      {
+        "food_code": 61122320,
+        "name": "Orange, canned, juice pack",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.489436,
+        "batch_cost_usd": 0.244718
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.429111,
+    "prepared_food_price_per_100g_usd": 0.427141,
+    "fdc_id": 1102598
+  },
+  {
+    "food_code": 63135110,
+    "name": "Peach, canned, NFS",
+    "kcal_per_100g": 47.0,
+    "protein_per_100g": 0.43,
+    "ingredients": [
+      {
+        "food_code": 63135140,
+        "name": "Peach, canned, in syrup",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.337959,
+        "batch_cost_usd": 0.1689795
+      },
+      {
+        "food_code": 63135170,
+        "name": "Peach, canned, juice pack",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.425351,
+        "batch_cost_usd": 0.2126755
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.38165499999999997,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1102678
+  },
+  {
+    "food_code": 63137110,
+    "name": "Pear, canned, NFS",
+    "kcal_per_100g": 51.0,
+    "protein_per_100g": 0.2,
+    "ingredients": [
+      {
+        "food_code": 63137170,
+        "name": "Pear, canned, juice pack",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.409537,
+        "batch_cost_usd": 0.2047685
+      },
+      {
+        "food_code": 63137140,
+        "name": "Pear, canned, in syrup",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.345648,
+        "batch_cost_usd": 0.172824
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.3775925,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1102684
+  },
+  {
+    "food_code": 63141110,
+    "name": "Pineapple, canned, NFS",
+    "kcal_per_100g": 54.0,
+    "protein_per_100g": 0.42,
+    "ingredients": [
+      {
+        "food_code": 63141170,
+        "name": "Pineapple, canned, juice pack",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.26963,
+        "batch_cost_usd": 0.134815
+      },
+      {
+        "food_code": 63141140,
+        "name": "Pineapple, canned, in syrup",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.25826,
+        "batch_cost_usd": 0.12913
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.263945,
+    "prepared_food_price_per_100g_usd": 0.271543,
+    "fdc_id": 1102689
+  },
+  {
+    "food_code": 63311110,
+    "name": "Fruit cocktail, canned, NFS",
+    "kcal_per_100g": 54.0,
+    "protein_per_100g": 0.41,
+    "ingredients": [
+      {
+        "food_code": 63311170,
+        "name": "Fruit cocktail, canned, juice pack",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.495536,
+        "batch_cost_usd": 0.247768
+      },
+      {
+        "food_code": 63311140,
+        "name": "Fruit cocktail, canned, in syrup",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.53255,
+        "batch_cost_usd": 0.266275
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.514043,
+    "prepared_food_price_per_100g_usd": 0.507538,
+    "fdc_id": 1102716
+  },
+  {
+    "food_code": 72118211,
+    "name": "Greens, fresh, cooked, no added fat",
+    "kcal_per_100g": 34.0,
+    "protein_per_100g": 2.97,
+    "ingredients": [
+      {
+        "food_code": 72128211,
+        "name": "Turnip greens, fresh, cooked, no added fat",
+        "grams": 10.0,
+        "price_per_100g_usd": 0.516036,
+        "batch_cost_usd": 0.051603600000000006
+      },
+      {
+        "food_code": 72122211,
+        "name": "Mustard greens, fresh, cooked, no added fat",
+        "grams": 10.0,
+        "price_per_100g_usd": 0.250465,
+        "batch_cost_usd": 0.0250465
+      },
+      {
+        "food_code": 72107211,
+        "name": "Collards, fresh, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.617097,
+        "batch_cost_usd": 0.24683880000000002
+      },
+      {
+        "food_code": 72119211,
+        "name": "Kale, fresh, cooked, no added fat",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.749143,
+        "batch_cost_usd": 0.2996572
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.6231461,
+    "prepared_food_price_per_100g_usd": 0.597559,
+    "fdc_id": 1103109
+  },
+  {
+    "food_code": 72118221,
+    "name": "Greens, fresh, cooked, fat added",
+    "kcal_per_100g": 54.0,
+    "protein_per_100g": 2.89,
+    "ingredients": [
+      {
+        "food_code": 72119221,
+        "name": "Kale, fresh, cooked, fat added",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.725112,
+        "batch_cost_usd": 0.2900448
+      },
+      {
+        "food_code": 72107221,
+        "name": "Collards, fresh, cooked, fat added, NS as to fat type",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.569954,
+        "batch_cost_usd": 0.2279816
+      },
+      {
+        "food_code": 72128211,
+        "name": "Turnip greens, fresh, cooked, no added fat",
+        "grams": 10.0,
+        "price_per_100g_usd": 0.516036,
+        "batch_cost_usd": 0.051603600000000006
+      },
+      {
+        "food_code": 72122221,
+        "name": "Mustard greens, fresh, cooked, fat added",
+        "grams": 10.0,
+        "price_per_100g_usd": 0.258616,
+        "batch_cost_usd": 0.025861600000000002
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.5954916,
+    "prepared_food_price_per_100g_usd": 0.597559,
+    "fdc_id": 1103113
+  },
+  {
+    "food_code": 75100250,
+    "name": "Raw vegetable, NFS",
+    "kcal_per_100g": 27.0,
+    "protein_per_100g": 1.33,
+    "ingredients": [
+      {
+        "food_code": 73101010,
+        "name": "Carrots, raw",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.301321,
+        "batch_cost_usd": 0.07533025
+      },
+      {
+        "food_code": 75109000,
+        "name": "Celery, raw",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.349821,
+        "batch_cost_usd": 0.08745525
+      },
+      {
+        "food_code": 74101000,
+        "name": "Tomatoes, raw",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.51767,
+        "batch_cost_usd": 0.1294175
+      },
+      {
+        "food_code": 72201100,
+        "name": "Broccoli, raw",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.742143,
+        "batch_cost_usd": 0.18553575
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.47773875,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1103331
+  },
+  {
+    "food_code": 75205030,
+    "name": "Green beans, NS as to form, cooked",
+    "kcal_per_100g": 49.0,
+    "protein_per_100g": 1.44,
+    "ingredients": [
+      {
+        "food_code": 75205031,
+        "name": "Green beans, fresh, cooked, fat added, NS as to fat type",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.645288,
+        "batch_cost_usd": 0.322644
+      },
+      {
+        "food_code": 75205033,
+        "name": "Green beans, canned, cooked, fat added, NS as to fat type",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.322338,
+        "batch_cost_usd": 0.161169
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.483813,
+    "prepared_food_price_per_100g_usd": 0.438651,
+    "fdc_id": 1103439
+  },
+  {
+    "food_code": 75311031,
+    "name": "Classic mixed vegetables, canned, cooked with butter or margarine",
+    "kcal_per_100g": 63.0,
+    "protein_per_100g": 2.07,
+    "ingredients": [
+      {
+        "food_code": 75224050,
+        "name": "Green peas, canned, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.358179,
+        "batch_cost_usd": 0.08954475
+      },
+      {
+        "food_code": 75205051,
+        "name": "Green beans, canned, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.324541,
+        "batch_cost_usd": 0.08113525
+      },
+      {
+        "food_code": 75216142,
+        "name": "Corn, canned, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.298906,
+        "batch_cost_usd": 0.0747265
+      },
+      {
+        "food_code": 73102228,
+        "name": "Carrots, canned, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.350859,
+        "batch_cost_usd": 0.08771475
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.33312125000000004,
+    "prepared_food_price_per_100g_usd": 0.407867,
+    "fdc_id": 1103610
+  },
+  {
+    "food_code": 75311110,
+    "name": "Classic mixed vegetables, canned, reduced sodium, cooked, no added fat",
+    "kcal_per_100g": 44.0,
+    "protein_per_100g": 1.95,
+    "ingredients": [
+      {
+        "food_code": 75205120,
+        "name": "Green beans, canned, reduced sodium, cooked, no added fat",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.33684,
+        "batch_cost_usd": 0.08421
+      },
+      {
+        "food_code": 75216310,
+        "name": "Corn, canned, reduced sodium, cooked, no added fat",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.195407,
+        "batch_cost_usd": 0.04885175
+      },
+      {
+        "food_code": 75224120,
+        "name": "Green peas, canned, reduced sodium, cooked, no added fat",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.322354,
+        "batch_cost_usd": 0.0805885
+      },
+      {
+        "food_code": 73103010,
+        "name": "Carrots, canned, reduced sodium, cooked, no added fat",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.344297,
+        "batch_cost_usd": 0.08607425
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.2997245,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1103611
+  },
+  {
+    "food_code": 75311122,
+    "name": "Classic mixed vegetables, canned, reduced sodium, cooked with butter or margarine",
+    "kcal_per_100g": 64.0,
+    "protein_per_100g": 1.91,
+    "ingredients": [
+      {
+        "food_code": 75205132,
+        "name": "Green beans, canned, reduced sodium, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.343619,
+        "batch_cost_usd": 0.08590475
+      },
+      {
+        "food_code": 75216322,
+        "name": "Corn, canned, reduced sodium, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.448542,
+        "batch_cost_usd": 0.1121355
+      },
+      {
+        "food_code": 75224132,
+        "name": "Green peas, canned, reduced sodium, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.30471,
+        "batch_cost_usd": 0.0761775
+      },
+      {
+        "food_code": 73103022,
+        "name": "Carrots, canned, reduced sodium, cooked with butter or margarine",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.377037,
+        "batch_cost_usd": 0.09425925
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.368477,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1103614
+  },
+  {
+    "food_code": 75317010,
+    "name": "Vegetables, stew type, cooked, fat added",
+    "kcal_per_100g": 95.0,
+    "protein_per_100g": 1.45,
+    "ingredients": [
+      {
+        "food_code": 75215020,
+        "name": "Celery, cooked",
+        "grams": 5.0,
+        "price_per_100g_usd": 0.380341,
+        "batch_cost_usd": 0.01901705
+      },
+      {
+        "food_code": 73102221,
+        "name": "Carrots, fresh, cooked, fat added, NS as to fat type",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.319549,
+        "batch_cost_usd": 0.09586470000000001
+      },
+      {
+        "food_code": 75221021,
+        "name": "Onions, cooked, fat added",
+        "grams": 15.0,
+        "price_per_100g_usd": 0.314611,
+        "batch_cost_usd": 0.047191649999999995
+      },
+      {
+        "food_code": 71103020,
+        "name": "Potato, boiled, from fresh, peel not eaten, fat added, NS as to fat type",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.290328,
+        "batch_cost_usd": 0.145164
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.3072374,
+    "prepared_food_price_per_100g_usd": 0.321599,
+    "fdc_id": 1103618
+  },
+  {
+    "food_code": 75317020,
+    "name": "Vegetables, stew type, cooked, no added fat",
+    "kcal_per_100g": 67.0,
+    "protein_per_100g": 1.49,
+    "ingredients": [
+      {
+        "food_code": 71103010,
+        "name": "Potato, boiled, from fresh, peel not eaten, no added fat",
+        "grams": 50.0,
+        "price_per_100g_usd": 0.316611,
+        "batch_cost_usd": 0.1583055
+      },
+      {
+        "food_code": 75221011,
+        "name": "Onions, cooked, no added fat",
+        "grams": 15.0,
+        "price_per_100g_usd": 0.308017,
+        "batch_cost_usd": 0.046202549999999995
+      },
+      {
+        "food_code": 73102211,
+        "name": "Carrots, fresh, cooked, no added fat",
+        "grams": 30.0,
+        "price_per_100g_usd": 0.32844,
+        "batch_cost_usd": 0.098532
+      },
+      {
+        "food_code": 75109000,
+        "name": "Celery, raw",
+        "grams": 5.0,
+        "price_per_100g_usd": 0.349821,
+        "batch_cost_usd": 0.01749105
+      }
+    ],
+    "ingredient_count": 4,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.32053109999999996,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1103619
+  },
+  {
+    "food_code": 75440610,
+    "name": "Vegetable curry with rice",
+    "kcal_per_100g": 102.0,
+    "protein_per_100g": 2.02,
+    "ingredients": [
+      {
+        "food_code": 56205000,
+        "name": "Rice, cooked, NFS",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.110812,
+        "batch_cost_usd": 0.0443248
+      },
+      {
+        "food_code": 75440600,
+        "name": "Vegetable curry",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.669788,
+        "batch_cost_usd": 0.40187280000000003
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.4461976,
+    "prepared_food_price_per_100g_usd": 0.439287,
+    "fdc_id": 1103658
+  },
+  {
+    "food_code": 81100000,
+    "name": "Table fat, NFS",
+    "kcal_per_100g": 662.0,
+    "protein_per_100g": 0.58,
+    "ingredients": [
+      {
+        "food_code": 81102000,
+        "name": "Margarine, NFS",
+        "grams": 40.0,
+        "price_per_100g_usd": 0.369613,
+        "batch_cost_usd": 0.1478452
+      },
+      {
+        "food_code": 81100500,
+        "name": "Butter, NFS",
+        "grams": 60.0,
+        "price_per_100g_usd": 0.868735,
+        "batch_cost_usd": 0.521241
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.6690862,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1103821
+  },
+  {
+    "food_code": 81102000,
+    "name": "Margarine, NFS",
+    "kcal_per_100g": 579.0,
+    "protein_per_100g": 0.17,
+    "ingredients": [
+      {
+        "food_code": 81102020,
+        "name": "Margarine, tub",
+        "grams": 75.0,
+        "price_per_100g_usd": 0.381853,
+        "batch_cost_usd": 0.28638975
+      },
+      {
+        "food_code": 81102010,
+        "name": "Margarine, stick",
+        "grams": 25.0,
+        "price_per_100g_usd": 0.409871,
+        "batch_cost_usd": 0.10246775
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 100.0,
+    "ingredient_batch_cost_usd": 0.38885749999999997,
+    "prepared_food_price_per_100g_usd": 0.369613,
+    "fdc_id": 1103826
+  },
+  {
+    "food_code": 93301370,
+    "name": "Fuzzy Navel",
+    "kcal_per_100g": 132.0,
+    "protein_per_100g": 0.5,
+    "ingredients": [
+      {
+        "food_code": 93201000,
+        "name": "Cordial or liqueur",
+        "grams": 60.0,
+        "price_per_100g_usd": 2.294827,
+        "batch_cost_usd": 1.3768962
+      },
+      {
+        "food_code": 61210000,
+        "name": "Orange juice, 100%, NFS",
+        "grams": 170.5,
+        "price_per_100g_usd": 0.180944,
+        "batch_cost_usd": 0.30850952
+      }
+    ],
+    "ingredient_count": 2,
+    "ingredient_batch_grams": 230.5,
+    "ingredient_batch_cost_usd": 1.6854057199999999,
+    "prepared_food_price_per_100g_usd": null,
+    "fdc_id": 1104464
+  }
+]

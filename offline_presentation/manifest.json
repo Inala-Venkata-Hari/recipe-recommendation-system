@@ -1,0 +1,23 @@
+{
+  "original": {
+    "branch": "main",
+    "commit": "f4fa48f14e4db1e79e1bb9db84a91ff457ef0f8d"
+  },
+  "synthetic": {
+    "branch": "small-test",
+    "commit": "65ba5ffe827bee98b2bbcf49bb41410a9d537a4d"
+  },
+  "real-data": {
+    "branch": "small-test-big-data",
+    "commit": "7e6863018c2516cd5a4f4d12d770e109e3774d05",
+    "local_presentation_additions": [
+      "Fixed assessment date 2026-11-12",
+      "Experimental ML risk scoring, model artifact and prepared ML-based promotions included in transfer"
+    ]
+  },
+  "assessment_dates": {
+    "synthetic": "2026-11-05 (fixed historical scenario)",
+    "real-data": "2026-11-12 (simulated inventory)"
+  },
+  "transfer_prepared": "2026-11-13"
+}

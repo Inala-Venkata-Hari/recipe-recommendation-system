@@ -1,0 +1,8 @@
+{
+  "demo": "real-data",
+  "initial_render": "PASS",
+  "external_connection_attempts": [],
+  "published_offers": "6",
+  "add_missing_and_auto_discount": "PASS",
+  "html_invoice": "PASS"
+}

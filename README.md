@@ -1,3 +1,7 @@
+# Ready-to-run transfer
+
+Moving laptops? Follow [NEW_LAPTOP.md](NEW_LAPTOP.md). The `offline_presentation/` folder includes all three demos, data, the trained experimental ML model, slides and a setup script.
+
 # Smart Cart Recipe Recommendation & Seller Inventory System
 
 A seller-oriented smart-cart platform. Its primary purpose is to create inventory-aware combo discounts from current stock and supply requirements; recipe recommendations help customers understand and use those combinations.

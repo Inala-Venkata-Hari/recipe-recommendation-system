@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "algorithm": "L2-regularized fractional logistic regression",
+  "features": [
+    "log_stock",
+    "log_daily_sales",
+    "horizon_days",
+    "age_over_target",
+    "frequency_ratio",
+    "sales_missing",
+    "expiry_missing",
+    "frequency_missing"
+  ],
+  "mean": [
+    4.538840280314655,
+    2.0594325241163367,
+    6.038492063492064,
+    1.1283925085288031,
+    0.282631934356372,
+    0.07738095238095238,
+    0.03664021164021164,
+    0.049867724867724866
+  ],
+  "scale": [
+    0.7250806209589348,
+    0.8265484452440897,
+    1.803868521115568,
+    0.9925832396851663,
+    0.18444744392313644,
+    0.26719494866027665,
+    0.18787683872999428,
+    0.21767162167872753
+  ],
+  "coefficients": [
+    0.09740848215146498,
+    1.4339777843004187,
+    -1.6413622564630344,
+    -0.8129957427896731,
+    0.22573848644185698,
+    -0.14044288281624104,
+    -1.1648738244934704,
+    0.08454843285203069,
+    -0.05259184545155423
+  ],
+  "training_origin": "SYNTHETIC simulated batch sales outcomes; not observed retailer sales",
+  "target": "Fraction of initial stock unsold after min(days to expiry, 7) days at unchanged price",
+  "seed": 42,
+  "training_rows": 7560,
+  "split": "Product-disjoint 70% training / 15% validation / 15% test; no product overlap",
+  "evaluation": {
+    "validation": {
+      "rows": 1620,
+      "mae": 0.08352735433692411,
+      "rmse": 0.12044883774363112,
+      "constant_baseline_mae": 0.3025125456785732,
+      "constant_baseline_rmse": 0.34564914018458875
+    },
+    "test": {
+      "rows": 1620,
+      "mae": 0.08604288716948946,
+      "rmse": 0.12391742606095581,
+      "constant_baseline_mae": 0.29665822309462825,
+      "constant_baseline_rmse": 0.33953180056063226
+    }
+  },
+  "limitations": [
+    "Simulation assumptions determine the learned relationship.",
+    "No causal price elasticity or optimal discount is learned.",
+    "Discount percentage still uses seller maximum and margin constraints.",
+    "Missing expiry uses a seven-day horizon.",
+    "Real sales data and temporal validation are required before operational use."
+  ]
+}

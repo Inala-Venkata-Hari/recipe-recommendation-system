@@ -38,7 +38,7 @@ def classification_parameters(classified):
 
 
 
-def score_inventory(inventory, today=None, classified=None):
+def score_inventory(inventory, today=None, classified=None, scoring_mode='rules', model_path=None):
     """Score batches; missing signals are omitted and weights renormalized.
 
     Expiry dates are exclusive: a batch expiring today is not offered.
@@ -111,21 +111,34 @@ def score_inventory(inventory, today=None, classified=None):
                    days_remaining=remaining, eligible=not reason and urgency > 0,
                    exclusion_reason=reason or ("No markdown urgency" if urgency == 0 else ""))
         rows.append(row)
-    return pd.DataFrame(rows)
+    result=pd.DataFrame(rows)
+    if scoring_mode not in {'rules','ml'}:raise ValueError('Unknown inventory scoring mode.')
+    if scoring_mode=='ml' and not result.empty:
+        from ml_inventory import load_model,predict_risk
+        model=load_model(model_path)
+        result['rule_priority']=result['discount_priority']
+        result['predicted_unsold_fraction']=predict_risk(result.to_dict('records'),model)
+        result['discount_priority']=result['predicted_unsold_fraction']
+        result['urgency_score']=result['predicted_unsold_fraction']
+        result['scoring_origin']=model['training_origin']
+        genuine_exclusion=~result.exclusion_reason.isin(['','No markdown urgency'])
+        result['eligible']=~genuine_exclusion & result.predicted_unsold_fraction.gt(0)
+        result.loc[~genuine_exclusion,'exclusion_reason']=''
+    return result
 
 
 REQUIRED = {"ingredient_name", "stock_qty", "required_qty", "unit_cost", "unit_price"}
 
 
 def generate_combo_offers(inventory, max_discount=15, min_items=2, max_items=4,
-                          base_discount=3, surplus_scale=12, minimum_margin_pct=5, today=None, classified=None):
+                          base_discount=3, surplus_scale=12, minimum_margin_pct=5, today=None, classified=None, scoring_mode='rules', model_path=None):
     """Score urgency and cap one-unit combo discounts at the margin floor.
 
     base_discount and surplus_scale are retained for call compatibility only.
     """
     if inventory is None or inventory.empty or not REQUIRED.issubset(inventory.columns):
         return []
-    data = score_inventory(inventory, today=today, classified=classified)
+    data = score_inventory(inventory, today=today, classified=classified, scoring_mode=scoring_mode, model_path=model_path)
     eligible = data[data["eligible"]].copy()
     # Offer only the earliest-expiring eligible batch of each ingredient.
     eligible["_expiry"] = pd.to_datetime(eligible.get("expiry_date", pd.Series(index=eligible.index, dtype=object)), errors="coerce")
@@ -170,4 +183,8 @@ def generate_combo_offers(inventory, max_discount=15, min_items=2, max_items=4,
                            "breakdown": "; ".join(details),
                            "discount_pct": applied_discount, "urgency_score": urgency, "surplus_score": avg_surplus,
                            "reason": f"Age/stock urgency: {urgency:.0%}; classification-adjusted priority: {priority:.0%}; one stock unit per ingredient; minimum margin retained."})
+    if scoring_mode=='ml':
+        for offer in offers:
+            offer['scoring_mode']='ml'
+            offer['reason']='ML predicted unsold fraction; model trained on simulated outcomes. Seller discount maximum and margin constraints remain rules.'
     return sorted(offers, key=lambda x: (-x["discount_priority"], -len(x["items"]), x["items"]))

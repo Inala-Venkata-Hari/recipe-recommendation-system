@@ -1,0 +1,248 @@
+[
+  {
+    "items": [
+      "56205018",
+      "41101110"
+    ],
+    "batch_ids": [
+      "DEMO-56205018-2026-11-12",
+      "DEMO-41101110-2026-11-12"
+    ],
+    "discount_priority": 0.9587492047143651,
+    "classifications": [
+      "Specialized",
+      "Rare / recipe-specific"
+    ],
+    "original_price": 1.38,
+    "offer_price": 0.99,
+    "cost": 0.83,
+    "profit": 0.16,
+    "margin_pct": 16.527063412022265,
+    "savings": 0.39,
+    "margin_limited": false,
+    "quantity_description": "100 g Rice, brown, cooked, no added fat + 100 g White beans, from dried, fat added",
+    "breakdown": "Rice, brown, cooked, no added fat: age 100%, expiry 71%, excess 92%; classification \u00d71.2; White beans, from dried, fat added: age 100%, expiry 71%, excess 92%; classification \u00d71.3",
+    "discount_pct": 28.7,
+    "urgency_score": 0.9587492047143651,
+    "surplus_score": 0.8,
+    "reason": "ML predicted unsold fraction; model trained on simulated outcomes. Seller discount maximum and margin constraints remain rules.",
+    "scoring_mode": "ml",
+    "quantities_g": {
+      "56205018": 100.0,
+      "41101110": 100.0
+    },
+    "currency": "USD",
+    "minimum_margin_pct": 5,
+    "effective_discount_pct": 28.260869565217394,
+    "display_name": "Rice, brown, cooked, no added fat + White beans, from dried, fat added",
+    "inventory_origin": "SIMULATED scenario \u2014 not USDA observed stock",
+    "promotion_id": "6e7ea26e7bf37455",
+    "valid_until": "2026-11-14",
+    "paused": false
+  },
+  {
+    "items": [
+      "27146150",
+      "56205000"
+    ],
+    "batch_ids": [
+      "DEMO-27146150-2026-11-12",
+      "DEMO-56205000-2026-11-12"
+    ],
+    "discount_priority": 0.9587435947731187,
+    "classifications": [
+      "Rare / recipe-specific",
+      "Specialized"
+    ],
+    "original_price": 1.17,
+    "offer_price": 0.84,
+    "cost": 0.7,
+    "profit": 0.14,
+    "margin_pct": 16.502907338778392,
+    "savings": 0.33,
+    "margin_limited": false,
+    "quantity_description": "100 g Chicken curry + 100 g Rice, cooked, NFS",
+    "breakdown": "Chicken curry: age 100%, expiry 71%, excess 92%; classification \u00d71.3; Rice, cooked, NFS: age 100%, expiry 71%, excess 92%; classification \u00d71.2",
+    "discount_pct": 28.7,
+    "urgency_score": 0.9587435947731187,
+    "surplus_score": 0.8,
+    "reason": "ML predicted unsold fraction; model trained on simulated outcomes. Seller discount maximum and margin constraints remain rules.",
+    "scoring_mode": "ml",
+    "quantities_g": {
+      "27146150": 100.0,
+      "56205000": 100.0
+    },
+    "currency": "USD",
+    "minimum_margin_pct": 5,
+    "effective_discount_pct": 28.20512820512821,
+    "display_name": "Chicken curry + Rice, cooked, NFS",
+    "inventory_origin": "SIMULATED scenario \u2014 not USDA observed stock",
+    "promotion_id": "5758c0bf3b872332",
+    "valid_until": "2026-11-14",
+    "paused": false
+  },
+  {
+    "items": [
+      "41102010",
+      "56205018"
+    ],
+    "batch_ids": [
+      "DEMO-41102010-2026-11-12",
+      "DEMO-56205018-2026-11-12"
+    ],
+    "discount_priority": 0.9581441277585543,
+    "classifications": [
+      "Specialized",
+      "Specialized"
+    ],
+    "original_price": 1.45,
+    "offer_price": 1.04,
+    "cost": 0.87,
+    "profit": 0.17,
+    "margin_pct": 16.64142410630618,
+    "savings": 0.41,
+    "margin_limited": false,
+    "quantity_description": "100 g Black beans, from dried, fat added + 100 g Rice, brown, cooked, no added fat",
+    "breakdown": "Black beans, from dried, fat added: age 100%, expiry 71%, excess 92%; classification \u00d71.2; Rice, brown, cooked, no added fat: age 100%, expiry 71%, excess 92%; classification \u00d71.2",
+    "discount_pct": 28.7,
+    "urgency_score": 0.9581441277585543,
+    "surplus_score": 0.8,
+    "reason": "ML predicted unsold fraction; model trained on simulated outcomes. Seller discount maximum and margin constraints remain rules.",
+    "scoring_mode": "ml",
+    "quantities_g": {
+      "41102010": 100.0,
+      "56205018": 100.0
+    },
+    "currency": "USD",
+    "minimum_margin_pct": 5,
+    "effective_discount_pct": 28.27586206896552,
+    "display_name": "Black beans, from dried, fat added + Rice, brown, cooked, no added fat",
+    "inventory_origin": "SIMULATED scenario \u2014 not USDA observed stock",
+    "promotion_id": "1b75eb9db1b273de",
+    "valid_until": "2026-11-14",
+    "paused": false
+  },
+  {
+    "items": [
+      "41102010",
+      "89901002"
+    ],
+    "batch_ids": [
+      "DEMO-41102010-2026-11-12",
+      "DEMO-89901002-2026-11-12"
+    ],
+    "discount_priority": 0.9579405549385306,
+    "classifications": [
+      "Specialized",
+      "Specialized"
+    ],
+    "original_price": 1.68,
+    "offer_price": 1.2,
+    "cost": 1.0,
+    "profit": 0.2,
+    "margin_pct": 16.28324962164492,
+    "savings": 0.48,
+    "margin_limited": false,
+    "quantity_description": "100 g Black beans, from dried, fat added + 100 g Ham, for use with vegetables",
+    "breakdown": "Black beans, from dried, fat added: age 100%, expiry 71%, excess 92%; classification \u00d71.2; Ham, for use with vegetables: age 100%, expiry 71%, excess 92%; classification \u00d71.2",
+    "discount_pct": 28.7,
+    "urgency_score": 0.9579405549385306,
+    "surplus_score": 0.8,
+    "reason": "ML predicted unsold fraction; model trained on simulated outcomes. Seller discount maximum and margin constraints remain rules.",
+    "scoring_mode": "ml",
+    "quantities_g": {
+      "41102010": 100.0,
+      "89901002": 100.0
+    },
+    "currency": "USD",
+    "minimum_margin_pct": 5,
+    "effective_discount_pct": 28.57142857142857,
+    "display_name": "Black beans, from dried, fat added + Ham, for use with vegetables",
+    "inventory_origin": "SIMULATED scenario \u2014 not USDA observed stock",
+    "promotion_id": "5561b57a46d49982",
+    "valid_until": "2026-11-14",
+    "paused": false
+  },
+  {
+    "items": [
+      "41102010",
+      "89901004"
+    ],
+    "batch_ids": [
+      "DEMO-41102010-2026-11-12",
+      "DEMO-89901004-2026-11-12"
+    ],
+    "discount_priority": 0.9579405549385306,
+    "classifications": [
+      "Specialized",
+      "Specialized"
+    ],
+    "original_price": 2.31,
+    "offer_price": 1.65,
+    "cost": 1.38,
+    "profit": 0.27,
+    "margin_pct": 16.29226802616178,
+    "savings": 0.66,
+    "margin_limited": false,
+    "quantity_description": "100 g Black beans, from dried, fat added + 100 g Beef, for use with vegetables",
+    "breakdown": "Black beans, from dried, fat added: age 100%, expiry 71%, excess 92%; classification \u00d71.2; Beef, for use with vegetables: age 100%, expiry 71%, excess 92%; classification \u00d71.2",
+    "discount_pct": 28.7,
+    "urgency_score": 0.9579405549385306,
+    "surplus_score": 0.8,
+    "reason": "ML predicted unsold fraction; model trained on simulated outcomes. Seller discount maximum and margin constraints remain rules.",
+    "scoring_mode": "ml",
+    "quantities_g": {
+      "41102010": 100.0,
+      "89901004": 100.0
+    },
+    "currency": "USD",
+    "minimum_margin_pct": 5,
+    "effective_discount_pct": 28.57142857142857,
+    "display_name": "Black beans, from dried, fat added + Beef, for use with vegetables",
+    "inventory_origin": "SIMULATED scenario \u2014 not USDA observed stock",
+    "promotion_id": "a7f4ba1091a0df24",
+    "valid_until": "2026-11-14",
+    "paused": false
+  },
+  {
+    "items": [
+      "89901004",
+      "89901002"
+    ],
+    "batch_ids": [
+      "DEMO-89901004-2026-11-12",
+      "DEMO-89901002-2026-11-12"
+    ],
+    "discount_priority": 0.9579405549385306,
+    "classifications": [
+      "Specialized",
+      "Specialized"
+    ],
+    "original_price": 3.11,
+    "offer_price": 2.22,
+    "cost": 1.86,
+    "profit": 0.36,
+    "margin_pct": 16.051791920208277,
+    "savings": 0.89,
+    "margin_limited": false,
+    "quantity_description": "100 g Beef, for use with vegetables + 100 g Ham, for use with vegetables",
+    "breakdown": "Beef, for use with vegetables: age 100%, expiry 71%, excess 92%; classification \u00d71.2; Ham, for use with vegetables: age 100%, expiry 71%, excess 92%; classification \u00d71.2",
+    "discount_pct": 28.7,
+    "urgency_score": 0.9579405549385306,
+    "surplus_score": 0.8,
+    "reason": "ML predicted unsold fraction; model trained on simulated outcomes. Seller discount maximum and margin constraints remain rules.",
+    "scoring_mode": "ml",
+    "quantities_g": {
+      "89901004": 100.0,
+      "89901002": 100.0
+    },
+    "currency": "USD",
+    "minimum_margin_pct": 5,
+    "effective_discount_pct": 28.617363344051448,
+    "display_name": "Beef, for use with vegetables + Ham, for use with vegetables",
+    "inventory_origin": "SIMULATED scenario \u2014 not USDA observed stock",
+    "promotion_id": "7fdfa1a8cb507ae0",
+    "valid_until": "2026-11-14",
+    "paused": false
+  }
+]

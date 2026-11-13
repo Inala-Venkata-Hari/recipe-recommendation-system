@@ -113,13 +113,13 @@ def simulated_batches(formulation,catalog,today):
         avg_daily_sales=2,target_holding_days=7,markdown_window_days=7,inventory_origin='SIMULATED scenario — not USDA observed stock') for i in formulation['ingredients']],columns=INVENTORY_COLUMNS)
 
 
-def draft_offers(inventory,classified,catalog,today,max_discount=30,minimum_margin=5,min_items=2,max_items=4,candidate_limit=12):
+def draft_offers(inventory,classified,catalog,today,max_discount=30,minimum_margin=5,min_items=2,max_items=4,candidate_limit=12,scoring_mode='rules',model_path=None):
     pricing_inventory=inventory.copy()
     rates={str(int(row.food_code)):float(row.price_per_100g_usd) for row in catalog.itertuples()}
     if not pricing_inventory.empty:
         pricing_inventory['recorded_unit_price']=pricing_inventory['unit_price']
         pricing_inventory['unit_price']=pricing_inventory.ingredient_name.astype(str).map(rates)*pricing_inventory.stock_unit.map(batch_pack_grams)/100
-    scored=score_inventory(pricing_inventory,today=today,classified=classified)
+    scored=score_inventory(pricing_inventory,today=today,classified=classified,scoring_mode=scoring_mode,model_path=model_path)
     if scored.empty:return [],scored,0
     eligible=scored[scored.eligible].copy()
     # Pick FEFO first, then cap distinct ingredients by urgency.
@@ -129,7 +129,7 @@ def draft_offers(inventory,classified,catalog,today,max_discount=30,minimum_marg
     count=len(eligible)
     eligible=eligible.sort_values(['discount_priority','ingredient_name'],ascending=[False,True]).head(candidate_limit)
     selected=pricing_inventory[pricing_inventory.batch_id.isin(eligible.batch_id)]
-    offers=generate_combo_offers(selected,max_discount=max_discount,minimum_margin_pct=minimum_margin,min_items=min_items,max_items=max_items,today=today,classified=classified)
+    offers=generate_combo_offers(selected,max_discount=max_discount,minimum_margin_pct=minimum_margin,min_items=min_items,max_items=max_items,today=today,classified=classified,scoring_mode=scoring_mode,model_path=model_path)
     # Compare to the same cent-rounded standalone 100 g lines used by checkout.
     for offer in offers:
         weights={code:batch_pack_grams(selected.loc[selected.batch_id==batch,'stock_unit'].iloc[0]) for code,batch in zip(offer['items'],offer['batch_ids'])}

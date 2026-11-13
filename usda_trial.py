@@ -202,12 +202,23 @@ with tabs[1]:
     cap=st.slider('Maximum discount (%)',0,40,30,key='usda_discount_cap')
     floor=st.slider('Minimum seller margin (%)',0,40,5,key='usda_margin_floor')
     size=st.select_slider('Items per combo',options=[2,3,4],value=2,key='usda_combo_size')
+    scoring_label=st.selectbox('Inventory scoring algorithm',['Rule-based baseline','ML: learned unsold-stock risk'],index=1,key='usda_scoring_algorithm')
+    scoring_mode='ml' if scoring_label.startswith('ML:') else 'rules'
+    if scoring_mode=='ml':
+        from ml_inventory import load_model
+        model_info=load_model()
+        st.warning('Experimental ML score trained on simulated sales outcomes, not real retailer history. Discount amounts still follow the seller cap and margin constraints.')
+        with st.expander('ML model evaluation and learned coefficients'):
+            st.write(model_info['algorithm']);st.write(model_info['target']);st.write(model_info['split'])
+            st.json(model_info['evaluation'])
+            st.dataframe(pd.DataFrame({'Feature':['intercept']+model_info['features'],'Standardized coefficient':model_info['coefficients']}),hide_index=True)
+            st.caption('Coefficients were fitted to unsold-stock outcomes; they are not feature importance percentages or causal effects. Metrics measure performance on synthetic held-out products only.')
     offer_inventory=inventory.copy()
     if not offer_inventory.empty:
         compatible=offer_inventory.apply(lambda row:batch_pack_grams(row.stock_unit)==pack_sizes.get(int(row.food_code),100),axis=1)
         if not compatible.all():st.caption(f'{int((~compatible).sum())} batches excluded from offers because their pack sizes differ from the current catalog.')
         offer_inventory=offer_inventory[compatible]
-    drafts,scored,omitted=draft_offers(offer_inventory,classified,catalog,assessment_date,max_discount=cap,minimum_margin=floor,min_items=size,max_items=size)
+    drafts,scored,omitted=draft_offers(offer_inventory,classified,catalog,assessment_date,max_discount=cap,minimum_margin=floor,min_items=size,max_items=size,scoring_mode=scoring_mode)
     if omitted:st.info(f'{omitted} eligible foods are outside this run’s 12-food candidate limit. Candidates use earliest expiry per food, then highest urgency. This bounds combination generation.')
     drafts=[o for o in drafts if all(pack_sizes.get(int(code),100)==o.get('quantities_g',{}).get(code,100) for code in o['items'])]
     if not scored.empty:

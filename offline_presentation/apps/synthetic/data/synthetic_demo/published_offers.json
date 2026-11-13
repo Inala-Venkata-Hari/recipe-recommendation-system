@@ -1,0 +1,715 @@
+[
+  {
+    "items": [
+      "tomato",
+      "onion",
+      "rice"
+    ],
+    "batch_ids": [
+      "DEMO-02",
+      "DEMO-03",
+      "DEMO-01"
+    ],
+    "discount_priority": 0.5143253968253968,
+    "classifications": [
+      "Common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 125.9,
+    "offer_price": 116.21,
+    "cost": 79.43,
+    "profit": 36.78,
+    "margin_pct": 31.649599862318205,
+    "savings": 9.69,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack tomato + 1 100 g pack onion + 1 100 g pack rice",
+    "breakdown": "tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0; rice: age 2%, expiry 0%, excess 0%; classification \u00d71.0",
+    "discount_pct": 7.7,
+    "urgency_score": 0.5143253968253968,
+    "surplus_score": 0.7648148148148147,
+    "reason": "Age/stock urgency: 51%; classification-adjusted priority: 51%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "af85c3117573def1",
+    "valid_until": "2026-11-07",
+    "paused": false
+  },
+  {
+    "items": [
+      "tomato",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-02",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.7685714285714287,
+    "classifications": [
+      "Common",
+      "Common"
+    ],
+    "original_price": 82.8,
+    "offer_price": 73.28,
+    "cost": 51.41,
+    "profit": 21.87,
+    "margin_pct": 29.844432314410486,
+    "savings": 9.52,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack tomato + 1 100 g pack onion",
+    "breakdown": "tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 11.5,
+    "urgency_score": 0.7685714285714287,
+    "surplus_score": 0.7583333333333333,
+    "reason": "Age/stock urgency: 77%; classification-adjusted priority: 77%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "d85629a909aa54da",
+    "valid_until": "2026-11-07",
+    "paused": false
+  },
+  {
+    "items": [
+      "tomato",
+      "rice"
+    ],
+    "batch_ids": [
+      "DEMO-02",
+      "DEMO-01"
+    ],
+    "discount_priority": 0.42577380952380955,
+    "classifications": [
+      "Common",
+      "Common"
+    ],
+    "original_price": 91.3,
+    "offer_price": 85.55,
+    "cost": 56.94,
+    "profit": 28.61,
+    "margin_pct": 33.442431326709524,
+    "savings": 5.75,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack tomato + 1 100 g pack rice",
+    "breakdown": "tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; rice: age 2%, expiry 0%, excess 0%; classification \u00d71.0",
+    "discount_pct": 6.3,
+    "urgency_score": 0.42577380952380955,
+    "surplus_score": 0.7722222222222223,
+    "reason": "Age/stock urgency: 43%; classification-adjusted priority: 43%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "e32058cb4dd79242",
+    "valid_until": "2026-11-07",
+    "paused": false
+  },
+  {
+    "items": [
+      "onion",
+      "rice"
+    ],
+    "batch_ids": [
+      "DEMO-03",
+      "DEMO-01"
+    ],
+    "discount_priority": 0.34863095238095243,
+    "classifications": [
+      "Common",
+      "Common"
+    ],
+    "original_price": 77.7,
+    "offer_price": 73.66,
+    "cost": 50.51,
+    "profit": 23.15,
+    "margin_pct": 31.428183546022264,
+    "savings": 4.04,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack onion + 1 100 g pack rice",
+    "breakdown": "onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0; rice: age 2%, expiry 0%, excess 0%; classification \u00d71.0",
+    "discount_pct": 5.2,
+    "urgency_score": 0.34863095238095243,
+    "surplus_score": 0.7638888888888888,
+    "reason": "Age/stock urgency: 35%; classification-adjusted priority: 35%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "41bb71fada8c22f2",
+    "valid_until": "2026-11-12",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "peas",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-12",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.7910374313186814,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 158.8,
+    "offer_price": 140.07,
+    "cost": 104.44,
+    "profit": 35.63,
+    "margin_pct": 25.437281359320334,
+    "savings": 18.73,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack peas + 1 100 g pack onion",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 11.8,
+    "urgency_score": 0.7685182005494506,
+    "surplus_score": 0.7205128205128205,
+    "reason": "Age/stock urgency: 77%; classification-adjusted priority: 79%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "d9ffbcc20fdaee7d",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "capsicum",
+      "peas"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-11",
+      "DEMO-12"
+    ],
+    "discount_priority": 0.8322874313186814,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Moderately common",
+      "Common"
+    ],
+    "original_price": 129.9,
+    "offer_price": 113.8,
+    "cost": 85.66,
+    "profit": 28.14,
+    "margin_pct": 24.727592267135325,
+    "savings": 16.1,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack capsicum + 1 100 g pack peas",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; capsicum: age 100%, expiry 57%, excess 80%; classification \u00d71.1; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0",
+    "discount_pct": 12.4,
+    "urgency_score": 0.7903039148351648,
+    "surplus_score": 0.7413461538461539,
+    "reason": "Age/stock urgency: 79%; classification-adjusted priority: 83%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "4a64baab668847de",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "capsicum",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-11",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.8461043956043957,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Moderately common",
+      "Common"
+    ],
+    "original_price": 124.8,
+    "offer_price": 109.08,
+    "cost": 82.34,
+    "profit": 26.74,
+    "margin_pct": 24.51411807847451,
+    "savings": 15.72,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack capsicum + 1 100 g pack onion",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; capsicum: age 100%, expiry 57%, excess 80%; classification \u00d71.1; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 12.6,
+    "urgency_score": 0.8041208791208792,
+    "surplus_score": 0.7413461538461539,
+    "reason": "Age/stock urgency: 80%; classification-adjusted priority: 85%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "cd1f9c044aebb203",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "chicken",
+      "peas"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-07",
+      "DEMO-12"
+    ],
+    "discount_priority": 0.7896733440170941,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Moderately common",
+      "Common"
+    ],
+    "original_price": 133.3,
+    "offer_price": 117.58,
+    "cost": 90.78,
+    "profit": 26.8,
+    "margin_pct": 22.7929920054431,
+    "savings": 15.72,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack chicken + 1 100 g pack peas",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; chicken: age 75%, expiry 50%, excess 64%; classification \u00d71.1; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0",
+    "discount_pct": 11.8,
+    "urgency_score": 0.7515638354700855,
+    "surplus_score": 0.5607905982905983,
+    "reason": "Age/stock urgency: 75%; classification-adjusted priority: 79%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "28fb96a04f14af65",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "onion",
+      "rice"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-03",
+      "DEMO-01"
+    ],
+    "discount_priority": 0.6334555860805862,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 162.2,
+    "offer_price": 146.8,
+    "cost": 106.65,
+    "profit": 40.15,
+    "margin_pct": 27.350136239782017,
+    "savings": 15.4,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack onion + 1 100 g pack rice",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0; rice: age 2%, expiry 0%, excess 0%; classification \u00d71.0",
+    "discount_pct": 9.5,
+    "urgency_score": 0.6109363553113554,
+    "surplus_score": 0.727457264957265,
+    "reason": "Age/stock urgency: 61%; classification-adjusted priority: 63%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "37531ef5b8096231",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "peas",
+      "rice"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-12",
+      "DEMO-01"
+    ],
+    "discount_priority": 0.6196386217948718,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 167.3,
+    "offer_price": 151.91,
+    "cost": 109.97,
+    "profit": 41.94,
+    "margin_pct": 27.60845237311566,
+    "savings": 15.39,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack peas + 1 100 g pack rice",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0; rice: age 2%, expiry 0%, excess 0%; classification \u00d71.0",
+    "discount_pct": 9.2,
+    "urgency_score": 0.597119391025641,
+    "surplus_score": 0.727457264957265,
+    "reason": "Age/stock urgency: 60%; classification-adjusted priority: 62%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "5297b79a0cea3925",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "chicken",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-07",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.8034903083028084,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Moderately common",
+      "Common"
+    ],
+    "original_price": 128.2,
+    "offer_price": 112.82,
+    "cost": 87.46,
+    "profit": 25.36,
+    "margin_pct": 22.478283992199966,
+    "savings": 15.38,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack chicken + 1 100 g pack onion",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; chicken: age 75%, expiry 50%, excess 64%; classification \u00d71.1; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 12.0,
+    "urgency_score": 0.7653807997557998,
+    "surplus_score": 0.5607905982905983,
+    "reason": "Age/stock urgency: 77%; classification-adjusted priority: 80%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "43cab4e7e5988f88",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "peas"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-12"
+    ],
+    "discount_priority": 0.8242403846153846,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 124.2,
+    "offer_price": 108.93,
+    "cost": 81.95,
+    "profit": 26.98,
+    "margin_pct": 24.76819976131461,
+    "savings": 15.27,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack peas",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0",
+    "discount_pct": 12.3,
+    "urgency_score": 0.7942147435897436,
+    "surplus_score": 0.7106837606837607,
+    "reason": "Age/stock urgency: 79%; classification-adjusted priority: 82%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "f7de5cab9de76866",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.8426630036630037,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 119.1,
+    "offer_price": 104.1,
+    "cost": 78.63,
+    "profit": 25.47,
+    "margin_pct": 24.46685878962536,
+    "savings": 15.0,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack onion",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 12.6,
+    "urgency_score": 0.8126373626373627,
+    "surplus_score": 0.7106837606837607,
+    "reason": "Age/stock urgency: 81%; classification-adjusted priority: 84%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "02a7a1c3df746cd6",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "peas",
+      "noodles"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-12",
+      "DEMO-05"
+    ],
+    "discount_priority": 0.6310136217948719,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Common",
+      "Moderately common"
+    ],
+    "original_price": 157.1,
+    "offer_price": 142.34,
+    "cost": 103.34,
+    "profit": 39.0,
+    "margin_pct": 27.399185049880565,
+    "savings": 14.76,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack peas + 1 100 g pack noodles",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0; noodles: age 13%, expiry 0%, excess 0%; classification \u00d71.1",
+    "discount_pct": 9.4,
+    "urgency_score": 0.6073277243589744,
+    "surplus_score": 0.727457264957265,
+    "reason": "Age/stock urgency: 61%; classification-adjusted priority: 63%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "52c6d60aa7426d16",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "onion",
+      "noodles"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-03",
+      "DEMO-05"
+    ],
+    "discount_priority": 0.6448305860805861,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Common",
+      "Moderately common"
+    ],
+    "original_price": 152.0,
+    "offer_price": 137.41,
+    "cost": 100.02,
+    "profit": 37.39,
+    "margin_pct": 27.2105378065643,
+    "savings": 14.59,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack onion + 1 100 g pack noodles",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0; noodles: age 13%, expiry 0%, excess 0%; classification \u00d71.1",
+    "discount_pct": 9.6,
+    "urgency_score": 0.6211446886446886,
+    "surplus_score": 0.727457264957265,
+    "reason": "Age/stock urgency: 62%; classification-adjusted priority: 64%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "60c65031c2f7e1d3",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "tomato",
+      "capsicum",
+      "peas",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-02",
+      "DEMO-11",
+      "DEMO-12",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.7574330357142858,
+    "classifications": [
+      "Common",
+      "Moderately common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 128.2,
+    "offer_price": 113.72,
+    "cost": 80.93,
+    "profit": 32.79,
+    "margin_pct": 28.833978192050658,
+    "savings": 14.48,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack tomato + 1 100 g pack capsicum + 1 100 g pack peas + 1 100 g pack onion",
+    "breakdown": "tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; capsicum: age 100%, expiry 57%, excess 80%; classification \u00d71.1; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 11.3,
+    "urgency_score": 0.7379687500000001,
+    "surplus_score": 0.775,
+    "reason": "Age/stock urgency: 74%; classification-adjusted priority: 76%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "b36459f3f616b650",
+    "valid_until": "2026-11-07",
+    "paused": false
+  },
+  {
+    "items": [
+      "tomato",
+      "chicken",
+      "peas",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-02",
+      "DEMO-07",
+      "DEMO-12",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.7148189484126984,
+    "classifications": [
+      "Common",
+      "Moderately common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 131.6,
+    "offer_price": 117.52,
+    "cost": 86.05,
+    "profit": 31.47,
+    "margin_pct": 26.778420694349897,
+    "savings": 14.08,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack tomato + 1 100 g pack chicken + 1 100 g pack peas + 1 100 g pack onion",
+    "breakdown": "tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; chicken: age 75%, expiry 50%, excess 64%; classification \u00d71.1; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 10.7,
+    "urgency_score": 0.6992286706349207,
+    "surplus_score": 0.5944444444444444,
+    "reason": "Age/stock urgency: 70%; classification-adjusted priority: 71%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "1e03abb15eff225f",
+    "valid_until": "2026-11-07",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "capsicum",
+      "peas",
+      "onion"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-11",
+      "DEMO-12",
+      "DEMO-03"
+    ],
+    "discount_priority": 0.7937160027472528,
+    "classifications": [
+      "Moderately common",
+      "Moderately common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 116.3,
+    "offer_price": 102.47,
+    "cost": 79.23,
+    "profit": 23.24,
+    "margin_pct": 22.679808724504742,
+    "savings": 13.83,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack capsicum + 1 100 g pack peas + 1 100 g pack onion",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; capsicum: age 100%, expiry 57%, excess 80%; classification \u00d71.1; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0",
+    "discount_pct": 11.9,
+    "urgency_score": 0.7517324862637362,
+    "surplus_score": 0.7371794871794872,
+    "reason": "Age/stock urgency: 75%; classification-adjusted priority: 79%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "ed1be87f24621b6e",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "paneer",
+      "tomato",
+      "capsicum",
+      "rice"
+    ],
+    "batch_ids": [
+      "DEMO-04",
+      "DEMO-02",
+      "DEMO-11",
+      "DEMO-01"
+    ],
+    "discount_priority": 0.6747055860805862,
+    "classifications": [
+      "Moderately common",
+      "Common",
+      "Moderately common",
+      "Common"
+    ],
+    "original_price": 133.3,
+    "offer_price": 119.84,
+    "cost": 87.87,
+    "profit": 31.97,
+    "margin_pct": 26.677236315086784,
+    "savings": 13.46,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack paneer + 1 100 g pack tomato + 1 100 g pack capsicum + 1 100 g pack rice",
+    "breakdown": "paneer: age 100%, expiry 80%, excess 92%; classification \u00d71.1; tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; capsicum: age 100%, expiry 57%, excess 80%; classification \u00d71.1; rice: age 2%, expiry 0%, excess 0%; classification \u00d71.0",
+    "discount_pct": 10.1,
+    "urgency_score": 0.6327220695970696,
+    "surplus_score": 0.7482905982905983,
+    "reason": "Age/stock urgency: 63%; classification-adjusted priority: 67%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "19bdf56e7ea44ea0",
+    "valid_until": "2026-11-06",
+    "paused": false
+  },
+  {
+    "items": [
+      "tomato",
+      "peas",
+      "onion",
+      "rice"
+    ],
+    "batch_ids": [
+      "DEMO-02",
+      "DEMO-12",
+      "DEMO-03",
+      "DEMO-01"
+    ],
+    "discount_priority": 0.5447842261904762,
+    "classifications": [
+      "Common",
+      "Common",
+      "Common",
+      "Common"
+    ],
+    "original_price": 165.6,
+    "offer_price": 152.19,
+    "cost": 105.24,
+    "profit": 46.95,
+    "margin_pct": 30.849595899862013,
+    "savings": 13.41,
+    "margin_limited": false,
+    "quantity_description": "1 100 g pack tomato + 1 100 g pack peas + 1 100 g pack onion + 1 100 g pack rice",
+    "breakdown": "tomato: age 100%, expiry 71%, excess 84%; classification \u00d71.0; peas: age 100%, expiry 29%, excess 69%; classification \u00d71.0; onion: age 100%, expiry 43%, excess 68%; classification \u00d71.0; rice: age 2%, expiry 0%, excess 0%; classification \u00d71.0",
+    "discount_pct": 8.1,
+    "urgency_score": 0.5447842261904762,
+    "surplus_score": 0.7611111111111111,
+    "reason": "Age/stock urgency: 54%; classification-adjusted priority: 54%; one stock unit per ingredient; minimum margin retained.",
+    "promotion_id": "fe1ee22f0b787920",
+    "valid_until": "2026-11-07",
+    "paused": false
+  }
+]

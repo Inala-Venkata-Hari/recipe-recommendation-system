@@ -1,0 +1,29 @@
+ingredient_name,recipe_frequency,frequency_ratio,ingredient_frequency_category
+cream,1,0.0667,Specialized
+cucumber,1,0.0667,Specialized
+curry leaves,1,0.0667,Specialized
+lentils,1,0.0667,Specialized
+mustard seeds,1,0.0667,Specialized
+cabbage,2,0.1333,Moderately common
+capsicum,2,0.1333,Moderately common
+chicken,2,0.1333,Moderately common
+chickpeas,2,0.1333,Moderately common
+coriander,2,0.1333,Moderately common
+egg,2,0.1333,Moderately common
+noodles,2,0.1333,Moderately common
+paneer,2,0.1333,Moderately common
+peanuts,2,0.1333,Moderately common
+potato,2,0.1333,Moderately common
+spring onion,2,0.1333,Moderately common
+chilli powder,3,0.2,Moderately common
+lemon,3,0.2,Moderately common
+turmeric,3,0.2,Moderately common
+carrot,4,0.2667,Common
+ginger,4,0.2667,Common
+peas,4,0.2667,Common
+soy sauce,4,0.2667,Common
+cumin,5,0.3333,Common
+rice,6,0.4,Common
+garlic,7,0.4667,Common
+tomato,7,0.4667,Common
+onion,9,0.6,Common

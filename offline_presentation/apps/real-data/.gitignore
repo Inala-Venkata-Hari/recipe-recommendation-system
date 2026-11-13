@@ -1,0 +1,22 @@
+.venv/
+__pycache__/
+*.py[cod]
+.streamlit/secrets.toml
+RAW_recipes.csv
+
+data/**/published_offers.json
+
+data/**/offer_history.json
+
+# Locally downloaded third-party data; not redistributed
+data/external/
+data/bigbasket_import/
+
+# Locally imported licensed recipe data
+data/real_recipes/
+
+data/price_compatible_recipes/
+
+data/bigbasket_quantity/
+
+data/usda_trial/

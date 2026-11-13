@@ -20,3 +20,7 @@ data/price_compatible_recipes/
 data/bigbasket_quantity/
 
 data/usda_trial/
+
+# Machine-local presentation runtime
+/offline_presentation/logs/
+/offline_presentation/running.json
